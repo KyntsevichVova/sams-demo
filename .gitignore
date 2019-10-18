@@ -1,22 +1,9 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**
-!**/src/test/**
+.idea/
+*.iml
 
 app/build
 app/node_modules
 app/package-lock.json
 
 src/main/webapp/frontend
-
-### Maven ###
-mvnw
-mvnw.cmd
-.mvn
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+target/
