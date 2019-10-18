@@ -4,32 +4,19 @@ target/
 !**/src/main/**
 !**/src/test/**
 
+app/build
+app/node_modules
+app/package-lock.json
+
+src/main/webapp/frontend
+
+### Maven ###
 mvnw
 mvnw.cmd
 .mvn
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-
-### VS Code ###
-.vscode/
