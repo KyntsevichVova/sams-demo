@@ -1,1 +1,1 @@
-<%@include file="/frontend/index.html"%>
+<%@include file="/index.html"%>
