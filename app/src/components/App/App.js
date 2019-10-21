@@ -1,5 +1,6 @@
 import React from 'react';
 import Main from '../Main/Main';
+import './App.css'
 
 function App() {
     return (
@@ -8,6 +9,12 @@ function App() {
                 <span className="navbar-brand" style={{fontSize: '2.5rem'}}>Java Interview Notes</span>
             </nav>
             <Main/>
+            <footer className="footer">
+                <div className="bg-light d-flex flex-column align-items-center justify-content-center">
+                    <span>© Vladimir Kuntsevich</span>
+                    <span>vkyntsevich@gmail.com</span>
+                </div>
+            </footer>
         </div>
     );
 }

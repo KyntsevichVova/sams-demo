@@ -9,7 +9,7 @@ function Main() {
         {title: "C", link: "linkC", level: "senior"}
     ];
     return (
-        <main className="d-flex flex-row">
+        <main className="d-flex flex-row pt-3">
             <div className="container w-25 d-flex justify-content-start flex-column mx-0">
                 <FilterButton
                     filter="all"
