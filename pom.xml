@@ -104,6 +104,7 @@
 					<webResources>
 						<resource>
 							<directory>./app/build</directory>
+							<targetPath>frontend</targetPath>
 						</resource>
 					</webResources>
 				</configuration>
