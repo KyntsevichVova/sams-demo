@@ -1,17 +1,6 @@
-.App {
-  text-align: center;
-}
-
-.App-main {
-  display: flex;
-  flex-direction: row;
-}
-
-.App-filters {
-  display: flex;
-  flex-direction: column;
-}
-
-.App-posts {
-  border: 1px solid black;
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
 }
