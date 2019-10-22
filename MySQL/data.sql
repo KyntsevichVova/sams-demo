@@ -1,4 +1,4 @@
-delete from Questions;
-insert into Questions (ID, TITLE, LINK, LEVEL) values (1, 'A', 'linkA', 'junior');
-insert into Questions (ID, TITLE, LINK, LEVEL) values (2, 'B', 'linkB', 'middle');
-insert into Questions (ID, TITLE, LINK, LEVEL) values (3, 'C', 'linkC', 'senior');
+DELETE FROM QUESTION;
+INSERT INTO QUESTION (ID, TITLE, LINK, LEVEL) VALUES (1, 'A', 'linkA', 'junior');
+INSERT INTO QUESTION (ID, TITLE, LINK, LEVEL) VALUES (2, 'B', 'linkB', 'middle');
+INSERT INTO QUESTION (ID, TITLE, LINK, LEVEL) VALUES (3, 'C', 'linkC', 'senior');

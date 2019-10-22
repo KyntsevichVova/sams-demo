@@ -3,10 +3,11 @@ package com.sams.demo.data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Questions")
+@Table(name = "QUESTION")
 public class Question {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final int id;
     private final String title;
     private final String link;
