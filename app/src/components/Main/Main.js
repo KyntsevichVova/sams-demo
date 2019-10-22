@@ -3,11 +3,17 @@ import FilterButton from '../FilterButton/FilterButton';
 
 function Main() {
     const [filter, setFilter] = React.useState("all");
-    const posts = [
-        {title: "A", link: "linkA", level: "junior"},
-        {title: "B", link: "linkB", level: "middle"},
-        {title: "C", link: "linkC", level: "senior"}
-    ];
+    const [posts, setPosts] = React.useState([]);
+    
+    React.useEffect(() => {
+        fetch("http://localhost:8085/demo/api/v1/questions")
+            .then((data) => {
+                data.json().then((value) => {
+                    setPosts(value);
+                });
+            });
+    }, []);
+
     return (
         <main className="d-flex flex-row pt-3">
             <div className="container w-25 d-flex justify-content-start flex-column mx-0">
