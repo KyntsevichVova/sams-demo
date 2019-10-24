@@ -17,13 +17,13 @@ public class Question {
     private int id;
 
     @NotNull
-    @Size(max = 100)
-    @Column(name = "TITLE", nullable = false, length = 100)
+    @Size(max = 255)
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
     @NotNull
-    @Size(max = 100)
-    @Column(name = "LINK", nullable = false, length = 100)
+    @Size(max = 255)
+    @Column(name = "LINK", nullable = false)
     private String link;
 
     @NotNull
