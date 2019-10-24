@@ -1,7 +1,8 @@
-package com.sams.demo.service;
+package com.sams.demo.service.impl;
 
 import com.sams.demo.data.Question;
 import com.sams.demo.data.QuestionRepository;
+import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
