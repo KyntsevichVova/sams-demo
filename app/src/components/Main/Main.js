@@ -1,5 +1,6 @@
 import React from 'react';
 import FilterButton from '../FilterButton/FilterButton';
+import './Main.css';
 
 function Main() {
     const [filter, setFilter] = React.useState("all");
@@ -15,7 +16,7 @@ function Main() {
     }, []);
 
     return (
-        <main className="d-flex flex-row pt-3">
+        <main className="content d-flex flex-row pt-3">
             <div className="container w-25 d-flex justify-content-start flex-column mx-0">
                 <FilterButton
                     filter="all"

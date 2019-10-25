@@ -9,8 +9,8 @@ function App() {
                 <span className="navbar-brand" style={{fontSize: '2.5rem'}}>Java Interview Notes</span>
             </nav>
             <Main/>
-            <footer className="footer">
-                <div className="bg-light d-flex flex-column align-items-center justify-content-center">
+            <footer className="footer mt-5">
+                <div className="bg-light d-flex flex-column align-items-center justify-content-center w-100">
                     <span>© Vladimir Kuntsevich</span>
                     <span>vkyntsevich@gmail.com</span>
                 </div>
