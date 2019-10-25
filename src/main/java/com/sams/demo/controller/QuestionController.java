@@ -1,4 +1,4 @@
-package com.sams.demo;
+package com.sams.demo.controller;
 
 import com.sams.demo.data.Question;
 import com.sams.demo.service.IQuestionService;
