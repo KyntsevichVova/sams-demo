@@ -28,29 +28,37 @@ function Main() {
             });
     }, [pageNumber]);
 
+    const filterAside = React.useMemo(() => {
+        return (
+            <FilterAside 
+                filters={filters}
+                currentFilter={filter}
+                setFilterCallback={setFilter}
+            />
+        );
+    }, [filters, filter, setFilter]);
+
+    const paginationNav = React.useMemo(() => {
+        return (
+            <PaginationNav 
+                currentPage={pageNumber}
+                totalPages={page.totalPages || 1}
+                setCurrentPageCallback={setPageNumber}
+            />
+        );
+    }, [pageNumber, page.totalPages || 1, setPageNumber]);
+
     return (
         <main className="content d-flex flex-row pt-3">
-            {React.useMemo(() => {
-                return (
-                    <FilterAside 
-                        filters={filters}
-                        currentFilter={filter}
-                        setFilterCallback={setFilter}
-                    />
-                );
-            }, [filters, filter, setFilter])}
-
+            {filterAside}
             <div className="container d-flex flex-column justify-content-start mx-0">
-                <PaginationNav 
-                    currentPage={pageNumber}
-                    totalPages={page.totalPages || 1}
-                    setCurrentPageCallback={setPageNumber}
-                />
+                {paginationNav}
                 {
                     loading 
                         ?   <div className="spinner-border text-primary" />
                         :   <QuestionTable posts={page.content} filter={filter}/>
-                }  
+                }
+                {paginationNav}
             </div>
         </main>
     );
