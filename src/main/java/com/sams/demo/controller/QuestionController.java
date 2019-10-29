@@ -27,8 +27,8 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Question>> findAll(@RequestParam(defaultValue = DEFAULT_OFFSET) String offset,
-                                                  @RequestParam(defaultValue = DEFAULT_LIMIT) String limit,
+    public ResponseEntity<Page<Question>> findAll(@RequestParam(required = false, defaultValue = DEFAULT_OFFSET) String offset,
+                                                  @RequestParam(required = false, defaultValue = DEFAULT_LIMIT) String limit,
                                                   Pageable pageable) {
 
         return new ResponseEntity<>(questionService.findAll(pageable), OK);
