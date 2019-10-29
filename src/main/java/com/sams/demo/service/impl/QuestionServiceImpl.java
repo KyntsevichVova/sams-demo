@@ -1,6 +1,6 @@
 package com.sams.demo.service.impl;
 
-import com.sams.demo.data.Question;
+import com.sams.demo.entity.Question;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.sams.demo.data;
+package com.sams.demo.entity;
 
 import lombok.Data;
 
