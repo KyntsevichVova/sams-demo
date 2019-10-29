@@ -4,9 +4,9 @@ import com.sams.demo.data.Question;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class QuestionServiceImpl implements IQuestionService {
@@ -19,8 +19,8 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<Question> findAll() {
+    public Page<Question> findAll(Pageable pageable) {
 
-        return repository.findAll();
+        return repository.findAll(pageable);
     }
 }

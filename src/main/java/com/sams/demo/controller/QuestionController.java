@@ -3,12 +3,12 @@ package com.sams.demo.controller;
 import com.sams.demo.data.Question;
 import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -24,8 +24,8 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Question>> findAll() {
+    public ResponseEntity<Page<Question>> findAll(Pageable pageable) {
 
-        return new ResponseEntity<>(questionService.findAll(), OK);
+        return new ResponseEntity<>(questionService.findAll(pageable), OK);
     }
 }
