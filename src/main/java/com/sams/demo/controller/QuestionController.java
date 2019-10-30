@@ -8,11 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.sams.demo.common.ApplicationConstant.DEFAULT_LIMIT;
-import static com.sams.demo.common.ApplicationConstant.DEFAULT_OFFSET;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -27,9 +24,7 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Question>> findAll(@RequestParam(required = false, defaultValue = DEFAULT_OFFSET) String offset,
-                                                  @RequestParam(required = false, defaultValue = DEFAULT_LIMIT) String limit,
-                                                  Pageable pageable) {
+    public ResponseEntity<Page<Question>> findAll(Pageable pageable) {
 
         return new ResponseEntity<>(questionService.findAll(pageable), OK);
     }
