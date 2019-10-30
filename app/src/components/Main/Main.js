@@ -28,6 +28,9 @@ function Main() {
         fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((value) => {
+                    if (value.number >= value.totalPages) {
+                        setPageNumber(value.totalPages - 1);
+                    }
                     setPage(value);
                     setLoading(false);
                 });
