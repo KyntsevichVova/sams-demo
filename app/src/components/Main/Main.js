@@ -1,87 +1,97 @@
 import React from 'react';
-import FilterButton from '../FilterButton/FilterButton';
 import './Main.css';
+import QuestionTable from '../QuestionTable/QuestionTable';
+import FilterAside from '../FilterAside/FilterAside';
+import PaginationNav from '../PaginationNav/PaginationNav';
+import Dropdown from '../Dropdown/Dropdown';
+
+const filters = [
+    {filter: "all", text: "All"},
+    {filter: "junior", text: "Junior"},
+    {filter: "middle", text: "Middle"},
+    {filter: "senior", text: "Senior"},
+];
+
+const limits = [5, 10, 25, 50];
+
+const API_URL = "http://localhost:8085/demo/api/v1";
 
 function Main() {
     const [filter, setFilter] = React.useState("all");
-    const [posts, setPosts] = React.useState([]);
+    const [page, setPage] = React.useState({});
+    const [loading, setLoading] = React.useState(true);
+    const [pageNumber, setPageNumber] = React.useState(0);
+    const [limit, setLimit] = React.useState(limits[0]);
     
     React.useEffect(() => {
-        fetch("http://localhost:8085/demo/api/v1/questions")
+        setLoading(true);
+        fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((value) => {
-                    setPosts(value);
+                    if (value.number >= value.totalPages) {
+                        setPageNumber(value.totalPages - 1);
+                    }
+                    setPage(value);
+                    setLoading(false);
                 });
             });
-    }, []);
+    }, [pageNumber, limit]);
+
+    const filterAside = React.useMemo(() => {
+        return (
+            <FilterAside 
+                filters={filters}
+                currentFilter={filter}
+                setFilterCallback={setFilter}
+            />
+        );
+    }, [filter, setFilter]);
+
+    const totalPages = page.totalPages || 1;
+    const offset = ((page.pageable || {}).offset || 0) + 1;
+    const numberOfElements = (page.numberOfElements || 0) + offset - 1;
+    const totalElements = page.totalElements || 0;
+
+    const paginationNav = React.useMemo(() => {
+        return (
+            <PaginationNav 
+                currentPage={pageNumber}
+                totalPages={totalPages}
+                setCurrentPageCallback={setPageNumber}
+                offset={offset}
+                numberOfElements={numberOfElements}
+                totalElements={totalElements}
+            />
+        );
+    }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
 
     return (
         <main className="content d-flex flex-row pt-3">
-            <div className="container w-25 d-flex justify-content-start flex-column mx-0">
-                <FilterButton
-                    filter="all"
-                    currentFilter={filter}
-                    onClick={setFilter}
-                >
-                    All
-                </FilterButton>
-
-                <FilterButton
-                    filter="junior"
-                    currentFilter={filter}
-                    onClick={setFilter}
-                >
-                    Junior
-                </FilterButton>
-
-                <FilterButton
-                    filter="middle"
-                    currentFilter={filter}
-                    onClick={setFilter}
-                >
-                    Middle
-                </FilterButton>
-
-                <FilterButton
-                    filter="senior"
-                    currentFilter={filter}
-                    onClick={setFilter}
-                >
-                    Senior
-                </FilterButton>
-            </div>
-
-            <div className="container d-flex justify-content-start mx-0">    
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                Title
-                            </th>
-                            <th scope="col">
-                                Link
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {posts.filter((value) => {
-                            return filter === "all" || value.level === filter;
-                        }).map((value) => {
+            {filterAside}
+            <div className="container d-flex flex-column justify-content-start mx-0">
+                <span className="my-1 font-weight-bold">
+                    Show
+                    <Dropdown title={`${limit}`}>
+                        {limits.map((value) => {
                             return (
-                                <tr>
-                                    <td>
-                                        {value.title}
-                                    </td>
-                                    <td>
-                                        <a target="_blank" rel="noopener noreferrer" href={value.link}>
-                                            {value.link}
-                                        </a>
-                                    </td>
-                                </tr>
-                            );
+                                <a 
+                                    className="dropdown-item" 
+                                    href="#"
+                                    onClick={() => {setLimit(value)}}
+                                >
+                                    {value}
+                                </a>
+                            );  
                         })}
-                    </tbody>
-                </table>
+                    </Dropdown>
+                    entries
+                </span>
+                {
+                    loading 
+                        ?   <div className="spinner-border text-primary" />
+                        :   <QuestionTable posts={page.content} filter={filter}/>
+                }
+                {paginationNav}
             </div>
         </main>
     );

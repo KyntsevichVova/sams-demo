@@ -1,4 +1,3 @@
-DELETE FROM QUESTION;
 INSERT INTO QUESTION (TITLE, LINK, LEVEL) VALUES
 ('Can we override the private method in Java?', 'http://www.java67.com/2013/08/can-we-override-private-method-in-java-inner-class.html', 'junior'),
 ('Difference between Hashtable and HashMap in Java?', 'http://javarevisited.blogspot.sg/2010/10/difference-between-hashmap-and.html#axzz53B6SD769', 'junior'),
