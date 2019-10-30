@@ -3,6 +3,7 @@ import './Main.css';
 import QuestionTable from '../QuestionTable/QuestionTable';
 import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
+import Dropdown from '../Dropdown/Dropdown';
 
 const filters = [
     {filter: "all", text: "All"},
@@ -11,22 +12,27 @@ const filters = [
     {filter: "senior", text: "Senior"},
 ];
 
+const limits = [5, 10, 25, 50];
+
+const API_URL = "http://localhost:8085/demo/api/v1";
+
 function Main() {
     const [filter, setFilter] = React.useState("all");
     const [page, setPage] = React.useState({});
     const [loading, setLoading] = React.useState(true);
     const [pageNumber, setPageNumber] = React.useState(0);
+    const [limit, setLimit] = React.useState(limits[0]);
     
     React.useEffect(() => {
         setLoading(true);
-        fetch(`http://localhost:8085/demo/api/v1/questions?limit=10&offset=${10 * pageNumber}`)
+        fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((value) => {
                     setPage(value);
                     setLoading(false);
                 });
             });
-    }, [pageNumber]);
+    }, [pageNumber, limit]);
 
     const filterAside = React.useMemo(() => {
         return (
@@ -36,23 +42,47 @@ function Main() {
                 setFilterCallback={setFilter}
             />
         );
-    }, [filters, filter, setFilter]);
+    }, [filter, setFilter]);
+
+    const totalPages = page.totalPages || 1;
+    const offset = ((page.pageable || {}).offset || 0) + 1;
+    const numberOfElements = (page.numberOfElements || 0) + offset - 1;
+    const totalElements = page.totalElements || 0;
 
     const paginationNav = React.useMemo(() => {
         return (
             <PaginationNav 
                 currentPage={pageNumber}
-                totalPages={page.totalPages || 1}
+                totalPages={totalPages}
                 setCurrentPageCallback={setPageNumber}
+                offset={offset}
+                numberOfElements={numberOfElements}
+                totalElements={totalElements}
             />
         );
-    }, [pageNumber, page.totalPages || 1, setPageNumber]);
+    }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
 
     return (
         <main className="content d-flex flex-row pt-3">
             {filterAside}
             <div className="container d-flex flex-column justify-content-start mx-0">
-                {paginationNav}
+                <span className="my-1 font-weight-bold">
+                    Show
+                    <Dropdown title={`${limit}`}>
+                        {limits.map((value) => {
+                            return (
+                                <a 
+                                    className="dropdown-item" 
+                                    href="#"
+                                    onClick={() => {setLimit(value)}}
+                                >
+                                    {value}
+                                </a>
+                            );  
+                        })}
+                    </Dropdown>
+                    entries
+                </span>
                 {
                     loading 
                         ?   <div className="spinner-border text-primary" />

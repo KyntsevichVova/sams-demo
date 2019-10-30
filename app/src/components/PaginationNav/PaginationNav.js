@@ -1,9 +1,15 @@
 import React from 'react';
 
-function PaginationNav({currentPage, totalPages, setCurrentPageCallback}) {
+function PaginationNav({
+        currentPage, totalPages, setCurrentPageCallback,
+        offset, numberOfElements, totalElements}) 
+{
     return (
-        <nav>
-            <ul className="pagination">
+        <nav className="d-flex justify-content-between">
+            <span className="font-weight-bold">
+                {`Showing ${offset} to ${numberOfElements} of ${totalElements} entries`}
+            </span>
+            <ul className="pagination justify-content-end">
                 <li 
                     className={`page-item${currentPage > 0 ? "" : " disabled"}`}
                     onClick={currentPage > 0 ? () => {setCurrentPageCallback(currentPage - 1)} : null}
@@ -12,7 +18,7 @@ function PaginationNav({currentPage, totalPages, setCurrentPageCallback}) {
                         &laquo;
                     </a>
                 </li>
-                {Array(totalPages).fill(1).map((_, index) => {
+                {Array(totalPages).fill(0).map((_, index) => {
                     return (
                         <li 
                             className={`page-item${(index === currentPage) ? " active" : ""}`} 
