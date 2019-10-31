@@ -1,4 +1,5 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function QuestionTable({posts, filter}) {
     return (
@@ -9,7 +10,10 @@ function QuestionTable({posts, filter}) {
                         Title
                     </th>
                     <th scope="col">
-                        Link
+                        Level
+                    </th>
+                    <th scope="col">
+                        Actions
                     </th>
                 </tr>
             </thead>
@@ -23,8 +27,17 @@ function QuestionTable({posts, filter}) {
                                 {value.title}
                             </td>
                             <td>
-                                <a target="_blank" rel="noopener noreferrer" href={value.link}>
-                                    {value.link}
+                                {value.level[0].toUpperCase() + value.level.substr(1)}
+                            </td>
+                            <td>
+                                <a className="text-primary mx-2" target="_blank" rel="noopener noreferrer" href={value.link}>
+                                    <FontAwesomeIcon icon={["fas", "external-link-alt"]} />
+                                </a>
+                                <a className="text-info mx-2" href="#">
+                                    <FontAwesomeIcon icon={["far", "edit"]} />
+                                </a>
+                                <a className="text-danger mx-2" href="#">
+                                    <FontAwesomeIcon icon={["far", "trash-alt"]} />
                                 </a>
                             </td>
                         </tr>
