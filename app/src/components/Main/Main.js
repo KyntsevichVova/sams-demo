@@ -19,12 +19,10 @@ const API_URL = "http://localhost:8085/demo/api/v1";
 function Main() {
     const [filter, setFilter] = React.useState("all");
     const [page, setPage] = React.useState({});
-    const [loading, setLoading] = React.useState(true);
     const [pageNumber, setPageNumber] = React.useState(0);
     const [limit, setLimit] = React.useState(limits[0]);
     
     React.useEffect(() => {
-        setLoading(true);
         fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((value) => {
@@ -32,7 +30,6 @@ function Main() {
                         setPageNumber(value.totalPages - 1);
                     }
                     setPage(value);
-                    setLoading(false);
                 });
             });
     }, [pageNumber, limit]);
@@ -86,11 +83,7 @@ function Main() {
                     </Dropdown>
                     entries
                 </span>
-                {
-                    loading 
-                        ?   <div className="spinner-border text-primary" />
-                        :   <QuestionTable posts={page.content} filter={filter}/>
-                }
+                <QuestionTable posts={page.content || []} filter={filter}/>
                 {paginationNav}
             </div>
         </main>
