@@ -4,7 +4,7 @@ function FilterButton(props) {
     return (
         <button
             onClick={() => {props.onClick(props.filter)}}
-            className={`btn${props.filter === props.currentFilter ? " btn-primary active" : " btn-default"}`}
+            className={`btn${props.filter === props.currentFilter ? " btn-primary" : " btn-default"}`}
         >
             {props.children}
         </button>
