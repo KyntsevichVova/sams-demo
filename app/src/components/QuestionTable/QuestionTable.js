@@ -3,17 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function QuestionTable({posts, filter}) {
     return (
-        <table className="table">
+        <table className="table table-fixed">
             <thead>
                 <tr>
-                    <th scope="col">
+                    <th scope="col" style={{width: "70%"}}>
                         Title
                     </th>
-                    <th scope="col">
+                    <th scope="col" style={{width: "15%"}}>
                         Level
                     </th>
-                    <th scope="col">
-                        Actions
+                    <th scope="col" style={{width: "15%"}}>
+                        
                     </th>
                 </tr>
             </thead>
@@ -24,7 +24,14 @@ function QuestionTable({posts, filter}) {
                     return (
                         <tr key={value.id.toString()}>
                             <td>
-                                {value.title}
+                                <div className="tooltip-wrapper">
+                                    <div className="text-truncate">
+                                        {value.title}
+                                    </div>
+                                    <span className="tooltip-text text-break">
+                                        {value.title}
+                                    </span>
+                                </div>
                             </td>
                             <td>
                                 {value.level[0].toUpperCase() + value.level.substr(1)}

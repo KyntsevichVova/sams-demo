@@ -63,28 +63,39 @@ function Main() {
     }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
 
     return (
-        <main className="content d-flex flex-row pt-3">
-            {filterAside}
-            <div className="container d-flex flex-column justify-content-start mx-0">
-                <span className="my-1 font-weight-bold">
-                    Show
-                    <Dropdown title={`${limit}`}>
-                        {limits.map((value) => {
-                            return (
-                                <a 
-                                    className="dropdown-item" 
-                                    href="#"
-                                    onClick={() => {setLimit(value)}}
-                                >
-                                    {value}
-                                </a>
-                            );  
-                        })}
-                    </Dropdown>
-                    entries
-                </span>
-                <QuestionTable posts={page.content || []} filter={filter}/>
-                {paginationNav}
+        <main className="content d-flex flex-row justify-content-start pt-3">
+            <div className="container-fluid mx-5">
+                <div className="row mb-3">
+                    <div className="col-2"></div>
+                    <div className="col-10">
+                        <span className="pb-2 font-weight-bold text-info border-bottom border-info">
+                            Show
+                            <Dropdown title={`${limit}`}>
+                                {limits.map((value) => {
+                                    return (
+                                        <a 
+                                            className="dropdown-item" 
+                                            href="#"
+                                            onClick={() => {setLimit(value)}}
+                                        >
+                                            {value}
+                                        </a>
+                                    );  
+                                })}
+                            </Dropdown>
+                            entries
+                        </span>
+                    </div>                    
+                </div>
+                <div className="row">
+                    <div className="col-2">
+                        {filterAside}
+                    </div>
+                    <div className="col-10 d-flex flex-column">
+                        <QuestionTable posts={page.content || []} filter={filter}/>
+                        {paginationNav}
+                    </div>
+                </div>
             </div>
         </main>
     );

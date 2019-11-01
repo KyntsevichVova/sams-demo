@@ -51,7 +51,7 @@ function PaginationNav({
 {
     return (
         <nav className="d-flex justify-content-between">
-            <span className="font-weight-bold">
+            <span className="font-weight-bold text-info border-top border-info">
                 {`Showing ${offset} to ${numberOfElements} of ${totalElements} entries`}
             </span>
             <ul className="pagination justify-content-end">

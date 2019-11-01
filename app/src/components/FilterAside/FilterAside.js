@@ -3,7 +3,7 @@ import FilterButton from '../FilterButton/FilterButton';
 
 function FilterAside({filters, currentFilter, setFilterCallback}) {
     return (
-        <div className="container w-25 d-flex justify-content-start flex-column mx-0">
+        <div className="d-flex justify-content-start flex-column mx-0">
             {filters.map((value) => {
                 return (
                     <FilterButton

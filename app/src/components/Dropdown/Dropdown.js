@@ -7,7 +7,7 @@ function Dropdown({title, children}) {
     return (
         <div className="dropdown d-inline-block">
             <button 
-                className="btn btn-default dropdown-toggle mx-1" 
+                className="btn btn-default dropdown-toggle mx-1 text-info font-weight-bold align-baseline"
                 onClick={() => {setActive(!active)}}
             >
                 {title}
