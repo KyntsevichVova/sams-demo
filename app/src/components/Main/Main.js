@@ -4,6 +4,7 @@ import QuestionTable from '../QuestionTable/QuestionTable';
 import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const filters = [
     {filter: "all", text: "All"},
@@ -67,24 +68,40 @@ function Main() {
             <div className="container-fluid mx-5">
                 <div className="row mb-3">
                     <div className="col-2"></div>
-                    <div className="col-10">
-                        <span className="pb-2 font-weight-bold text-info border-bottom border-info">
-                            Show
-                            <Dropdown title={`${limit}`}>
-                                {limits.map((value) => {
-                                    return (
-                                        <a 
+                    <div className="col-10 d-flex flex-row justify-content-between">
+                        <div>
+                            <span className="pb-2 font-weight-bold text-info border-bottom border-info">
+                                Show
+                                <Dropdown title={`${limit}`}>
+                                    {limits.map((value) => {
+                                        return (
+                                            <a 
                                             className="dropdown-item" 
                                             href="#"
                                             onClick={() => {setLimit(value)}}
-                                        >
-                                            {value}
-                                        </a>
-                                    );  
-                                })}
-                            </Dropdown>
-                            entries
-                        </span>
+                                            >
+                                                {value}
+                                            </a>
+                                        );  
+                                    })}
+                                </Dropdown>
+                                entries
+                            </span>
+                            <button className="btn btn-primary mx-5">
+                                <FontAwesomeIcon icon={["fas", "plus"]} />
+                            </button>
+                        </div>
+                        <div className="d-flex flex-row justify-content-end">
+                            <div className="input-group mb-0">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        <FontAwesomeIcon icon={["fas", "search"]} />
+                                    </span>
+                                </div>
+                                <input type="text" className="form-control h-100">
+                                </input>
+                            </div>
+                        </div>
                     </div>                    
                 </div>
                 <div className="row">
