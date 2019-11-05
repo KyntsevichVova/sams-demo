@@ -91,7 +91,7 @@ function Main() {
                                 <FontAwesomeIcon icon={["fas", "plus"]} />
                             </button>
                         </div>
-                        <div className="d-flex flex-row justify-content-end">
+                        <div className="d-flex flex-row justify-content-end w-50">
                             <div className="input-group mb-0">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text">
