@@ -1,5 +1,6 @@
 package com.sams.demo.service.impl;
 
+import com.sams.demo.dto.QuestionDTO;
 import com.sams.demo.entity.Question;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
@@ -22,5 +23,34 @@ public class QuestionServiceImpl implements IQuestionService {
     public Page<Question> findAll(Pageable pageable) {
 
         return repository.findAll(pageable);
+    }
+
+    @Override
+    public void save(QuestionDTO questionDTO) {
+
+        Question question = new Question();
+        question.setTitle(questionDTO.getTitle());
+        question.setLink(questionDTO.getLink());
+        question.setLevel(questionDTO.getLevel());
+
+        repository.save(question);
+    }
+
+    @Override
+    public void update(QuestionDTO questionDTO) {
+
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTitle(questionDTO.getTitle());
+        question.setLink(questionDTO.getLink());
+        question.setLevel(questionDTO.getLevel());
+
+        repository.save(question);
+    }
+
+    @Override
+    public void delete(int questionId) {
+
+        repository.deleteById(questionId);
     }
 }
