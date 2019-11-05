@@ -1,12 +1,20 @@
 import React from 'react';
+import classNames from 'classnames';
 
-function FilterButton(props) {
+function FilterButton({filter, currentFilter, onClick, className, children}) {
+    let btnClass = classNames('btn', 
+        {
+            'btn-primary': filter === currentFilter,
+            'btn-default': !(filter === currentFilter)
+        },
+        className
+    );
     return (
         <button
-            onClick={() => {props.onClick(props.filter)}}
-            className={`btn${props.filter === props.currentFilter ? " btn-primary active" : " btn-default"}`}
+            onClick={() => {onClick(filter)}}
+            className={btnClass}
         >
-            {props.children}
+            {children}
         </button>
     );
 }
