@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -30,14 +32,14 @@ public class QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<Question> save(@RequestBody QuestionDTO questionDTO) {
+    public ResponseEntity<Question> save(@RequestBody @Valid QuestionDTO questionDTO) {
 
         questionService.save(questionDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Question> update(@RequestBody QuestionDTO questionDTO) {
+    public ResponseEntity<Question> update(@RequestBody @Valid QuestionDTO questionDTO) {
 
         questionService.update(questionDTO);
         return new ResponseEntity<>(HttpStatus.OK);
