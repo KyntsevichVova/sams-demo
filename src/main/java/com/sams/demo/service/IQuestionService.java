@@ -9,6 +9,8 @@ public interface IQuestionService {
 
     Page<Question> findAll(Pageable pageable);
 
+    QuestionDTO findById(int questionId);
+
     void save(QuestionDTO questionDTO);
 
     void update(QuestionDTO questionDTO);

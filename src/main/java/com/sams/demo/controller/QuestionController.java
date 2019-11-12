@@ -31,6 +31,12 @@ public class QuestionController {
         return new ResponseEntity<>(questionService.findAll(pageable), OK);
     }
 
+    @GetMapping("/{questionId}")
+    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") int questionId) {
+
+        return new ResponseEntity<>(questionService.findById(questionId), OK);
+    }
+
     @PostMapping
     public ResponseEntity<Question> save(@RequestBody @Valid QuestionDTO questionDTO) {
 

@@ -26,6 +26,19 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
+    public QuestionDTO findById(int questionId) {
+
+        Question question = repository.findById(questionId).get();
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setId(question.getId());
+        questionDTO.setTitle(question.getTitle());
+        questionDTO.setLink(question.getLink());
+        questionDTO.setLevel(question.getLevel());
+
+        return questionDTO;
+    }
+
+    @Override
     public void save(QuestionDTO questionDTO) {
 
         Question question = new Question();
