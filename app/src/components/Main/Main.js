@@ -5,6 +5,8 @@ import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import { API_URL } from '../../Constraints';
 
 const filters = [
     {filter: "all", text: "All"},
@@ -14,8 +16,6 @@ const filters = [
 ];
 
 const limits = [5, 10, 25, 50];
-
-const API_URL = "http://localhost:8085/demo/api/v1";
 
 function Main() {
     const [filter, setFilter] = React.useState("all");
@@ -64,7 +64,7 @@ function Main() {
     }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
 
     return (
-        <main className="content d-flex flex-row justify-content-start pt-3">
+        <main className="d-flex flex-row justify-content-start pt-3">
             <div className="container-fluid mx-5">
                 <div className="row mb-3">
                     <div className="col-2"></div>
@@ -87,9 +87,11 @@ function Main() {
                                 </Dropdown>
                                 entries
                             </span>
-                            <button className="btn btn-primary mx-5">
-                                <FontAwesomeIcon icon={["fas", "plus"]} />
-                            </button>
+                            <Link to="/add">
+                                <button className="btn btn-primary mx-5">
+                                    <FontAwesomeIcon icon={["fas", "plus"]} />
+                                </button>
+                            </Link>
                         </div>
                         <div className="d-flex flex-row justify-content-end w-50">
                             <div className="input-group mb-0">

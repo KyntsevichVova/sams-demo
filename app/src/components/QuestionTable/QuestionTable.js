@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 function QuestionTable({posts, filter}) {
     return (
@@ -40,9 +41,11 @@ function QuestionTable({posts, filter}) {
                                 <a className="text-primary mx-2" target="_blank" rel="noopener noreferrer" href={value.link}>
                                     <FontAwesomeIcon icon={["fas", "external-link-alt"]} />
                                 </a>
-                                <a className="text-info mx-2" href="#">
-                                    <FontAwesomeIcon icon={["far", "edit"]} />
-                                </a>
+                                <Link to={`/edit/${value.id}`}>
+                                    
+                                        <FontAwesomeIcon icon={["far", "edit"]} className="text-info mx-2" />
+
+                                </Link>
                                 <a className="text-danger mx-2" href="#">
                                     <FontAwesomeIcon icon={["far", "trash-alt"]} />
                                 </a>
