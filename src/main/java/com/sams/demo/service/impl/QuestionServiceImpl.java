@@ -32,7 +32,20 @@ public class QuestionServiceImpl implements IQuestionService {
     public QuestionDTO findById(Long questionId) {
 
         //TODO add optional check
-        Question question = questionRepository.findById(questionId).get();
+        Optional<Question> optionalQuestion;
+
+        try {
+            optionalQuestion = questionRepository.findById(questionId);
+        } catch (Exception ex) {
+            throw new SamsDemoException("ERROR");
+        }
+
+        if (!optionalQuestion.isPresent()) {
+            throw new SamsDemoException("ERROR");
+        }
+
+        Question question = optionalQuestion.get();
+
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setId(question.getId());
         questionDTO.setTitle(question.getTitle());
