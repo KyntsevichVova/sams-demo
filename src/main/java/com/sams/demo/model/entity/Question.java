@@ -1,20 +1,20 @@
-package com.sams.demo.entity;
+package com.sams.demo.model.entity;
 
 import lombok.Data;
 
 import javax.persistence.*;
 
-import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "QUESTION")
 @Data
-public class Question {
+public class Question extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID", nullable = false)
-    private int id;
+    private Long id;
 
     @Column(name = "TITLE", nullable = false)
     private String title;

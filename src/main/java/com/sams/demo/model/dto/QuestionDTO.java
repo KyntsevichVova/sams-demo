@@ -1,4 +1,4 @@
-package com.sams.demo.dto;
+package com.sams.demo.model.dto;
 
 import lombok.Data;
 
@@ -6,9 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class QuestionDTO {
+public class QuestionDTO extends BaseDTO {
 
-    private int id;
+    private Long id;
 
     @NotNull
     @NotBlank

@@ -1,7 +1,8 @@
 package com.sams.demo.service.impl;
 
-import com.sams.demo.dto.QuestionDTO;
-import com.sams.demo.entity.Question;
+import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,26 +10,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class QuestionServiceImpl implements IQuestionService {
 
-    private final QuestionRepository repository;
+    private final QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionServiceImpl(QuestionRepository repository) {
-        this.repository = repository;
+    public QuestionServiceImpl(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
     }
 
     @Override
     public Page<Question> findAll(Pageable pageable) {
 
-        return repository.findAll(pageable);
+        return questionRepository.findAll(pageable);
     }
 
     @Override
-    public QuestionDTO findById(int questionId) {
+    public QuestionDTO findById(Long questionId) {
 
-        Question question = repository.findById(questionId).get();
+        Question question = questionRepository.findById(questionId).get();
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setId(question.getId());
         questionDTO.setTitle(question.getTitle());
@@ -46,24 +49,36 @@ public class QuestionServiceImpl implements IQuestionService {
         question.setLink(questionDTO.getLink());
         question.setLevel(questionDTO.getLevel());
 
-        repository.save(question);
+        questionRepository.save(question);
     }
 
     @Override
-    public void update(QuestionDTO questionDTO) {
+    public void update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException {
 
-        Question question = new Question();
-        question.setId(questionDTO.getId());
+        Optional<Question> optionalQuestion;
+
+        try {
+            optionalQuestion = questionRepository.findById(questionId);
+        } catch (IllegalArgumentException ex) {
+            throw new SamsDemoException("ERROR");
+        }
+
+        if (!optionalQuestion.isPresent()) {
+            throw new SamsDemoException("ERROR");
+        }
+
+        Question question = optionalQuestion.get();
+
         question.setTitle(questionDTO.getTitle());
         question.setLink(questionDTO.getLink());
         question.setLevel(questionDTO.getLevel());
 
-        repository.save(question);
+        questionRepository.save(question);
     }
 
     @Override
-    public void delete(int questionId) {
+    public void delete(Long questionId) {
 
-        repository.deleteById(questionId);
+        questionRepository.deleteById(questionId);
     }
 }

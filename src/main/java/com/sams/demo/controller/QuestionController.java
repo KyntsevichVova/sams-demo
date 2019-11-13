@@ -1,7 +1,11 @@
 package com.sams.demo.controller;
 
-import com.sams.demo.dto.QuestionDTO;
-import com.sams.demo.entity.Question;
+import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.error.exception.SamsDemoException;
+import com.sams.demo.model.mapper.IDTOMapper;
+import com.sams.demo.model.response.ResponseBuilder;
+import com.sams.demo.model.response.SamsDemoResponse;
 import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,19 +24,29 @@ public class QuestionController {
 
     private IQuestionService questionService;
 
+    private IDTOMapper<QuestionDTO, Question> questionDTOMapper;
+
     @Autowired
-    public QuestionController(IQuestionService questionService) {
+    public QuestionController(IQuestionService questionService, IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
+
         this.questionService = questionService;
+        this.questionDTOMapper = questionDTOMapper;
     }
 
     @GetMapping
-    public ResponseEntity<Page<Question>> findAll(Pageable pageable) {
+    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAll(Pageable pageable) {
 
-        return new ResponseEntity<>(questionService.findAll(pageable), OK);
+        Page<Question> page = questionService.findAll(pageable);
+
+        return ResponseBuilder
+                .<QuestionDTO, Question>success()
+                .withPageData(page, questionDTOMapper)
+                .withHttpStatus(OK)
+                .build();
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") int questionId) {
+    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") Long questionId) {
 
         return new ResponseEntity<>(questionService.findById(questionId), OK);
     }
@@ -41,20 +55,24 @@ public class QuestionController {
     public ResponseEntity<Question> save(@RequestBody @Valid QuestionDTO questionDTO) {
 
         questionService.save(questionDTO);
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<Question> update(@RequestBody @Valid QuestionDTO questionDTO) {
+    @PutMapping("/{questionId}")
+    public ResponseEntity<Question> update(@PathVariable(name = "questionId") Long questionId,
+                                           @RequestBody @Valid QuestionDTO questionDTO) throws SamsDemoException {
 
-        questionService.update(questionDTO);
+        questionService.update(questionId, questionDTO);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{questionId}")
-    public ResponseEntity<Question> delete(@PathVariable(name = "questionId") int questionId) {
+    public ResponseEntity<Question> delete(@PathVariable(name = "questionId") Long questionId) {
 
         questionService.delete(questionId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,7 +1,8 @@
 package com.sams.demo.service;
 
-import com.sams.demo.dto.QuestionDTO;
-import com.sams.demo.entity.Question;
+import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.error.exception.SamsDemoException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,11 +10,11 @@ public interface IQuestionService {
 
     Page<Question> findAll(Pageable pageable);
 
-    QuestionDTO findById(int questionId);
+    QuestionDTO findById(Long questionId);
 
     void save(QuestionDTO questionDTO);
 
-    void update(QuestionDTO questionDTO);
+    void update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException;
 
-    void delete(int questionId);
+    void delete(Long questionId);
 }
