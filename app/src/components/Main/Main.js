@@ -10,18 +10,18 @@ import { QUESTIONS_ENPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
 
 function Main() {
     const [filter, setFilter] = React.useState(FILTERS[0].filter);
-    const [page, setPage] = React.useState({});
+    const [pageData, setPageData] = React.useState({});
     const [pageNumber, setPageNumber] = React.useState(0);
     const [pageSize, setPageSize] = React.useState(PAGE_SIZES[0]);
     
     React.useEffect(() => {
         fetch(`${QUESTIONS_ENPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
             .then((data) => {
-                data.json().then((value) => {
-                    if (value.number >= value.totalPages) {
-                        setPageNumber(value.totalPages - 1);
+                data.json().then((pageData) => {
+                    if (pageNumber * pageSize > pageData.total) {
+                        setPageNumber(Math.floor((pageData.total - 1) / pageSize));
                     }
-                    setPage(value);
+                    setPageData(pageData);
                 });
             });
     }, [pageNumber, pageSize]);
@@ -34,25 +34,32 @@ function Main() {
                 setFilterCallback={setFilter}
             />
         );
-    }, [filter, setFilter]);
+    }, [filter]);
 
-    const totalPages = page.totalPages || 1;
-    const offset = ((page.pageable || {}).offset || 0) + 1;
-    const numberOfElements = (page.numberOfElements || 0) + offset - 1;
-    const totalElements = page.totalElements || 0;
+    const totalElements = pageData.total || 0;
+    const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
+    const firstOnPage = pageNumber * pageSize + 1;
+    const lastOnPage = Math.min(totalElements, firstOnPage + pageSize);
 
     const paginationNav = React.useMemo(() => {
         return (
-            <PaginationNav 
+            <PaginationNav
                 currentPage={pageNumber}
                 totalPages={totalPages}
                 setCurrentPageCallback={setPageNumber}
-                offset={offset}
-                numberOfElements={numberOfElements}
-                totalElements={totalElements}
             />
         );
-    }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
+    }, [pageNumber, totalPages]);
+
+    const nav = (
+        <nav className="d-flex justify-content-between">
+            <span className="font-weight-bold text-info border-top border-info">
+                {`Showing ${firstOnPage} to ${lastOnPage} of ${totalElements} entries`}
+            </span>
+
+            {paginationNav}
+        </nav>
+    );
 
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
@@ -70,13 +77,13 @@ function Main() {
                                 <Dropdown title={`${pageSize}`}>
                                     {PAGE_SIZES.map((value) => {
                                         return (
-                                            <a 
+                                            <button 
                                                 className="dropdown-item" 
-                                                href="#"
                                                 onClick={() => {setPageSize(value)}}
+                                                key={value.toString()}
                                             >
                                                 {value}
-                                            </a>
+                                            </button>
                                         );  
                                     })}
                                 </Dropdown>
@@ -113,9 +120,9 @@ function Main() {
                     </div>
 
                     <div className="col-10 d-flex flex-column">
-                        <QuestionTable questions={page.content || []} filter={filter}/>
+                        <QuestionTable questions={pageData.data || []} filter={filter} />
                         
-                        {paginationNav}
+                        {nav}
                     </div>
                 </div>
 

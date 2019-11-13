@@ -1,20 +1,22 @@
 import React from 'react';
 
-function QuestionForm({initState = {title: "", link: "", level: ""}, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback}) {
-    const [question, setQuestion] = React.useState(initState);
+function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
+    const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: ""});
     
     const changeHandler = (event) => {
         setQuestion({...question, [event.target.name]: event.target.value})
     };
 
     React.useEffect(() => {
-        setQuestion(initState);
+        if (initState) {
+            setQuestion(initState);
+        }
     }, [initState]);
 
     return (
         <div className="d-flex flex-column">
             <div className="form-group">
-                <label for="question-title">
+                <label htmlFor="question-title">
                     Question
                 </label>
 
@@ -30,7 +32,7 @@ function QuestionForm({initState = {title: "", link: "", level: ""}, okTitle = "
             </div>
 
             <div className="form-group">
-                <label for="question-link">
+                <label htmlFor="question-link">
                     Link to answer
                 </label>
 
@@ -46,7 +48,7 @@ function QuestionForm({initState = {title: "", link: "", level: ""}, okTitle = "
             </div>
 
             <div className="form-group">
-                <label for="question-level">
+                <label htmlFor="question-level">
                     Question level
                 </label>
 

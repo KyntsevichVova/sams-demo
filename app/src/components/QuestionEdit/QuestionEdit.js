@@ -6,14 +6,15 @@ import { Redirect } from 'react-router-dom';
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const [question, setQuestion] = React.useState(undefined);
+    const questionId = match.params.questionId || 0;
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         
-        fetch(`${QUESTIONS_ENPOINT}`, {
+        fetch(`${QUESTIONS_ENPOINT}/${questionId}`, {
             method: 'PUT',
-            body: JSON.stringify({...question, id: match.params.questionId}),
+            body: JSON.stringify(question),
             headers: headers
         }).then((response) => {
             if (response.ok) {
@@ -21,11 +22,11 @@ function QuestionEdit({ match }) {
             }
         });
 
-    }, []);
+    }, [questionId]);
 
     React.useEffect(() => {
         
-        fetch(`${QUESTIONS_ENPOINT}/${match.params.questionId}`)
+        fetch(`${QUESTIONS_ENPOINT}/${questionId}`)
             .then((response) => {
                 if (response.ok) {
                     response.json().then((value) => {
@@ -34,7 +35,7 @@ function QuestionEdit({ match }) {
                 }
             });
 
-    }, [match.params.questionId]);
+    }, [questionId]);
 
     return (
         <>
