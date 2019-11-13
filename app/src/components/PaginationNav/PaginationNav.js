@@ -47,20 +47,23 @@ function fillOverflownPages(totalPages, currentPage, setCurrentPageCallback) {
 
 function PaginationNav({
         currentPage, totalPages, setCurrentPageCallback,
-        offset, numberOfElements, totalElements}) 
-{
+        offset, numberOfElements, totalElements
+}) {
     return (
         <nav className="d-flex justify-content-between">
             <span className="font-weight-bold text-info border-top border-info">
                 {`Showing ${offset} to ${numberOfElements} of ${totalElements} entries`}
             </span>
+
             <ul className="pagination justify-content-end">
                 {createPage("«", false, currentPage <= 0, currentPage > 0 ? () => {setCurrentPageCallback(currentPage - 1)} : null)}
+                
                 {   
                     totalPages <= 6 
                         ? fillPages(1, totalPages, currentPage, setCurrentPageCallback)
                         : fillOverflownPages(totalPages, currentPage, setCurrentPageCallback)
                 }
+                
                 {createPage("»", false, currentPage + 1 >= totalPages, currentPage + 1 < totalPages ? () => {setCurrentPageCallback(currentPage + 1)} : null)}
             </ul>
         </nav>  

@@ -6,25 +6,16 @@ import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../../Constraints';
-
-const filters = [
-    {filter: "all", text: "All"},
-    {filter: "junior", text: "Junior"},
-    {filter: "middle", text: "Middle"},
-    {filter: "senior", text: "Senior"},
-];
-
-const limits = [5, 10, 25, 50];
+import { QUESTIONS_ENPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
 
 function Main() {
-    const [filter, setFilter] = React.useState("all");
+    const [filter, setFilter] = React.useState(FILTERS[0].filter);
     const [page, setPage] = React.useState({});
     const [pageNumber, setPageNumber] = React.useState(0);
-    const [limit, setLimit] = React.useState(limits[0]);
+    const [pageSize, setPageSize] = React.useState(PAGE_SIZES[0]);
     
     React.useEffect(() => {
-        fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
+        fetch(`${QUESTIONS_ENPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((value) => {
                     if (value.number >= value.totalPages) {
@@ -33,12 +24,12 @@ function Main() {
                     setPage(value);
                 });
             });
-    }, [pageNumber, limit]);
+    }, [pageNumber, pageSize]);
 
     const filterAside = React.useMemo(() => {
         return (
             <FilterAside 
-                filters={filters}
+                filters={FILTERS}
                 currentFilter={filter}
                 setFilterCallback={setFilter}
             />
@@ -66,33 +57,40 @@ function Main() {
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
             <div className="container-fluid mx-5">
+
                 <div className="row mb-3">
-                    <div className="col-2"></div>
+                    
+                    <div className="col-2" />
+                    
                     <div className="col-10 d-flex flex-row justify-content-between">
                         <div>
                             <span className="pb-2 font-weight-bold text-info border-bottom border-info">
                                 Show
-                                <Dropdown title={`${limit}`}>
-                                    {limits.map((value) => {
+                                
+                                <Dropdown title={`${pageSize}`}>
+                                    {PAGE_SIZES.map((value) => {
                                         return (
                                             <a 
-                                            className="dropdown-item" 
-                                            href="#"
-                                            onClick={() => {setLimit(value)}}
+                                                className="dropdown-item" 
+                                                href="#"
+                                                onClick={() => {setPageSize(value)}}
                                             >
                                                 {value}
                                             </a>
                                         );  
                                     })}
                                 </Dropdown>
+                                
                                 entries
                             </span>
+
                             <Link to="/add">
                                 <button className="btn btn-primary mx-5">
                                     <FontAwesomeIcon icon={["fas", "plus"]} />
                                 </button>
                             </Link>
                         </div>
+
                         <div className="d-flex flex-row justify-content-end w-50">
                             <div className="input-group mb-0">
                                 <div className="input-group-prepend">
@@ -100,21 +98,27 @@ function Main() {
                                         <FontAwesomeIcon icon={["fas", "search"]} />
                                     </span>
                                 </div>
-                                <input type="text" className="form-control h-100">
-                                </input>
+                                
+                                <input type="text" className="form-control h-100" />
                             </div>
                         </div>
-                    </div>                    
+
+                    </div>  
+
                 </div>
+
                 <div className="row">
                     <div className="col-2">
                         {filterAside}
                     </div>
+
                     <div className="col-10 d-flex flex-column">
-                        <QuestionTable posts={page.content || []} filter={filter}/>
+                        <QuestionTable questions={page.content || []} filter={filter}/>
+                        
                         {paginationNav}
                     </div>
                 </div>
+
             </div>
         </main>
     );
