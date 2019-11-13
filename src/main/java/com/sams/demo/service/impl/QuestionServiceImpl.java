@@ -29,7 +29,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public QuestionDTO findById(Long questionId) throws SamsDemoException {
+    public Question findById(Long questionId) throws SamsDemoException {
 
         Optional<Question> optionalQuestion;
 
@@ -43,30 +43,17 @@ public class QuestionServiceImpl implements IQuestionService {
             throw new SamsDemoException("ERROR");
         }
 
-        Question question = optionalQuestion.get();
-
-        QuestionDTO questionDTO = new QuestionDTO();
-        questionDTO.setId(question.getId());
-        questionDTO.setTitle(question.getTitle());
-        questionDTO.setLink(question.getLink());
-        questionDTO.setLevel(question.getLevel());
-
-        return questionDTO;
+        return optionalQuestion.get();
     }
 
     @Override
-    public void save(QuestionDTO questionDTO) {
-
-        Question question = new Question();
-        question.setTitle(questionDTO.getTitle());
-        question.setLink(questionDTO.getLink());
-        question.setLevel(questionDTO.getLevel());
+    public void save(Question question) {
 
         questionRepository.save(question);
     }
 
     @Override
-    public void update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException {
+    public Question update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException {
 
         Optional<Question> optionalQuestion;
 
@@ -87,6 +74,8 @@ public class QuestionServiceImpl implements IQuestionService {
         question.setLevel(questionDTO.getLevel());
 
         questionRepository.save(question);
+
+        return question;
     }
 
     @Override

@@ -10,4 +10,6 @@ public interface IDTOMapper<DTO extends BaseDTO, ENTITY extends BaseEntity> {
     DTO mapToDTO(ENTITY entity);
 
     List<DTO> mapToDTOList(List<ENTITY> entityList);
+
+    ENTITY mapToEntity(DTO entity);
 }

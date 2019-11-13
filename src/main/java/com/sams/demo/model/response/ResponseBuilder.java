@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static com.sams.demo.model.response.enums.ResponseStatus.SUCCESS;
 
 @Data
@@ -15,6 +17,9 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
     private SamsDemoResponse<DTO> response;
     private HttpStatus httpStatus;
+
+    public ResponseBuilder() {
+    }
 
     public ResponseBuilder(SamsDemoResponse<DTO> response) {
         this.response = response;
@@ -26,10 +31,23 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
         return new ResponseBuilder<>(response);
     }
 
+    public static ResponseBuilder empty() {
+
+        return new ResponseBuilder();
+    }
+
     public ResponseBuilder<DTO, ENTITY> withPageData(Page<ENTITY> page, IDTOMapper<DTO, ENTITY> mapper) {
 
         this.response.setData(mapper.mapToDTOList(page.getContent()));
         this.response.setTotal(page.getTotalElements());
+
+        return this;
+    }
+
+    public ResponseBuilder<DTO, ENTITY> withData(List<ENTITY> list, IDTOMapper<DTO, ENTITY> mapper) {
+
+        this.response.setData(mapper.mapToDTOList(list));
+        this.response.setTotal((long) list.size());
 
         return this;
     }

@@ -10,13 +10,13 @@ import com.sams.demo.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static org.springframework.http.HttpStatus.OK;
+import static java.util.Collections.singletonList;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/questions")
@@ -27,14 +27,15 @@ public class QuestionController {
     private IDTOMapper<QuestionDTO, Question> questionDTOMapper;
 
     @Autowired
-    public QuestionController(IQuestionService questionService, IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
+    public QuestionController(IQuestionService questionService,
+                              IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
 
         this.questionService = questionService;
         this.questionDTOMapper = questionDTOMapper;
     }
 
     @GetMapping
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAll(Pageable pageable) {
+    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAllQuestions(Pageable pageable) {
 
         Page<Question> page = questionService.findAll(pageable);
 
@@ -46,33 +47,51 @@ public class QuestionController {
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
+    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findQuestionById(
+            @PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
 
-        return new ResponseEntity<>(questionService.findById(questionId), OK);
+        Question question = questionService.findById(questionId);
+
+        return ResponseBuilder
+                .<QuestionDTO, Question>success()
+                .withData(singletonList(question), questionDTOMapper)
+                .withHttpStatus(OK)
+                .build();
     }
 
     @PostMapping
-    public ResponseEntity<Question> save(@RequestBody @Valid QuestionDTO questionDTO) {
+    public ResponseEntity createQuestion(@RequestBody @Valid QuestionDTO questionDTO) {
 
-        questionService.save(questionDTO);
+        questionService.save(questionDTOMapper.mapToEntity(questionDTO));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseBuilder
+                .empty()
+                .withHttpStatus(CREATED)
+                .build();
     }
 
     @PutMapping("/{questionId}")
-    public ResponseEntity<Question> update(@PathVariable(name = "questionId") Long questionId,
-                                           @RequestBody @Valid QuestionDTO questionDTO) throws SamsDemoException {
+    public ResponseEntity<SamsDemoResponse<QuestionDTO>> updateQuestion(
+            @PathVariable(name = "questionId") Long questionId,
+            @RequestBody @Valid QuestionDTO questionDTO) throws SamsDemoException {
 
-        questionService.update(questionId, questionDTO);
+        Question question = questionService.update(questionId, questionDTO);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseBuilder
+                .<QuestionDTO, Question>success()
+                .withData(singletonList(question), questionDTOMapper)
+                .withHttpStatus(OK)
+                .build();
     }
 
     @DeleteMapping("/{questionId}")
-    public ResponseEntity<Question> delete(@PathVariable(name = "questionId") Long questionId) {
+    public ResponseEntity deleteQuestion(@PathVariable(name = "questionId") Long questionId) {
 
         questionService.delete(questionId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseBuilder
+                .empty()
+                .withHttpStatus(NO_CONTENT)
+                .build();
     }
 }

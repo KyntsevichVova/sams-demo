@@ -10,11 +10,11 @@ public interface IQuestionService {
 
     Page<Question> findAll(Pageable pageable);
 
-    QuestionDTO findById(Long questionId) throws SamsDemoException;
+    Question findById(Long questionId) throws SamsDemoException;
 
-    void save(QuestionDTO questionDTO);
+    void save(Question question);
 
-    void update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException;
+    Question update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException;
 
     void delete(Long questionId);
 }
