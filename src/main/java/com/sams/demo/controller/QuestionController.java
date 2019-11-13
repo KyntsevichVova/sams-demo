@@ -46,7 +46,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") Long questionId) {
+    public ResponseEntity<QuestionDTO> findById(@PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
 
         return new ResponseEntity<>(questionService.findById(questionId), OK);
     }

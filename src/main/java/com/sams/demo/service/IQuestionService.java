@@ -10,7 +10,7 @@ public interface IQuestionService {
 
     Page<Question> findAll(Pageable pageable);
 
-    QuestionDTO findById(Long questionId);
+    QuestionDTO findById(Long questionId) throws SamsDemoException;
 
     void save(QuestionDTO questionDTO);
 

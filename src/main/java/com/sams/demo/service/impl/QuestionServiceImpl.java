@@ -29,9 +29,8 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public QuestionDTO findById(Long questionId) {
+    public QuestionDTO findById(Long questionId) throws SamsDemoException {
 
-        //TODO add optional check
         Optional<Question> optionalQuestion;
 
         try {
