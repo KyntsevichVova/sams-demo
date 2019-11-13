@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 public class QuestionDTO extends BaseDTO {
@@ -20,5 +21,6 @@ public class QuestionDTO extends BaseDTO {
 
     @NotNull
     @NotBlank
+    @Size(max = 10)
     private String level;
 }

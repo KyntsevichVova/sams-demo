@@ -31,6 +31,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public QuestionDTO findById(Long questionId) {
 
+        //TODO add optional check
         Question question = questionRepository.findById(questionId).get();
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setId(question.getId());
@@ -59,7 +60,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
         try {
             optionalQuestion = questionRepository.findById(questionId);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             throw new SamsDemoException("ERROR");
         }
 

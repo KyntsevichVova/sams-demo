@@ -1,6 +1,7 @@
 package com.sams.demo.model.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 
@@ -22,6 +23,11 @@ public class Question extends BaseEntity {
     @Column(name = "LINK", nullable = false)
     private String link;
 
-    @Column(name = "LEVEL", nullable = false, length = 10)
-    private String level;
+    @ColumnTransformer
+    @Column(name = "LEVEL", nullable = false)
+    private Level level;
+
+    enum Level {
+
+    }
 }
