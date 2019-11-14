@@ -30,7 +30,7 @@ function QuestionEdit({ match }) {
             .then((response) => {
                 if (response.ok) {
                     response.json().then((value) => {
-                        setQuestion(value);
+                        setQuestion(value.data[0]);
                     });
                 }
             });

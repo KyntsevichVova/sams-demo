@@ -5,9 +5,9 @@ export const QUESTIONS_ENPOINT = `${API_URL}/questions`;
 
 export const FILTERS = [
     {filter: "all", text: "All"},
-    {filter: "junior", text: "Junior"},
-    {filter: "middle", text: "Middle"},
-    {filter: "senior", text: "Senior"},
+    {filter: "JUNIOR", text: "Junior"},
+    {filter: "MIDDLE", text: "Middle"},
+    {filter: "SENIOR", text: "Senior"},
 ];
 
 export const PAGE_SIZES = [5, 10, 25, 50];
