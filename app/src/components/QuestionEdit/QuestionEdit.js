@@ -1,6 +1,6 @@
 import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
-import { QUESTIONS_ENPOINT } from '../../Constraints';
+import { QUESTIONS_ENDPOINT } from '../../Constraints';
 import { Redirect, useHistory } from 'react-router-dom';
 
 function QuestionEdit({ match }) {
@@ -12,7 +12,7 @@ function QuestionEdit({ match }) {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         
-        fetch(`${QUESTIONS_ENPOINT}/${questionId}`, {
+        fetch(`${QUESTIONS_ENDPOINT}/${questionId}`, {
             method: 'PUT',
             body: JSON.stringify(question),
             headers: headers
@@ -27,11 +27,11 @@ function QuestionEdit({ match }) {
     const history = useHistory();
     const cancelCallback = React.useCallback(() => {
         history.goBack();
-    });
+    }, [history]);
 
     React.useEffect(() => {
         
-        fetch(`${QUESTIONS_ENPOINT}/${questionId}`)
+        fetch(`${QUESTIONS_ENDPOINT}/${questionId}`)
             .then((response) => {
                 if (response.ok) {
                     response.json().then((value) => {

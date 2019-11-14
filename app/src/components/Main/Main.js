@@ -6,25 +6,26 @@ import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { QUESTIONS_ENPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
+import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
+import PageDispatch from '../../contexts/PageDispatch';
 
-function Main() {
+function Main({ pageNumber }) {
     const [filter, setFilter] = React.useState(FILTERS[0].filter);
     const [pageData, setPageData] = React.useState({});
-    const [pageNumber, setPageNumber] = React.useState(0);
     const [pageSize, setPageSize] = React.useState(PAGE_SIZES[0]);
+    const dispatchPageNumber = React.useContext(PageDispatch);
     
     React.useEffect(() => {
-        fetch(`${QUESTIONS_ENPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
+        fetch(`${QUESTIONS_ENDPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
-                        setPageNumber(Math.floor((pageData.total - 1) / pageSize));
+                        dispatchPageNumber({ pageNumber: Math.floor((pageData.total - 1) / pageSize) });
                     }
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize]);
+    }, [pageNumber, pageSize, dispatchPageNumber]);
 
     const filterAside = React.useMemo(() => {
         return (
@@ -46,10 +47,10 @@ function Main() {
             <PaginationNav
                 currentPage={pageNumber}
                 totalPages={totalPages}
-                setCurrentPageCallback={setPageNumber}
+                dispatchPageNumber={dispatchPageNumber}
             />
         );
-    }, [pageNumber, totalPages]);
+    }, [pageNumber, totalPages, dispatchPageNumber]);
 
     const nav = (
         <nav className="d-flex justify-content-between">

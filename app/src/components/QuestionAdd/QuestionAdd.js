@@ -1,6 +1,6 @@
 import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
-import { QUESTIONS_ENPOINT } from '../../Constraints';
+import { QUESTIONS_ENDPOINT } from '../../Constraints';
 import { Redirect, useHistory } from 'react-router-dom';
 
 function QuestionAdd() {
@@ -10,7 +10,7 @@ function QuestionAdd() {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         
-        fetch(`${QUESTIONS_ENPOINT}`, {
+        fetch(`${QUESTIONS_ENDPOINT}`, {
             method: 'POST',
             body: JSON.stringify(question),
             headers: headers
@@ -25,7 +25,7 @@ function QuestionAdd() {
     const history = useHistory();
     const cancelCallback = React.useCallback(() => {
         history.goBack();
-    });
+    }, [history]);
 
     return (
         <>

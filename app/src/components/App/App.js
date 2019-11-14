@@ -5,8 +5,17 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
 import { BASE_SUBDIR } from '../../Constraints';
+import PageDispatch from '../../contexts/PageDispatch';
+
+const initialState = { pageNumber: 0 };
+
+function pageReducer(state, action) {
+    return { pageNumber: action.pageNumber }
+}
 
 function App() {
+    const [state, dispatch] = React.useReducer(pageReducer, initialState);
+
     return (
         <BrowserRouter basename={`/${BASE_SUBDIR}`}>
             <div className="App">
@@ -16,20 +25,24 @@ function App() {
                 </nav>
 
                 <div className="content">
-                    <Switch>
-                        <Route path="/add">
-                            <QuestionAdd />
-                        </Route>
+                    <PageDispatch.Provider value={dispatch}>
+                        <Switch>
+                            <Route path="/add">
+                                <QuestionAdd />
+                            </Route>
 
-                        <Route 
-                            path="/edit/:questionId" 
-                            component={QuestionEdit}
-                        />
+                            <Route 
+                                path="/edit/:questionId" 
+                                component={QuestionEdit}
+                            />
 
-                        <Route exact path="/">
-                            <Main />
-                        </Route>
-                    </Switch>
+                            <Route exact path="/">
+                                <Main 
+                                    pageNumber={state.pageNumber}
+                                />
+                            </Route>
+                        </Switch>
+                    </PageDispatch.Provider>
                 </div>
 
                 <footer className="footer mt-5">

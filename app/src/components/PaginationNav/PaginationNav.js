@@ -53,7 +53,11 @@ function fillOverflownPages(totalPages, currentPage, setCurrentPageCallback) {
     return pages;
 }
 
-function PaginationNav({ currentPage, totalPages, setCurrentPageCallback }) {
+function PaginationNav({ currentPage, totalPages, dispatchPageNumber }) {
+    const setCurrentPageCallback = (pageNumber) => {
+        dispatchPageNumber({ pageNumber: pageNumber });
+    }
+
     return (
         <ul className="pagination justify-content-end">
             {createPage("«", false, currentPage <= 0, currentPage > 0 ? () => {setCurrentPageCallback(currentPage - 1)} : null)}
