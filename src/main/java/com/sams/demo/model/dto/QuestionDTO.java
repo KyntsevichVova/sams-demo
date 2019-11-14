@@ -1,5 +1,6 @@
 package com.sams.demo.model.dto;
 
+import com.sams.demo.model.entity.Question;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -20,7 +21,5 @@ public class QuestionDTO extends BaseDTO {
     private String link;
 
     @NotNull
-    @NotBlank
-    @Size(max = 10)
-    private String level;
+    private Question.Level level;
 }

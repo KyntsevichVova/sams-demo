@@ -23,11 +23,17 @@ public class Question extends BaseEntity {
     @Column(name = "LINK", nullable = false)
     private String link;
 
-    @ColumnTransformer
-    @Column(name = "LEVEL", nullable = false)
+    @Column(name = "LEVEL_ID", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @ColumnTransformer(
+            read  = "( SELECT L.LEVEL_NAME FROM `LEVEL` L WHERE L.ID = LEVEL_ID )",
+            write = "( SELECT L.ID FROM `LEVEL` L WHERE L.LEVEL_NAME = ? )"
+    )
     private Level level;
 
-    enum Level {
-
+    public enum Level {
+        JUNIOR,
+        MIDDLE,
+        SENIOR
     }
 }
