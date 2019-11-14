@@ -1,7 +1,7 @@
 import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import { QUESTIONS_ENPOINT } from '../../Constraints';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
@@ -24,6 +24,11 @@ function QuestionEdit({ match }) {
 
     }, [questionId]);
 
+    const history = useHistory();
+    const cancelCallback = React.useCallback(() => {
+        history.goBack();
+    });
+
     React.useEffect(() => {
         
         fetch(`${QUESTIONS_ENPOINT}/${questionId}`)
@@ -43,6 +48,7 @@ function QuestionEdit({ match }) {
                 <QuestionForm
                     okTitle="Edit"
                     okCallback={okCallback}
+                    cancelCallback={cancelCallback}
                     initState={question}
                 />
             </div>
