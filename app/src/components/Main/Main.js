@@ -62,6 +62,16 @@ function Main({ pageNumber }) {
         </nav>
     );
 
+    const deleteCallback = React.useCallback((questionId) => {
+        fetch(`${QUESTIONS_ENDPOINT}/${questionId}`, {
+            method: 'DELETE'
+        }).then((response) => {
+            if (response.ok) {
+                dispatchPageNumber({ pageNumber: pageNumber });
+            }
+        });
+    }, [pageNumber, dispatchPageNumber]);
+
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
             <div className="container-fluid mx-5">
@@ -121,7 +131,11 @@ function Main({ pageNumber }) {
                     </div>
 
                     <div className="col-10 d-flex flex-column">
-                        <QuestionTable questions={pageData.data || []} filter={filter} />
+                        <QuestionTable 
+                            questions={pageData.data || []} 
+                            filter={filter} 
+                            deleteCallback={deleteCallback}
+                        />
                         
                         {nav}
                     </div>

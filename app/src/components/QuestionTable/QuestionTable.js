@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 
-function QuestionTable({questions, filter}) {
+function QuestionTable({ questions, filter, deleteCallback }) {
     return (
         <table className="table table-fixed">
             <thead>
@@ -54,7 +54,11 @@ function QuestionTable({questions, filter}) {
                                     <FontAwesomeIcon icon={["far", "edit"]} className="text-info mx-2" />
                                 </Link>
 
-                                <a className="text-danger mx-2" href="#">
+                                <a 
+                                    className="text-danger mx-2" 
+                                    href="#"
+                                    onClick={() => {deleteCallback(question.id)}}
+                                >
                                     <FontAwesomeIcon icon={["far", "trash-alt"]} />
                                 </a>
                             </td>
