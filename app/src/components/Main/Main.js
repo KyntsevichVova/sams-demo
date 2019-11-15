@@ -13,6 +13,7 @@ function Main({ pageNumber }) {
     const [filter, setFilter] = React.useState(FILTERS[0].filter);
     const [pageData, setPageData] = React.useState({});
     const [pageSize, setPageSize] = React.useState(PAGE_SIZES[0]);
+    const [forceUpdate, setForceUpdate] = React.useState(false);
     const dispatchPageNumber = React.useContext(PageDispatch);
     
     React.useEffect(() => {
@@ -25,7 +26,7 @@ function Main({ pageNumber }) {
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, dispatchPageNumber]);
+    }, [pageNumber, pageSize, dispatchPageNumber, forceUpdate]);
 
     const filterAside = React.useMemo(() => {
         return (
@@ -42,15 +43,19 @@ function Main({ pageNumber }) {
     const firstOnPage = pageNumber * pageSize + 1;
     const lastOnPage = Math.min(totalElements, firstOnPage + pageSize);
 
+    const setCurrentPageCallback = React.useCallback((pageNumber) => {
+        dispatchPageNumber({ pageNumber: pageNumber });
+    }, [dispatchPageNumber]);
+
     const paginationNav = React.useMemo(() => {
         return (
             <PaginationNav
                 currentPage={pageNumber}
                 totalPages={totalPages}
-                dispatchPageNumber={dispatchPageNumber}
+                setCurrentPageCallback={setCurrentPageCallback}
             />
         );
-    }, [pageNumber, totalPages, dispatchPageNumber]);
+    }, [pageNumber, totalPages, setCurrentPageCallback]);
 
     const nav = (
         <nav className="d-flex justify-content-between">
@@ -67,10 +72,10 @@ function Main({ pageNumber }) {
             method: 'DELETE'
         }).then((response) => {
             if (response.ok) {
-                dispatchPageNumber({ pageNumber: pageNumber });
+                setForceUpdate(!forceUpdate);
             }
         });
-    }, [pageNumber, dispatchPageNumber]);
+    }, [forceUpdate]);
 
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
