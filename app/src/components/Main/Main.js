@@ -9,24 +9,47 @@ import { Link } from 'react-router-dom';
 import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
 
-function Main({ pageNumber }) {
+function usePageNumber() {
+    const dispatchPageParams = React.useContext(PageDispatch);
+
+    return React.useCallback((pageNumber) => {
+        dispatchPageParams({
+            type: 'pageNumber',
+            pageNumber: pageNumber
+        });
+    }, [dispatchPageParams]); 
+}
+
+function usePageSize() {
+    const dispatchPageParams = React.useContext(PageDispatch);
+
+    return React.useCallback((pageSize) => {
+        dispatchPageParams({
+            type: 'pageSize',
+            pageSize: pageSize
+        });
+    }, [dispatchPageParams]);
+}
+
+function Main({ pageNumber, pageSize }) {
     const [filter, setFilter] = React.useState(FILTERS[0].filter);
     const [pageData, setPageData] = React.useState({});
-    const [pageSize, setPageSize] = React.useState(PAGE_SIZES[0]);
     const [forceUpdate, setForceUpdate] = React.useState(false);
-    const dispatchPageNumber = React.useContext(PageDispatch);
+
+    const setPageNumberCallback = usePageNumber();
+    const setPageSizeCallback = usePageSize();
     
     React.useEffect(() => {
         fetch(`${QUESTIONS_ENDPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
-                        dispatchPageNumber({ pageNumber: Math.floor((pageData.total - 1) / pageSize) });
+                        setPageNumberCallback(Math.floor((pageData.total - 1) / pageSize));
                     }
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, dispatchPageNumber, forceUpdate]);
+    }, [pageNumber, pageSize, setPageNumberCallback, forceUpdate]);
 
     const filterAside = React.useMemo(() => {
         return (
@@ -43,19 +66,15 @@ function Main({ pageNumber }) {
     const firstOnPage = pageNumber * pageSize + 1;
     const lastOnPage = Math.min(totalElements, firstOnPage + pageSize);
 
-    const setCurrentPageCallback = React.useCallback((pageNumber) => {
-        dispatchPageNumber({ pageNumber: pageNumber });
-    }, [dispatchPageNumber]);
-
     const paginationNav = React.useMemo(() => {
         return (
             <PaginationNav
                 currentPage={pageNumber}
                 totalPages={totalPages}
-                setCurrentPageCallback={setCurrentPageCallback}
+                setCurrentPageCallback={setPageNumberCallback}
             />
         );
-    }, [pageNumber, totalPages, setCurrentPageCallback]);
+    }, [pageNumber, totalPages, setPageNumberCallback]);
 
     const nav = (
         <nav className="d-flex justify-content-between">
@@ -95,7 +114,7 @@ function Main({ pageNumber }) {
                                         return (
                                             <button 
                                                 className="dropdown-item" 
-                                                onClick={() => {setPageSize(value)}}
+                                                onClick={() => {setPageSizeCallback(value)}}
                                                 key={value.toString()}
                                             >
                                                 {value}

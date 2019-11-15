@@ -4,13 +4,23 @@ import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
-import { BASE_SUBDIR } from '../../Constraints';
+import { BASE_SUBDIR, PAGE_SIZES } from '../../Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
 
-const initialState = { pageNumber: 0 };
+const initialState = {
+    pageNumber: 0, 
+    pageSize: PAGE_SIZES[0]
+};
 
 function pageReducer(state, action) {
-    return { pageNumber: action.pageNumber }
+    switch (action.type) {
+        case 'pageNumber':
+            return { ...state, pageNumber: action.pageNumber };
+        case 'pageSize':
+            return { ...state, pageSize: action.pageSize };
+        default:
+            throw new Error();
+    }
 }
 
 function App() {
@@ -39,6 +49,7 @@ function App() {
                             <Route exact path="/">
                                 <Main 
                                     pageNumber={state.pageNumber}
+                                    pageSize={state.pageSize}
                                 />
                             </Route>
                         </Switch>
