@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity
+@Entity(name = "QUESTION")
 @Table(name = "QUESTION")
 @Data
 public class Question extends BaseEntity {
@@ -23,15 +23,15 @@ public class Question extends BaseEntity {
     @Column(name = "LINK", nullable = false)
     private String link;
 
-    @Column(name = "LEVEL_ID", nullable = false)
+    @Column(name = "DIFFICULTY_ID", nullable = false)
     @Enumerated(EnumType.STRING)
     @ColumnTransformer(
-            read  = "( SELECT L.LEVEL_NAME FROM `LEVEL` L WHERE L.ID = LEVEL_ID )",
-            write = "( SELECT L.ID FROM `LEVEL` L WHERE L.LEVEL_NAME = ? )"
+            read  = "( SELECT D.DIFFICULTY_NAME FROM DIFFICULTY D WHERE D.ID = DIFFICULTY_ID )",
+            write = "( SELECT D.ID FROM DIFFICULTY D WHERE D.DIFFICULTY_NAME = ? )"
     )
-    private Level level;
+    private Difficulty difficulty;
 
-    public enum Level {
+    public enum Difficulty {
         JUNIOR,
         MIDDLE,
         SENIOR

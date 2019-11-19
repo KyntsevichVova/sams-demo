@@ -21,5 +21,5 @@ public class QuestionDTO extends BaseDTO {
     private String link;
 
     @NotNull
-    private Question.Level level;
+    private Question.Difficulty difficulty;
 }

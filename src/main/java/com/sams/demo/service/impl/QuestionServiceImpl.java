@@ -23,9 +23,9 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Page<Question> findAll(Pageable pageable) {
+    public Page<Question> findAll(String difficulty, Pageable pageable) {
 
-        return questionRepository.findAll(pageable);
+        return questionRepository.findAll(difficulty, pageable);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
         question.setTitle(questionDTO.getTitle());
         question.setLink(questionDTO.getLink());
-        question.setLevel(questionDTO.getLevel());
+        question.setDifficulty(questionDTO.getDifficulty());
 
         questionRepository.save(question);
 

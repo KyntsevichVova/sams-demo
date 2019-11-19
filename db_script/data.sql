@@ -1,9 +1,9 @@
-INSERT INTO `LEVEL` (LEVEL_NAME) VALUES
+INSERT INTO DIFFICULTY (DIFFICULTY_NAME) VALUES
 ('JUNIOR'),
 ('MIDDLE'),
 ('SENIOR');
 
-INSERT INTO QUESTION (TITLE, LINK, LEVEL_ID) VALUES
+INSERT INTO QUESTION (TITLE, LINK, DIFFICULTY_ID) VALUES
 ('Can we override the private method in Java?', 'http://www.java67.com/2013/08/can-we-override-private-method-in-java-inner-class.html', 1),
 ('Difference between Hashtable and HashMap in Java?', 'http://javarevisited.blogspot.sg/2010/10/difference-between-hashmap-and.html#axzz53B6SD769', 1),
 ('Difference between List and Set in Java?', 'http://javarevisited.blogspot.sg/2012/04/difference-between-list-and-set-in-java.html#axzz53n9YK0Mb', 1),
