@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface IQuestionService {
 
-    Page<Question> findAll(String difficulty, Pageable pageable);
+    Page<Question> findAll(String level, Pageable pageable);
 
     Question findById(Long questionId) throws SamsDemoException;
 

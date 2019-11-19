@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    @Query(value = "SELECT * FROM QUESTION Q inner join DIFFICULTY AS D " +
-            "on Q.DIFFICULTY_ID = D.ID " +
-            "where D.DIFFICULTY_NAME LIKE coalesce(:difficulty, '%')", nativeQuery = true)
-    Page<Question> findAll(@Param("difficulty") String difficulty, Pageable pageable);
+
+    @Query(value = "FROM QUESTION q WHERE q.level LIKE COALESCE(:level, '%')")
+    Page<Question> findAll(@Param("level") String level, Pageable pageable);
 }

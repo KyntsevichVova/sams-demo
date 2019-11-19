@@ -2,6 +2,7 @@ package com.sams.demo.model.mapper.impl;
 
 import com.sams.demo.model.dto.QuestionDTO;
 import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.entity.Question.Level;
 import com.sams.demo.model.mapper.IDTOMapper;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class QuestionDTOMapper implements IDTOMapper<QuestionDTO, Question> {
         dto.setId(question.getId());
         dto.setTitle(question.getTitle());
         dto.setLink(question.getLink());
-        dto.setDifficulty(question.getDifficulty());
+        dto.setLevel(question.getLevel().name());
 
         return dto;
     }
@@ -41,7 +42,7 @@ public class QuestionDTOMapper implements IDTOMapper<QuestionDTO, Question> {
         question.setId(dto.getId());
         question.setTitle(dto.getTitle());
         question.setLink(dto.getLink());
-        question.setDifficulty(dto.getDifficulty());
+        question.setLevel(Level.valueOf(dto.getLevel()));
 
         return question;
     }

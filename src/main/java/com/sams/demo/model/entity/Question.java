@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "QUESTION")
@@ -14,7 +15,7 @@ public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "QUESTION_ID", nullable = false)
     private Long id;
 
     @Column(name = "TITLE", nullable = false)
@@ -23,15 +24,17 @@ public class Question extends BaseEntity {
     @Column(name = "LINK", nullable = false)
     private String link;
 
-    @Column(name = "DIFFICULTY_ID", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Column(name = "level_id", nullable = false)
+    @Enumerated(STRING)
     @ColumnTransformer(
-            read  = "( SELECT D.DIFFICULTY_NAME FROM DIFFICULTY D WHERE D.ID = DIFFICULTY_ID )",
-            write = "( SELECT D.ID FROM DIFFICULTY D WHERE D.DIFFICULTY_NAME = ? )"
+            forColumn = "level_id",
+            read  = "( SELECT LC.LEVEL_NAME FROM LEVEL_CON AS LC WHERE LC.LEVEL_ID = level_id )",
+            write = "( SELECT LC.level_id FROM LEVEL_CON AS LC WHERE LC.LEVEL_NAME = ? )"
     )
-    private Difficulty difficulty;
+    private Level level;
 
-    public enum Difficulty {
+    public enum Level {
+
         JUNIOR,
         MIDDLE,
         SENIOR

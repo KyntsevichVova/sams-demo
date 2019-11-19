@@ -2,6 +2,7 @@ package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.QuestionDTO;
 import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.entity.Question.Level;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
@@ -23,9 +24,9 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Page<Question> findAll(String difficulty, Pageable pageable) {
+    public Page<Question> findAll(String level, Pageable pageable) {
 
-        return questionRepository.findAll(difficulty, pageable);
+        return questionRepository.findAll(level, pageable);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
         question.setTitle(questionDTO.getTitle());
         question.setLink(questionDTO.getLink());
-        question.setDifficulty(questionDTO.getDifficulty());
+        question.setLevel(Level.valueOf(questionDTO.getLevel()));
 
         questionRepository.save(question);
 

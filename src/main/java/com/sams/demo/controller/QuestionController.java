@@ -36,10 +36,10 @@ public class QuestionController {
 
     @GetMapping
     public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAllQuestions(
-            @RequestParam(name = "difficulty", required = false) String difficulty,
+            @RequestParam(name = "level", required = false) String level,
             Pageable pageable) {
 
-        Page<Question> page = questionService.findAll(difficulty, pageable);
+        Page<Question> page = questionService.findAll(level, pageable);
 
         return ResponseBuilder
                 .<QuestionDTO, Question>success()
