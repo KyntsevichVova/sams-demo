@@ -31,16 +31,47 @@ function usePageSize() {
     }, [dispatchPageParams]);
 }
 
-function Main({ pageNumber, pageSize }) {
-    const [filter, setFilter] = React.useState(FILTERS[0].filter);
+function useFilter() {
+    const dispatchPageParams = React.useContext(PageDispatch);
+
+    return React.useCallback((filter) => {
+        dispatchPageParams({
+            type: 'filter',
+            filter: filter
+        });
+    }, [dispatchPageParams]);
+}
+
+function buildRequest(params) {
+    let paramsArray = [];
+
+    const entries = Object.entries(params);
+
+    for (const [key, value] of entries) {
+        if (value !== null && value !== undefined) {
+            paramsArray.push(`${key}=${encodeURI(value)}`);
+        }
+    }
+
+    return paramsArray ? `?${paramsArray.join('&')}` : '';
+}
+
+function Main({ pageNumber, pageSize, filter }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
 
     const setPageNumberCallback = usePageNumber();
     const setPageSizeCallback = usePageSize();
+    const setFilterCallback = useFilter();
     
     React.useEffect(() => {
-        fetch(`${QUESTIONS_ENDPOINT}?pageSize=${pageSize}&pageNum=${pageNumber}`)
+        let params = {
+            pageSize: pageSize,
+            pageNum: pageNumber,
+            level: filter === 'all' ? null : filter
+        };
+
+        fetch(`${QUESTIONS_ENDPOINT}${buildRequest(params)}`)
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
@@ -49,17 +80,17 @@ function Main({ pageNumber, pageSize }) {
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, setPageNumberCallback, forceUpdate]);
+    }, [pageNumber, pageSize, filter, setPageNumberCallback, forceUpdate]);
 
     const filterAside = React.useMemo(() => {
         return (
             <FilterAside 
                 filters={FILTERS}
                 currentFilter={filter}
-                setFilterCallback={setFilter}
+                setFilterCallback={setFilterCallback}
             />
         );
-    }, [filter]);
+    }, [filter, setFilterCallback]);
 
     const totalElements = pageData.total || 0;
     const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
@@ -157,7 +188,6 @@ function Main({ pageNumber, pageSize }) {
                     <div className="col-10 d-flex flex-column">
                         <QuestionTable 
                             questions={pageData.data || []} 
-                            filter={filter} 
                             deleteCallback={deleteCallback}
                         />
                         

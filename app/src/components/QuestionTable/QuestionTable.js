@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 
-function QuestionTable({ questions, filter, deleteCallback }) {
+function QuestionTable({ questions, deleteCallback }) {
     return (
         <table className="table table-fixed">
             <thead>
@@ -19,9 +19,7 @@ function QuestionTable({ questions, filter, deleteCallback }) {
                 </tr>
             </thead>
             <tbody>
-                {questions.filter((question) => {
-                    return filter === "all" || question.level === filter;
-                }).map((question) => {
+                {questions.map((question) => {
                     return (
                         <tr key={question.id.toString()}>
                             <td>
