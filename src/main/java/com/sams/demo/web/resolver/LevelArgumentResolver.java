@@ -1,15 +1,14 @@
 package com.sams.demo.web.resolver;
 
 import com.sams.demo.model.entity.Question;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sams.demo.web.annotation.Level;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static com.sams.demo.common.ApplicationConstant.*;
+import static com.sams.demo.common.ApplicationConstant.LEVEL_PARAMETER;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class LevelArgumentResolver implements HandlerMethodArgumentResolver {
@@ -17,9 +16,7 @@ public class LevelArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
 
-        return methodParameter.getParameterType().equals(String.class)
-                && methodParameter.getParameterName() != null
-                && methodParameter.getParameterName().equals(LEVEL_PARAMETER);
+        return methodParameter.hasParameterAnnotation(Level.class);
     }
 
     @Override

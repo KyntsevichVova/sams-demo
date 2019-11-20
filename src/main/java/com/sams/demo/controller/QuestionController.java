@@ -7,6 +7,7 @@ import com.sams.demo.model.mapper.IDTOMapper;
 import com.sams.demo.model.response.ResponseBuilder;
 import com.sams.demo.model.response.SamsDemoResponse;
 import com.sams.demo.service.IQuestionService;
+import com.sams.demo.web.annotation.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class QuestionController {
 
     @GetMapping
     public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAllQuestions(
-            @RequestParam(name = "level", required = false) String level,
+            @Level String level,
             Pageable pageable) {
 
         Page<Question> page = questionService.findAll(level, pageable);
