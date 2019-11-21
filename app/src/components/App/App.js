@@ -6,6 +6,8 @@ import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
 import { PAGE_SIZES, FILTERS } from '../../Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
+import flag_russia from '../../flag_russia.png';
+import flag_uk from '../../flag_uk.png';
 
 const initialState = {
     pageNumber: 0, 
@@ -35,6 +37,10 @@ function App() {
 
                 <nav className="navbar navbar-dark mb-5 shadow-sm bg-primary border-bottom">
                     <span className="navbar-brand" style={{fontSize: '2.5rem'}}>Java Interview Notes</span>
+                    <div className="d-flex flex-row justify-content-end">
+                        <img src={ flag_russia } alt="ru"></img>
+                        <img src={ flag_uk } alt="en"></img>
+                    </div>
                 </nav>
 
                 <div className="content">
