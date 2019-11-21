@@ -1,10 +1,10 @@
 import React from 'react';
 import Main from '../Main/Main';
 import './App.css';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
-import { BASE_SUBDIR, PAGE_SIZES, FILTERS } from '../../Constraints';
+import { PAGE_SIZES, FILTERS } from '../../Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
 
 const initialState = {
@@ -30,7 +30,7 @@ function App() {
     const [state, dispatch] = React.useReducer(pageReducer, initialState);
 
     return (
-        <BrowserRouter basename={`/${BASE_SUBDIR}`}>
+        <HashRouter>
             <div className="App">
 
                 <nav className="navbar navbar-dark mb-5 shadow-sm bg-primary border-bottom">
@@ -68,7 +68,7 @@ function App() {
                 </footer>
 
             </div>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 

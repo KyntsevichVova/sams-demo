@@ -1,7 +1,7 @@
 import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import { QUESTIONS_ENDPOINT } from '../../Constraints';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 function QuestionAdd() {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
@@ -22,10 +22,9 @@ function QuestionAdd() {
 
     }, []);
 
-    const history = useHistory();
     const cancelCallback = React.useCallback(() => {
-        history.goBack();
-    }, [history]);
+        setShouldRedirect(true);
+    }, []);
 
     return (
         <>
