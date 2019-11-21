@@ -7,4 +7,7 @@ public class ApplicationConstant {
 
     public static final String PAGE_SIZE_PARAMETER = "pageSize";
     public static final int DEFAULT_PAGE_SIZE = 5;
+
+    public static final String LEVEL_PARAMETER = "level";
+
 }

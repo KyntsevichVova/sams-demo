@@ -1,7 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
-function QuestionTable({posts, filter}) {
+function QuestionTable({ questions, deleteCallback }) {
     return (
         <table className="table table-fixed">
             <thead>
@@ -18,32 +19,44 @@ function QuestionTable({posts, filter}) {
                 </tr>
             </thead>
             <tbody>
-                {posts.filter((value) => {
-                    return filter === "all" || value.level === filter;
-                }).map((value) => {
+                {questions.map((question) => {
                     return (
-                        <tr key={value.id.toString()}>
+                        <tr key={question.id.toString()}>
                             <td>
                                 <div className="tooltip-wrapper">
                                     <div className="text-truncate">
-                                        {value.title}
+                                        {question.title}
                                     </div>
+
                                     <span className="tooltip-text text-break">
-                                        {value.title}
+                                        {question.title}
                                     </span>
                                 </div>
                             </td>
+
                             <td>
-                                {value.level[0].toUpperCase() + value.level.substr(1)}
+                                {question.level[0].toUpperCase() + question.level.substr(1)}
                             </td>
+
                             <td>
-                                <a className="text-primary mx-2" target="_blank" rel="noopener noreferrer" href={value.link}>
+                                <a 
+                                    className="text-primary mx-2" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    href={question.link}
+                                >
                                     <FontAwesomeIcon icon={["fas", "external-link-alt"]} />
                                 </a>
-                                <a className="text-info mx-2" href="#">
-                                    <FontAwesomeIcon icon={["far", "edit"]} />
-                                </a>
-                                <a className="text-danger mx-2" href="#">
+
+                                <Link to={`/edit/${question.id}`}>
+                                    <FontAwesomeIcon icon={["far", "edit"]} className="text-info mx-2" />
+                                </Link>
+
+                                <a 
+                                    className="text-danger mx-2" 
+                                    href="#"
+                                    onClick={() => {deleteCallback(question.id)}}
+                                >
                                     <FontAwesomeIcon icon={["far", "trash-alt"]} />
                                 </a>
                             </td>

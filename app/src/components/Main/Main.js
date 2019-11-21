@@ -5,92 +5,165 @@ import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
+import PageDispatch from '../../contexts/PageDispatch';
 
-const filters = [
-    {filter: "all", text: "All"},
-    {filter: "junior", text: "Junior"},
-    {filter: "middle", text: "Middle"},
-    {filter: "senior", text: "Senior"},
-];
+function usePageNumber() {
+    const dispatchPageParams = React.useContext(PageDispatch);
 
-const limits = [5, 10, 25, 50];
+    return React.useCallback((pageNumber) => {
+        dispatchPageParams({
+            type: 'pageNumber',
+            pageNumber: pageNumber
+        });
+    }, [dispatchPageParams]); 
+}
 
-const API_URL = "http://localhost:8085/demo/api/v1";
+function usePageSize() {
+    const dispatchPageParams = React.useContext(PageDispatch);
 
-function Main() {
-    const [filter, setFilter] = React.useState("all");
-    const [page, setPage] = React.useState({});
-    const [pageNumber, setPageNumber] = React.useState(0);
-    const [limit, setLimit] = React.useState(limits[0]);
+    return React.useCallback((pageSize) => {
+        dispatchPageParams({
+            type: 'pageSize',
+            pageSize: pageSize
+        });
+    }, [dispatchPageParams]);
+}
+
+function useFilter() {
+    const dispatchPageParams = React.useContext(PageDispatch);
+
+    return React.useCallback((filter) => {
+        dispatchPageParams({
+            type: 'filter',
+            filter: filter
+        });
+    }, [dispatchPageParams]);
+}
+
+function buildRequest(params) {
+    let paramsArray = [];
+
+    const entries = Object.entries(params);
+
+    for (const [key, value] of entries) {
+        if (value !== null && value !== undefined) {
+            paramsArray.push(`${key}=${encodeURI(value)}`);
+        }
+    }
+
+    return paramsArray ? `?${paramsArray.join('&')}` : '';
+}
+
+function Main({ pageNumber, pageSize, filter }) {
+    const [pageData, setPageData] = React.useState({});
+    const [forceUpdate, setForceUpdate] = React.useState(false);
+
+    const setPageNumberCallback = usePageNumber();
+    const setPageSizeCallback = usePageSize();
+    const setFilterCallback = useFilter();
     
     React.useEffect(() => {
-        fetch(`${API_URL}/questions?pageSize=${limit}&pageNum=${pageNumber}`)
+        let params = {
+            pageSize: pageSize,
+            pageNum: pageNumber,
+            level: filter === 'all' ? null : filter
+        };
+
+        fetch(`${QUESTIONS_ENDPOINT}${buildRequest(params)}`)
             .then((data) => {
-                data.json().then((value) => {
-                    if (value.number >= value.totalPages) {
-                        setPageNumber(value.totalPages - 1);
+                data.json().then((pageData) => {
+                    if (pageNumber * pageSize > pageData.total) {
+                        setPageNumberCallback(Math.floor((pageData.total - 1) / pageSize));
                     }
-                    setPage(value);
+                    setPageData(pageData);
                 });
             });
-    }, [pageNumber, limit]);
+    }, [pageNumber, pageSize, filter, setPageNumberCallback, forceUpdate]);
 
     const filterAside = React.useMemo(() => {
         return (
             <FilterAside 
-                filters={filters}
+                filters={FILTERS}
                 currentFilter={filter}
-                setFilterCallback={setFilter}
+                setFilterCallback={setFilterCallback}
             />
         );
-    }, [filter, setFilter]);
+    }, [filter, setFilterCallback]);
 
-    const totalPages = page.totalPages || 1;
-    const offset = ((page.pageable || {}).offset || 0) + 1;
-    const numberOfElements = (page.numberOfElements || 0) + offset - 1;
-    const totalElements = page.totalElements || 0;
+    const totalElements = pageData.total || 0;
+    const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
+    const firstOnPage = pageNumber * pageSize + 1;
+    const lastOnPage = Math.min(totalElements, firstOnPage + pageSize);
 
     const paginationNav = React.useMemo(() => {
         return (
-            <PaginationNav 
+            <PaginationNav
                 currentPage={pageNumber}
                 totalPages={totalPages}
-                setCurrentPageCallback={setPageNumber}
-                offset={offset}
-                numberOfElements={numberOfElements}
-                totalElements={totalElements}
+                setCurrentPageCallback={setPageNumberCallback}
             />
         );
-    }, [pageNumber, totalPages, setPageNumber, offset, numberOfElements, totalElements]);
+    }, [pageNumber, totalPages, setPageNumberCallback]);
+
+    const nav = (
+        <nav className="d-flex justify-content-between">
+            <span className="font-weight-bold text-info border-top border-info">
+                {`Showing ${firstOnPage} to ${lastOnPage} of ${totalElements} entries`}
+            </span>
+
+            {paginationNav}
+        </nav>
+    );
+
+    const deleteCallback = React.useCallback((questionId) => {
+        fetch(`${QUESTIONS_ENDPOINT}/${questionId}`, {
+            method: 'DELETE'
+        }).then((response) => {
+            if (response.ok) {
+                setForceUpdate(!forceUpdate);
+            }
+        });
+    }, [forceUpdate]);
 
     return (
-        <main className="content d-flex flex-row justify-content-start pt-3">
+        <main className="d-flex flex-row justify-content-start pt-3">
             <div className="container-fluid mx-5">
+
                 <div className="row mb-3">
-                    <div className="col-2"></div>
+                    
+                    <div className="col-2" />
+                    
                     <div className="col-10 d-flex flex-row justify-content-between">
                         <div>
                             <span className="pb-2 font-weight-bold text-info border-bottom border-info">
                                 Show
-                                <Dropdown title={`${limit}`}>
-                                    {limits.map((value) => {
+                                
+                                <Dropdown title={`${pageSize}`}>
+                                    {PAGE_SIZES.map((value) => {
                                         return (
-                                            <a 
-                                            className="dropdown-item" 
-                                            href="#"
-                                            onClick={() => {setLimit(value)}}
+                                            <button 
+                                                className="dropdown-item" 
+                                                onClick={() => {setPageSizeCallback(value)}}
+                                                key={value.toString()}
                                             >
                                                 {value}
-                                            </a>
+                                            </button>
                                         );  
                                     })}
                                 </Dropdown>
+                                
                                 entries
                             </span>
-                            <button className="btn btn-primary mx-5">
-                                <FontAwesomeIcon icon={["fas", "plus"]} />
-                            </button>
+
+                            <Link to="/add">
+                                <button className="btn btn-primary mx-5">
+                                    <FontAwesomeIcon icon={["fas", "plus"]} />
+                                </button>
+                            </Link>
                         </div>
+
                         <div className="d-flex flex-row justify-content-end w-50">
                             <div className="input-group mb-0">
                                 <div className="input-group-prepend">
@@ -98,21 +171,30 @@ function Main() {
                                         <FontAwesomeIcon icon={["fas", "search"]} />
                                     </span>
                                 </div>
-                                <input type="text" className="form-control h-100">
-                                </input>
+                                
+                                <input type="text" className="form-control h-100" />
                             </div>
                         </div>
-                    </div>                    
+
+                    </div>  
+
                 </div>
+
                 <div className="row">
                     <div className="col-2">
                         {filterAside}
                     </div>
+
                     <div className="col-10 d-flex flex-column">
-                        <QuestionTable posts={page.content || []} filter={filter}/>
-                        {paginationNav}
+                        <QuestionTable 
+                            questions={pageData.data || []} 
+                            deleteCallback={deleteCallback}
+                        />
+                        
+                        {nav}
                     </div>
                 </div>
+
             </div>
         </main>
     );

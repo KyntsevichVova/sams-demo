@@ -1,7 +1,7 @@
 import React from 'react';
 import FilterButton from '../FilterButton/FilterButton';
 
-function FilterAside({filters, currentFilter, setFilterCallback}) {
+function FilterAside({ filters, currentFilter, setFilterCallback }) {
     return (
         <div className="d-flex justify-content-start flex-column mx-0">
             {filters.map((value) => {

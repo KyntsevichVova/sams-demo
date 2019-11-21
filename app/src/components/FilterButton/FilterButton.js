@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-function FilterButton({filter, currentFilter, onClick, className, children}) {
+function FilterButton({ filter, currentFilter, onClick, className, children }) {
     let btnClass = classNames('btn', 
         {
             'btn-primary': filter === currentFilter,
@@ -9,6 +9,7 @@ function FilterButton({filter, currentFilter, onClick, className, children}) {
         },
         className
     );
+    
     return (
         <button
             onClick={() => {onClick(filter)}}

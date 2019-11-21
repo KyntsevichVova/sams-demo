@@ -1,18 +1,26 @@
 import React from 'react';
+import classNames from 'classnames';
 
 function getFirstDisplayedPage(currentPage) {
     return Math.floor((currentPage - 2) / 3) * 3 + 2;
 }
 
 function createPage(pageTitle, isActive, isDisabled, onClick) {
+    const className = classNames('page-item', 
+        {
+            'active': isActive,
+            'disabled': isDisabled
+        }
+    );
+
     return (
         <li 
-            className={`page-item${isActive ? " active" : ""}${isDisabled ? " disabled" : ""}`} 
+            className={className} 
             onClick={onClick}
         >
-            <a className="page-link noselect" href="#">
+            <button className="page-link noselect">
                 {pageTitle}
-            </a>
+            </button>
         </li>
     );
 }
@@ -45,25 +53,20 @@ function fillOverflownPages(totalPages, currentPage, setCurrentPageCallback) {
     return pages;
 }
 
-function PaginationNav({
-        currentPage, totalPages, setCurrentPageCallback,
-        offset, numberOfElements, totalElements}) 
-{
+function PaginationNav({ currentPage, totalPages, setCurrentPageCallback }) {
+
     return (
-        <nav className="d-flex justify-content-between">
-            <span className="font-weight-bold text-info border-top border-info">
-                {`Showing ${offset} to ${numberOfElements} of ${totalElements} entries`}
-            </span>
-            <ul className="pagination justify-content-end">
-                {createPage("«", false, currentPage <= 0, currentPage > 0 ? () => {setCurrentPageCallback(currentPage - 1)} : null)}
-                {   
-                    totalPages <= 6 
-                        ? fillPages(1, totalPages, currentPage, setCurrentPageCallback)
-                        : fillOverflownPages(totalPages, currentPage, setCurrentPageCallback)
-                }
-                {createPage("»", false, currentPage + 1 >= totalPages, currentPage + 1 < totalPages ? () => {setCurrentPageCallback(currentPage + 1)} : null)}
-            </ul>
-        </nav>  
+        <ul className="pagination justify-content-end">
+            {createPage("«", false, currentPage <= 0, currentPage > 0 ? () => {setCurrentPageCallback(currentPage - 1)} : null)}
+            
+            {   
+                totalPages <= 6 
+                    ? fillPages(1, totalPages, currentPage, setCurrentPageCallback)
+                    : fillOverflownPages(totalPages, currentPage, setCurrentPageCallback)
+            }
+            
+            {createPage("»", false, currentPage + 1 >= totalPages, currentPage + 1 < totalPages ? () => {setCurrentPageCallback(currentPage + 1)} : null)}
+        </ul>
     );
 }
 
