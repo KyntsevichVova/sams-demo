@@ -2,6 +2,7 @@ package com.sams.demo.model.response;
 
 import com.sams.demo.model.dto.BaseDTO;
 import com.sams.demo.model.entity.BaseEntity;
+import com.sams.demo.model.error.ErrorMessage;
 import com.sams.demo.model.mapper.IDTOMapper;
 import lombok.Data;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.sams.demo.model.response.enums.ResponseStatus.FAILURE;
 import static com.sams.demo.model.response.enums.ResponseStatus.SUCCESS;
 
 @Data
@@ -18,11 +20,18 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
     private SamsDemoResponse<DTO> response;
     private HttpStatus httpStatus;
 
-    public ResponseBuilder() {
+    private ResponseBuilder() {
     }
 
-    public ResponseBuilder(SamsDemoResponse<DTO> response) {
+    private ResponseBuilder(SamsDemoResponse<DTO> response) {
         this.response = response;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static  ResponseBuilder failure() {
+
+        SamsDemoResponse response = new SamsDemoResponse<>(FAILURE);
+        return new ResponseBuilder(response);
     }
 
     public static <DTO extends BaseDTO, ENTITY extends BaseEntity> ResponseBuilder<DTO, ENTITY> success() {
@@ -48,6 +57,13 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
         this.response.setData(mapper.mapToDTOList(list));
         this.response.setTotal((long) list.size());
+
+        return this;
+    }
+
+    public ResponseBuilder withErrorMessage(List<ErrorMessage> errors) {
+
+        this.response.setErrorData(errors);
 
         return this;
     }
