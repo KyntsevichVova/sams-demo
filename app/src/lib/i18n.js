@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import XHR from 'i18next-xhr-backend';
+import {BASE_URL} from "./Constraints";
 
 i18n
     .use(XHR)
@@ -11,7 +12,7 @@ i18n
         load: 'languageOnly',
 
         backend: {
-            loadPath: `/demo/resources/{{lng}}/{{ns}}.json`
+            loadPath: `${BASE_URL}/resources/i18n/{{lng}}/{{ns}}.json`
         }
     });
 

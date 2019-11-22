@@ -26,8 +26,8 @@ public class ErrorHandler {
     @Autowired
     private MessageSource messageSource;
 
-    @ExceptionHandler( MethodArgumentNotValidException.class )
-    @ResponseStatus( BAD_REQUEST )
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public ResponseEntity handle(MethodArgumentNotValidException ex, Locale locale) {
 
@@ -62,7 +62,7 @@ public class ErrorHandler {
 
             String message = messageSource.getMessage(
                     fe.getDefaultMessage(),
-                    new String[]{fe.getField()},
+                    new String [] {fe.getField()},
                     locale);
 
             errorMessage.setField(fe.getField());
