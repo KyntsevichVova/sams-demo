@@ -6,7 +6,7 @@ import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
+import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../lib/Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
 
 function usePageNumber() {

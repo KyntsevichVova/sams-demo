@@ -1,6 +1,6 @@
 import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
-import { QUESTIONS_ENDPOINT } from '../../Constraints';
+import { QUESTIONS_ENDPOINT } from '../../lib/Constraints';
 import { Redirect } from 'react-router-dom';
 
 function QuestionEdit({ match }) {
