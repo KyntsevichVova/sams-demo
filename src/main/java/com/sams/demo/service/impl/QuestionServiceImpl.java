@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.sams.demo.model.error.ErrorCode.*;
+import static com.sams.demo.model.error.exception.SamsDemoException.*;
+
 @Service
 public class QuestionServiceImpl implements IQuestionService {
 
@@ -34,14 +37,21 @@ public class QuestionServiceImpl implements IQuestionService {
 
         Optional<Question> optionalQuestion;
 
+        if (questionId == null) {
+            throw badRequestException(ID_MISSING);
+        }
+
         try {
             optionalQuestion = questionRepository.findById(questionId);
         } catch (Exception ex) {
-            throw new SamsDemoException("ERROR");
+            throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
         if (!optionalQuestion.isPresent()) {
-            throw new SamsDemoException("ERROR");
+            throw entityNotFoundException(
+                    ENTITY_NOT_FOUND,
+                    Question.class.getSimpleName(),
+                    questionId.toString());
         }
 
         return optionalQuestion.get();
@@ -56,19 +66,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public Question update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException {
 
-        Optional<Question> optionalQuestion;
-
-        try {
-            optionalQuestion = questionRepository.findById(questionId);
-        } catch (Exception ex) {
-            throw new SamsDemoException("ERROR");
-        }
-
-        if (!optionalQuestion.isPresent()) {
-            throw new SamsDemoException("ERROR");
-        }
-
-        Question question = optionalQuestion.get();
+        Question question = findById(questionId);
 
         question.setTitle(questionDTO.getTitle());
         question.setLink(questionDTO.getLink());

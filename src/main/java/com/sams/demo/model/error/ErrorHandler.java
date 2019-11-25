@@ -9,16 +9,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -27,8 +25,6 @@ public class ErrorHandler {
     private MessageSource messageSource;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(BAD_REQUEST)
-    @ResponseBody
     public ResponseEntity handle(MethodArgumentNotValidException ex, Locale locale) {
 
         List<ErrorMessage> errors = ex.getBindingResult()
@@ -45,11 +41,19 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(SamsDemoException.class)
-    @ResponseStatus(NOT_FOUND)
-    @ResponseBody
-    public ResponseEntity handleNotFoundException(SamsDemoException e) {
+    public ResponseEntity handleSamsDemoException(SamsDemoException ex, Locale locale) {
 
-        return new ResponseEntity(NOT_FOUND);
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setMessage(messageSource.getMessage(
+                ex.getMessage(),
+                ex.getErrorMessageParams(),
+                locale));
+
+        return ResponseBuilder
+                .failure()
+                .withErrorMessage(singletonList(errorMessage))
+                .withHttpStatus(ex.getStatus())
+                .build();
     }
 
     private ErrorMessage formatErrorMessage(ObjectError error, Locale locale) {
