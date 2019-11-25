@@ -2,11 +2,13 @@ import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import { QUESTIONS_ENDPOINT } from '../../lib/Constraints';
 import { Redirect } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const [question, setQuestion] = React.useState(undefined);
     const questionId = match.params.questionId || 0;
+    const { t } = useTranslation('forms');
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
@@ -45,7 +47,8 @@ function QuestionEdit({ match }) {
         <>
             <div className="container">
                 <QuestionForm
-                    okTitle="Edit"
+                    okTitle={ t('edit.ok') }
+                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                     initState={question}

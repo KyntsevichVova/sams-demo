@@ -1,0 +1,11 @@
+{
+    "header": {
+        "title": "Title",
+        "level": "Level"
+    },
+
+    "entries": {
+        "showing": "Показаны записи от {{firstOnPage}} до {{lastOnPage}} из {{totalElements}} записей",
+        "limit": "Показать <1></1> записей"
+    }
+}

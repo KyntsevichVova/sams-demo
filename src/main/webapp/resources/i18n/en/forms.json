@@ -1,0 +1,29 @@
+{
+    "add": {
+        "ok": "Add"
+    },
+
+    "edit": {
+        "ok": "Edit"
+    },
+
+    "common": {
+        "cancel": "Cancel"
+    },
+
+    "label": {
+        "question": {
+            "title": "Question",
+            "answerLink": "Link to answer",
+            "level": "Question level"
+        }
+    },
+
+    "placeholder": {
+        "question": {
+            "title": "Enter question",
+            "answerLink": "Enter URL",
+            "level": "Enter question level"
+        }
+    }
+}

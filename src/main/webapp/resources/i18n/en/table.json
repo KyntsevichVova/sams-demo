@@ -1,0 +1,11 @@
+{
+    "header": {
+        "title": "Title",
+        "level": "Level"
+    },
+
+    "entries": {
+        "showing": "Showing {{firstOnPage}} to {{lastOnPage}} of {{totalElements}} entries",
+        "limit": "Show <1></1> entries"
+    }
+}

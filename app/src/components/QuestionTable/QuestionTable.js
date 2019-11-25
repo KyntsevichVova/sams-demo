@@ -1,17 +1,20 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function QuestionTable({ questions, deleteCallback }) {
+    const { t } = useTranslation('table');
+
     return (
         <table className="table table-fixed">
             <thead>
                 <tr>
                     <th scope="col" style={{width: "70%"}}>
-                        Title
+                        { t('header.title') }
                     </th>
                     <th scope="col" style={{width: "15%"}}>
-                        Level
+                        { t('header.level') }
                     </th>
                     <th scope="col" style={{width: "15%"}}>
                         

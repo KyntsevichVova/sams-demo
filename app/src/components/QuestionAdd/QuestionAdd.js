@@ -2,9 +2,11 @@ import React from 'react';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import { QUESTIONS_ENDPOINT } from '../../lib/Constraints';
 import { Redirect } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function QuestionAdd() {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
+    const { t } = useTranslation('forms');
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
@@ -30,7 +32,8 @@ function QuestionAdd() {
         <>
             <div className="container">
                 <QuestionForm
-                    okTitle="Add"
+                    okTitle={ t('add.ok') }
+                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                 />
