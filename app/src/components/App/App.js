@@ -46,13 +46,19 @@ function App() {
                     <div className="d-flex flex-row justify-content-end">
                         <img 
                             src={ flag_russia } 
+                            className={`cursor-pointer${i18n.languages[0] !== 'ru' ? " opaque-5" : ""}`}
                             alt="ru" 
                             onClick={()=>{changeLang('ru')}}
+                            height="48"
+                            width="48"
                         />
                         <img 
                             src={ flag_uk } 
+                            className={`cursor-pointer${i18n.languages[0] !== 'en' ? " opaque-5" : ""}`}
                             alt="en" 
                             onClick={()=>{changeLang('en')}}
+                            height="48"
+                            width="48"
                         />
                     </div>
                 </nav>
