@@ -8,4 +8,4 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 
 library.add(faExternalLinkAlt, faEdit, faTrashAlt, faPlus, faSearch);
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<React.Suspense fallback={<span>Loading</span>}><App /></React.Suspense>, document.getElementById('root'));

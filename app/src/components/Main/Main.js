@@ -6,8 +6,9 @@ import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../Constraints';
+import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../lib/Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
+import { Trans } from 'react-i18next';
 
 function usePageNumber() {
     const dispatchPageParams = React.useContext(PageDispatch);
@@ -110,7 +111,10 @@ function Main({ pageNumber, pageSize, filter }) {
     const nav = (
         <nav className="d-flex justify-content-between">
             <span className="font-weight-bold text-info border-top border-info">
-                {`Showing ${firstOnPage} to ${lastOnPage} of ${totalElements} entries`}
+                <Trans i18nKey="entries.showing" ns="table">
+                    Showing {{firstOnPage}} to {{lastOnPage}} of {{totalElements}} entries
+                </Trans>
+                {/*`Showing ${firstOnPage} to ${lastOnPage} of ${totalElements} entries`*/}
             </span>
 
             {paginationNav}
@@ -138,23 +142,25 @@ function Main({ pageNumber, pageSize, filter }) {
                     <div className="col-10 d-flex flex-row justify-content-between">
                         <div>
                             <span className="pb-2 font-weight-bold text-info border-bottom border-info">
-                                Show
-                                
-                                <Dropdown title={`${pageSize}`}>
-                                    {PAGE_SIZES.map((value) => {
-                                        return (
-                                            <button 
+                                <Trans i18nKey="entries.limit" ns="table">
+                                    Show
+                                    
+                                    <Dropdown title={`${pageSize}`}>
+                                        {PAGE_SIZES.map((value) => {
+                                            return (
+                                                <button 
                                                 className="dropdown-item" 
                                                 onClick={() => {setPageSizeCallback(value)}}
                                                 key={value.toString()}
-                                            >
-                                                {value}
-                                            </button>
-                                        );  
-                                    })}
-                                </Dropdown>
-                                
-                                entries
+                                                >
+                                                    {value}
+                                                </button>
+                                            );  
+                                        })}
+                                    </Dropdown>
+                                    
+                                    entries
+                                </Trans>
                             </span>
 
                             <Link to="/add">

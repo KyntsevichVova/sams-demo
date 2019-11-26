@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
     const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: ""});
+    const { t } = useTranslation('forms');
     
     const changeHandler = (event) => {
         setQuestion({...question, [event.target.name]: event.target.value})
@@ -17,14 +19,14 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
         <div className="d-flex flex-column">
             <div className="form-group">
                 <label htmlFor="question-title">
-                    Question
+                    { t('label.question.title') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
                     id="question-title" 
-                    placeholder="Enter question" 
+                    placeholder={ t('placeholder.question.title') } 
                     value={question.title}
                     name="title"
                     onChange={changeHandler}
@@ -33,14 +35,14 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
 
             <div className="form-group">
                 <label htmlFor="question-link">
-                    Link to answer
+                    { t('label.question.answerLink') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
                     id="question-link" 
-                    placeholder="Enter URL"
+                    placeholder={ t('placeholder.question.answerLink') }
                     value={question.link}
                     name="link"
                     onChange={changeHandler}
@@ -49,14 +51,14 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
 
             <div className="form-group">
                 <label htmlFor="question-level">
-                    Question level
+                    { t('label.question.level') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
                     id="question-level" 
-                    placeholder="Enter question level"
+                    placeholder={ t('placeholder.question.level') }
                     value={question.level}
                     name="level"
                     onChange={changeHandler}

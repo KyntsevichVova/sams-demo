@@ -55,3 +55,11 @@
     visibility: visible;
     opacity: 1;
 } 
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.opaque-5 {
+    opacity: 0.5;
+}
