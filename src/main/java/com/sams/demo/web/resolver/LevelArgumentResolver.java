@@ -1,6 +1,6 @@
 package com.sams.demo.web.resolver;
 
-import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.entity.LevelCon;
 import com.sams.demo.web.annotation.Level;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -25,7 +25,7 @@ public class LevelArgumentResolver implements HandlerMethodArgumentResolver {
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
 
-        Question.Level level;
+        LevelCon.LevelType level;
 
         String levelParam = nativeWebRequest.getParameter(LEVEL_PARAMETER);
 
@@ -33,7 +33,7 @@ public class LevelArgumentResolver implements HandlerMethodArgumentResolver {
             return null;
         } else {
             try {
-                level = Question.Level.valueOf(levelParam.toUpperCase());
+                level = LevelCon.LevelType.valueOf(levelParam.toUpperCase());
             } catch (Exception e) {
                 return null;
             }

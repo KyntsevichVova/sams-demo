@@ -2,7 +2,6 @@ package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.QuestionDTO;
 import com.sams.demo.model.entity.Question;
-import com.sams.demo.model.entity.Question.Level;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.service.IQuestionService;
@@ -68,9 +67,9 @@ public class QuestionServiceImpl implements IQuestionService {
 
         Question question = findById(questionId);
 
-        question.setTitle(questionDTO.getTitle());
+        //question.setTitle(questionDTO.getTitle());
         question.setLink(questionDTO.getLink());
-        question.setLevel(Level.valueOf(questionDTO.getLevel()));
+        //question.setLevel(Level.valueOf(questionDTO.getLevel()));
 
         questionRepository.save(question);
 
