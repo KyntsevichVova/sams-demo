@@ -1,5 +1,6 @@
 package com.sams.demo.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class LevelCon extends BaseEntity {
     private LevelType levelType;
 
     @OneToMany(mappedBy = "level")
+    @JsonIgnore
     private List<Question> questionList;
 
     @OneToMany(mappedBy = "levelCon")

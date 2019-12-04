@@ -1,5 +1,6 @@
 package com.sams.demo.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,9 +21,11 @@ public class Locale extends BaseEntity {
     private Code code;
 
     @OneToMany(mappedBy = "locale")
+    @JsonIgnore
     private List<LevelLocalized> levelLocalizedList;
 
     @OneToMany(mappedBy = "locale")
+    @JsonIgnore
     private List<Title> titleList;
 
     public enum Code {
