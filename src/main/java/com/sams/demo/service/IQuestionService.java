@@ -12,9 +12,9 @@ public interface IQuestionService {
 
     Question findById(Long questionId) throws SamsDemoException;
 
-    void save(Question question);
+    void save(QuestionDTO questionDTO, String locale) throws SamsDemoException;
 
-    Question update(Long questionId, QuestionDTO questionDTO) throws SamsDemoException;
+    Question update(Long questionId, QuestionDTO questionDTO, String locale) throws SamsDemoException;
 
     void delete(Long questionId);
 }

@@ -1,31 +1,33 @@
 package com.sams.demo.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity(name = "LEVEL_CON")
-@Table(name = "LEVEL_CON")
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity(name = "LEVEL")
+@Table(name = "LEVEL")
 @Data
+@EqualsAndHashCode(of = {"id", "type"}, callSuper = false)
+@ToString(of = {"id", "type"})
 public class LevelCon extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "LEVEL_ID", nullable = false)
-    private Long levelId;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "LEVEL_TYPE", nullable = false)
-    private LevelType levelType;
+    @Enumerated(STRING)
+    @Column(name = "TYPE", nullable = false)
+    private LevelType type;
 
     @OneToMany(mappedBy = "level")
-    @JsonIgnore
-    private List<Question> questionList;
-
-    @OneToMany(mappedBy = "levelCon")
-    private List<LevelLocalized> levelLocalizedList;
+    private List<LevelLocalized> localizedLevels;
 
     public enum LevelType {
 
@@ -33,5 +35,4 @@ public class LevelCon extends BaseEntity {
         MIDDLE,
         SENIOR
     }
-
 }

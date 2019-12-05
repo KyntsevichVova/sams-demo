@@ -17,9 +17,7 @@ public class QuestionDTOMapper implements IDTOMapper<QuestionDTO, Question> {
         QuestionDTO dto = new QuestionDTO();
 
         dto.setId(question.getId());
-        //dto.setTitle(question.getTitle());
         dto.setLink(question.getLink());
-        //dto.setLevel(question.getLevel().name());
 
         return dto;
     }
@@ -39,9 +37,7 @@ public class QuestionDTOMapper implements IDTOMapper<QuestionDTO, Question> {
         Question question = new Question();
 
         question.setId(dto.getId());
-        //question.setTitle(dto.getTitle());
         question.setLink(dto.getLink());
-        //question.setLevel(Level.valueOf(dto.getLevel()));
 
         return question;
     }

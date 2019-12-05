@@ -9,4 +9,6 @@ public interface ApplicationConstant {
     int DEFAULT_PAGE_SIZE = 5;
 
     String LEVEL_PARAMETER = "level";
+
+    int SUPPORTED_LOCALES = 2;
 }

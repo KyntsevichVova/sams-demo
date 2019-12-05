@@ -1,37 +1,25 @@
 package com.sams.demo.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "LOCALE")
 @Table(name = "LOCALE")
 @Data
+@EqualsAndHashCode(of = {"id", "code"}, callSuper = false)
+@ToString(of = {"id", "code"})
 public class Locale extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "LOCALE_ID", nullable = false)
-    private Long localeId;
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "LOCALE_CODE", nullable = false)
-    private Code code;
-
-    @OneToMany(mappedBy = "locale")
-    @JsonIgnore
-    private List<LevelLocalized> levelLocalizedList;
-
-    @OneToMany(mappedBy = "locale")
-    @JsonIgnore
-    private List<Title> titleList;
-
-    public enum Code {
-
-        EN,
-        RU
-    }
-
+    private String code;
 }

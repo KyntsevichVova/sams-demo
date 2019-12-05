@@ -1,16 +1,20 @@
 package com.sams.demo.model.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
-
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "QUESTION")
 @Table(name = "QUESTION")
 @Data
+@EqualsAndHashCode(of = {"id", "link", "level"}, callSuper = false)
+@ToString(of = {"id", "link", "level"})
 public class Question extends BaseEntity {
 
     @Id
@@ -22,10 +26,9 @@ public class Question extends BaseEntity {
     private String link;
 
     @ManyToOne
-    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "LEVEL_ID")
+    @JoinColumn(name = "LEVEL_ID")
     private LevelCon level;
 
-    @OneToMany(mappedBy = "question")
-    private List<Title> titleList;
-
+    @OneToMany(mappedBy = "question", cascade = ALL)
+    private List<Title> titles;
 }

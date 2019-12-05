@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.Locale;
+
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -63,9 +65,11 @@ public class QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity createQuestion(@RequestBody @Valid QuestionDTO questionDTO) {
+    public ResponseEntity createQuestion(
+            @RequestBody @Valid QuestionDTO questionDTO,
+            Locale locale) throws SamsDemoException {
 
-        questionService.save(questionDTOMapper.mapToEntity(questionDTO));
+        questionService.save(questionDTO, locale.toLanguageTag());
 
         return ResponseBuilder
                 .empty()
@@ -76,9 +80,10 @@ public class QuestionController {
     @PutMapping("/{questionId}")
     public ResponseEntity<SamsDemoResponse<QuestionDTO>> updateQuestion(
             @PathVariable(name = "questionId") Long questionId,
-            @RequestBody @Valid QuestionDTO questionDTO) throws SamsDemoException {
+            @RequestBody @Valid QuestionDTO questionDTO,
+            Locale locale) throws SamsDemoException {
 
-        Question question = questionService.update(questionId, questionDTO);
+        Question question = questionService.update(questionId, questionDTO, locale.toLanguageTag());
 
         return ResponseBuilder
                 .<QuestionDTO, Question>success()

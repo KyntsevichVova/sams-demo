@@ -8,4 +8,6 @@ public interface ErrorCode {
     String ID_MISSING = "id.missing";
     String ACCESS_DATABASE_ERROR = "access.database.error";
     String ENTITY_NOT_FOUND = "entity.not.found";
+
+    String LOCALE_NOT_SUPPORTED = "locale.not.supported";
 }
