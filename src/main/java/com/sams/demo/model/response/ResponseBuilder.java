@@ -45,6 +45,14 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
         return new ResponseBuilder();
     }
 
+    public ResponseBuilder<DTO, ENTITY> withPageData(Page<DTO> page) {
+
+        this.response.setData(page.getContent());
+        this.response.setTotal(page.getTotalElements());
+
+        return this;
+    }
+
     public ResponseBuilder<DTO, ENTITY> withPageData(Page<ENTITY> page, IDTOMapper<DTO, ENTITY> mapper) {
 
         this.response.setData(mapper.mapToDTOList(page.getContent()));

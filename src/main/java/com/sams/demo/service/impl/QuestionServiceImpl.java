@@ -1,6 +1,7 @@
 package com.sams.demo.service.impl;
 
-import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.dto.CreateQuestionDTO;
+import com.sams.demo.model.dto.ReadQuestionDTO;
 import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -25,13 +26,13 @@ public class QuestionServiceImpl implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final LevelConRepository levelConRepository;
 
-    private IDTOMapper<QuestionDTO, Question> questionDTOMapper;
+    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
 
     @Autowired
     public QuestionServiceImpl(
             QuestionRepository questionRepository,
             LevelConRepository levelConRepository,
-            IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
+            IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper) {
 
         this.questionRepository = questionRepository;
         this.levelConRepository = levelConRepository;
@@ -39,9 +40,9 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Page<Question> findAll(String level, Pageable pageable) {
+    public Page<ReadQuestionDTO> findAll(String level, String locale, Pageable pageable) {
 
-        return questionRepository.findAll(level, pageable);
+        return questionRepository.findAll(level, locale, pageable);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     @Transactional
-    public void save(QuestionDTO questionDTO, String locale) throws SamsDemoException {
+    public void save(CreateQuestionDTO questionDTO, String locale) throws SamsDemoException {
 
         LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
 
@@ -90,7 +91,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Question update(Long questionId, QuestionDTO questionDTO, String locale) throws SamsDemoException {
+    public Question update(Long questionId, CreateQuestionDTO questionDTO, String locale) throws SamsDemoException {
 
         Question question = findById(questionId);
 

@@ -1,6 +1,7 @@
 package com.sams.demo.controller;
 
-import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.dto.CreateQuestionDTO;
+import com.sams.demo.model.dto.ReadQuestionDTO;
 import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.Locale;
 
 import static java.util.Collections.singletonList;
@@ -27,38 +27,39 @@ public class QuestionController {
 
     private IQuestionService questionService;
 
-    private IDTOMapper<QuestionDTO, Question> questionDTOMapper;
+    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
 
     @Autowired
     public QuestionController(IQuestionService questionService,
-                              IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
+                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper) {
 
         this.questionService = questionService;
         this.questionDTOMapper = questionDTOMapper;
     }
 
     @GetMapping
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAllQuestions(
+    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> findAllQuestions(
             @Level String level,
+            Locale locale,
             Pageable pageable) {
 
-        Page<Question> page = questionService.findAll(level, pageable);
+        Page<ReadQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
-                .withPageData(page, questionDTOMapper)
+                .<ReadQuestionDTO, Question>success()
+                .withPageData(page)
                 .withHttpStatus(OK)
                 .build();
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findQuestionById(
+    public ResponseEntity<SamsDemoResponse<CreateQuestionDTO>> findQuestionById(
             @PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
 
         Question question = questionService.findById(questionId);
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
+                .<CreateQuestionDTO, Question>success()
                 .withData(singletonList(question), questionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
@@ -66,7 +67,7 @@ public class QuestionController {
 
     @PostMapping
     public ResponseEntity createQuestion(
-            @RequestBody @Valid QuestionDTO questionDTO,
+            @RequestBody @Valid CreateQuestionDTO questionDTO,
             Locale locale) throws SamsDemoException {
 
         questionService.save(questionDTO, locale.toLanguageTag());
@@ -78,15 +79,15 @@ public class QuestionController {
     }
 
     @PutMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> updateQuestion(
+    public ResponseEntity<SamsDemoResponse<CreateQuestionDTO>> updateQuestion(
             @PathVariable(name = "questionId") Long questionId,
-            @RequestBody @Valid QuestionDTO questionDTO,
+            @RequestBody @Valid CreateQuestionDTO questionDTO,
             Locale locale) throws SamsDemoException {
 
         Question question = questionService.update(questionId, questionDTO, locale.toLanguageTag());
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
+                .<CreateQuestionDTO, Question>success()
                 .withData(singletonList(question), questionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
