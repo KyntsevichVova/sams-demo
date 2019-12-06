@@ -39,7 +39,8 @@ function QuestionEdit({ match }) {
         headers.append('Accept-Language', locale.full);
         
         API.get({
-            url: `${questionId}`
+            url: `${questionId}`,
+            headers: headers
         }).then((response) => {
             if (response.ok) {
                 response.json().then((value) => {
