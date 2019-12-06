@@ -11,3 +11,14 @@ export const FILTERS = [
 ];
 
 export const PAGE_SIZES = [5, 10, 25, 50];
+
+export const LOCALE = {
+    EN: {
+        full: 'en-US',
+        short: 'en'
+    },
+    RU: {
+        full: 'ru-RU',
+        short: 'ru'
+    }
+};

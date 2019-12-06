@@ -6,9 +6,11 @@ import PaginationNav from '../PaginationNav/PaginationNav';
 import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { QUESTIONS_ENDPOINT, FILTERS, PAGE_SIZES } from '../../lib/Constraints';
+import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
 import { Trans } from 'react-i18next';
+import { API } from '../../lib/API';
+import LocaleContext from '../../contexts/LocaleContext';
 
 function usePageNumber() {
     const dispatchPageParams = React.useContext(PageDispatch);
@@ -43,23 +45,10 @@ function useFilter() {
     }, [dispatchPageParams]);
 }
 
-function buildRequest(params) {
-    let paramsArray = [];
-
-    const entries = Object.entries(params);
-
-    for (const [key, value] of entries) {
-        if (value !== null && value !== undefined) {
-            paramsArray.push(`${key}=${encodeURI(value)}`);
-        }
-    }
-
-    return paramsArray ? `?${paramsArray.join('&')}` : '';
-}
-
 function Main({ pageNumber, pageSize, filter }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
+    const locale = React.useContext(LocaleContext);
 
     const setPageNumberCallback = usePageNumber();
     const setPageSizeCallback = usePageSize();
@@ -72,7 +61,10 @@ function Main({ pageNumber, pageSize, filter }) {
             level: filter === 'all' ? null : filter
         };
 
-        fetch(`${QUESTIONS_ENDPOINT}${buildRequest(params)}`)
+        let headers = new Headers();
+        headers.append('Accept-Language', locale.full);
+
+        API.get({ params: params, headers: headers })
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
@@ -81,7 +73,7 @@ function Main({ pageNumber, pageSize, filter }) {
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, filter, setPageNumberCallback, forceUpdate]);
+    }, [pageNumber, pageSize, filter, setPageNumberCallback, forceUpdate, locale.full]);
 
     const filterAside = React.useMemo(() => {
         return (
@@ -114,7 +106,6 @@ function Main({ pageNumber, pageSize, filter }) {
                 <Trans i18nKey="entries.showing" ns="table">
                     Showing {{firstOnPage}} to {{lastOnPage}} of {{totalElements}} entries
                 </Trans>
-                {/*`Showing ${firstOnPage} to ${lastOnPage} of ${totalElements} entries`*/}
             </span>
 
             {paginationNav}
@@ -122,13 +113,12 @@ function Main({ pageNumber, pageSize, filter }) {
     );
 
     const deleteCallback = React.useCallback((questionId) => {
-        fetch(`${QUESTIONS_ENDPOINT}/${questionId}`, {
-            method: 'DELETE'
-        }).then((response) => {
-            if (response.ok) {
-                setForceUpdate(!forceUpdate);
-            }
-        });
+        API.delete({ url: `${questionId}` })
+            .then((response) => {
+                if (response.ok) {
+                    setForceUpdate(!forceUpdate);
+                }
+            });
     }, [forceUpdate]);
 
     return (
