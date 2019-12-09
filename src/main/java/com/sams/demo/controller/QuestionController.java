@@ -1,6 +1,7 @@
 package com.sams.demo.controller;
 
 import com.sams.demo.model.dto.CreateQuestionDTO;
+import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.dto.ReadQuestionDTO;
 import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.error.exception.SamsDemoException;
@@ -28,39 +29,42 @@ public class QuestionController {
     private IQuestionService questionService;
 
     private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
+    private IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper;
 
     @Autowired
     public QuestionController(IQuestionService questionService,
-                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper) {
+                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper,
+                              IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper) {
 
         this.questionService = questionService;
         this.questionDTOMapper = questionDTOMapper;
+        this.readQuestionDTOMapper = readQuestionDTOMapper;
     }
 
     @GetMapping
-    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> findAllQuestions(
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findAllQuestions(
             @Level String level,
             Locale locale,
             Pageable pageable) {
 
-        Page<ReadQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
+        Page<ReadAllQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
 
         return ResponseBuilder
-                .<ReadQuestionDTO, Question>success()
+                .<ReadAllQuestionDTO, Question>success()
                 .withPageData(page)
                 .withHttpStatus(OK)
                 .build();
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<CreateQuestionDTO>> findQuestionById(
+    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> findQuestionById(
             @PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
 
         Question question = questionService.findById(questionId);
 
         return ResponseBuilder
-                .<CreateQuestionDTO, Question>success()
-                .withData(singletonList(question), questionDTOMapper)
+                .<ReadQuestionDTO, Question>success()
+                .withData(singletonList(question), readQuestionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
     }

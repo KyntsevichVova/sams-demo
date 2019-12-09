@@ -1,7 +1,7 @@
 package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.CreateQuestionDTO;
-import com.sams.demo.model.dto.ReadQuestionDTO;
+import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -40,7 +40,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Page<ReadQuestionDTO> findAll(String level, String locale, Pageable pageable) {
+    public Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable) {
 
         return questionRepository.findAll(level, locale, pageable);
     }
