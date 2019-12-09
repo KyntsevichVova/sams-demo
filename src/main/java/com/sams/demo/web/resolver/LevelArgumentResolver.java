@@ -1,6 +1,6 @@
 package com.sams.demo.web.resolver;
 
-import com.sams.demo.model.entity.LevelCon.LevelType;
+import com.sams.demo.model.enums.LevelType;
 import com.sams.demo.web.annotation.Level;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

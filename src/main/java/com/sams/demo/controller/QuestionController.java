@@ -71,10 +71,9 @@ public class QuestionController {
 
     @PostMapping
     public ResponseEntity createQuestion(
-            @RequestBody @Valid CreateQuestionDTO questionDTO,
-            Locale locale) throws SamsDemoException {
+            @RequestBody @Valid CreateQuestionDTO questionDTO) throws SamsDemoException {
 
-        questionService.save(questionDTO, locale.toLanguageTag());
+        questionService.save(questionDTO);
 
         return ResponseBuilder
                 .empty()

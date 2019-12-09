@@ -1,7 +1,7 @@
 package com.sams.demo.repository;
 
 import com.sams.demo.model.entity.LevelCon;
-import com.sams.demo.model.entity.LevelCon.LevelType;
+import com.sams.demo.model.enums.LevelType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

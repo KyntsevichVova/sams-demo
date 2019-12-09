@@ -1,5 +1,6 @@
 package com.sams.demo.model.entity;
 
+import com.sams.demo.model.enums.LevelType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -28,11 +29,4 @@ public class LevelCon extends BaseEntity {
 
     @OneToMany(mappedBy = "level")
     private List<LevelLocalized> localizedLevels;
-
-    public enum LevelType {
-
-        JUNIOR,
-        MIDDLE,
-        SENIOR
-    }
 }

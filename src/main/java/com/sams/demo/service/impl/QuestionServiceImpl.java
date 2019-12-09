@@ -72,13 +72,13 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     @Transactional
-    public void save(CreateQuestionDTO questionDTO, String locale) throws SamsDemoException {
+    public void save(CreateQuestionDTO questionDTO) throws SamsDemoException {
 
         LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
 
         Title title = new Title();
         title.setTitle(questionDTO.getTitle());
-        title.setLocale(findRequiredLocale(level, locale));
+        title.setLocale(findRequiredLocale(level, questionDTO.getLocale().getValue()));
         title.setId(new TitleId());
         title.getId().setLocaleId(title.getLocale().getId());
 

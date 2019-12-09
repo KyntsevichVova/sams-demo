@@ -13,7 +13,7 @@ public interface IQuestionService {
 
     Question findById(Long questionId) throws SamsDemoException;
 
-    void save(CreateQuestionDTO questionDTO, String locale) throws SamsDemoException;
+    void save(CreateQuestionDTO questionDTO) throws SamsDemoException;
 
     Question update(Long questionId, CreateQuestionDTO questionDTO, String locale) throws SamsDemoException;
 

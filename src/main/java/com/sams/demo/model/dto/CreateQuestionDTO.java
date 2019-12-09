@@ -1,6 +1,7 @@
 package com.sams.demo.model.dto;
 
-import com.sams.demo.model.entity.LevelCon.LevelType;
+import com.sams.demo.model.enums.LevelType;
+import com.sams.demo.model.enums.LocaleEnum;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -24,5 +25,9 @@ public class CreateQuestionDTO extends BaseDTO {
     @NotBlank(message = FIELD_EMPTY)
     private String link;
 
+    @NotNull(message = FIELD_MISSING)
+    private LocaleEnum locale;
+
+    @NotNull(message = FIELD_MISSING)
     private LevelType level;
 }
