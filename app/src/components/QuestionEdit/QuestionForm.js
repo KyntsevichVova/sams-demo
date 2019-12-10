@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { LEVELS } from '../../lib/Constraints';
 
 function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
-    const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: ""});
+    const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: LEVELS[0].filter});
     const { t } = useTranslation('forms');
     
     const changeHandler = (event) => {
@@ -17,20 +18,24 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
 
     return (
         <div className="d-flex flex-column">
-            <div className="form-group">
-                <label htmlFor="question-title">
-                    { t('label.question.title') }
-                </label>
-
-                <input 
-                    type="text" 
-                    className="form-control" 
-                    id="question-title" 
-                    placeholder={ t('placeholder.question.title') } 
-                    value={question.title}
-                    name="title"
-                    onChange={changeHandler}
-                />
+            <div className="input-group my-3">
+                <div className="btn-group btn-group-toggle" id="question-level">
+                    {LEVELS.map((level) => {
+                        const isActive = level.filter === question.level;
+                        return (
+                            <button 
+                                type="button"
+                                className={`btn${isActive ? " btn-primary" : ""}`}
+                                name="level"
+                                value={level.filter}
+                                onClick={changeHandler}
+                                key={level.filter}
+                            >
+                                { t(`level.${level.text}`) }
+                            </button>   
+                        );
+                    })}
+                </div>
             </div>
 
             <div className="form-group">
@@ -50,17 +55,33 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
             </div>
 
             <div className="form-group">
-                <label htmlFor="question-level">
-                    { t('label.question.level') }
+                <label htmlFor="question-title">
+                    { t('label.question.title') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
-                    id="question-level" 
-                    placeholder={ t('placeholder.question.level') }
-                    value={question.level}
-                    name="level"
+                    id="question-title" 
+                    placeholder={ t('placeholder.question.title') } 
+                    value={question.title}
+                    name="title"
+                    onChange={changeHandler}
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="question-title">
+                    { t('label.question.title') }
+                </label>
+
+                <input 
+                    type="text" 
+                    className="form-control" 
+                    id="question-title" 
+                    placeholder={ t('placeholder.question.title') } 
+                    value={question.title}
+                    name="title"
                     onChange={changeHandler}
                 />
             </div>

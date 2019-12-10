@@ -1,5 +1,5 @@
 import React from 'react';
-import QuestionForm from '../QuestionForm/QuestionForm';
+import QuestionForm from './QuestionForm';
 import { Redirect } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API } from '../../lib/API';
