@@ -25,5 +25,11 @@
             "answerLink": "Enter URL",
             "level": "Enter question level"
         }
+    },
+
+    "level": {
+        "junior": "Junior",
+        "middle": "Middle",
+        "senior": "Senior"
     }
 }
