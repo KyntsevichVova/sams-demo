@@ -2,19 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LEVELS } from '../../lib/Constraints';
 
-function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
-    const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: LEVELS[0].filter});
+function QuestionForm({ okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
+    const [question, setQuestion] = React.useState({title: "", link: "", level: LEVELS[0].filter});
     const { t } = useTranslation('forms');
     
     const changeHandler = (event) => {
         setQuestion({...question, [event.target.name]: event.target.value})
     };
-
-    React.useEffect(() => {
-        if (initState) {
-            setQuestion(initState);
-        }
-    }, [initState]);
 
     return (
         <div className="d-flex flex-column">
@@ -56,14 +50,14 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
 
             <div className="form-group">
                 <label htmlFor="question-title">
-                    { t('label.question.title') }
+                    { t('label.question.title.common') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
                     id="question-title" 
-                    placeholder={ t('placeholder.question.title') } 
+                    placeholder={ t('placeholder.question.title.common') } 
                     value={question.title}
                     name="title"
                     onChange={changeHandler}

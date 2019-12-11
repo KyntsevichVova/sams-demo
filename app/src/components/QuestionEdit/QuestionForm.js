@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { LEVELS } from '../../lib/Constraints';
 
 function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
-    const [question, setQuestion] = React.useState(initState || {title: "", link: "", level: LEVELS[0].filter});
+    const [question, setQuestion] = React.useState(initState || {titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter});
     const { t } = useTranslation('forms');
     
     const changeHandler = (event) => {
-        setQuestion({...question, [event.target.name]: event.target.value})
+        setQuestion({...question, [event.target.name]: event.target.value});
     };
 
     React.useEffect(() => {
@@ -55,33 +55,33 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
             </div>
 
             <div className="form-group">
-                <label htmlFor="question-title">
-                    { t('label.question.title') }
+                <label htmlFor="question-titleEn">
+                    { t('label.question.title.en') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
-                    id="question-title" 
-                    placeholder={ t('placeholder.question.title') } 
+                    id="question-titleEn" 
+                    placeholder={ t('placeholder.question.title.en') } 
                     value={question.title}
-                    name="title"
+                    name="titleEn"
                     onChange={changeHandler}
                 />
             </div>
 
             <div className="form-group">
-                <label htmlFor="question-title">
-                    { t('label.question.title') }
+                <label htmlFor="question-titleRu">
+                    { t('label.question.title.ru') }
                 </label>
 
                 <input 
                     type="text" 
                     className="form-control" 
-                    id="question-title" 
-                    placeholder={ t('placeholder.question.title') } 
+                    id="question-titleRu" 
+                    placeholder={ t('placeholder.question.title.ru') } 
                     value={question.title}
-                    name="title"
+                    name="titleRu"
                     onChange={changeHandler}
                 />
             </div>

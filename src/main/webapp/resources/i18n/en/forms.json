@@ -13,7 +13,11 @@
 
     "label": {
         "question": {
-            "title": "Question",
+            "title": {
+                "common": "English title",
+                "en": "English title",
+                "ru": "Russian title"
+            },
             "answerLink": "Link to answer",
             "level": "Question level"
         }
@@ -21,7 +25,11 @@
 
     "placeholder": {
         "question": {
-            "title": "Enter question",
+            "title": {
+                "common": "Enter english title",
+                "en": "Enter english title",
+                "ru": "Enter russian title"
+            },
             "answerLink": "Enter URL",
             "level": "Enter question level"
         }
