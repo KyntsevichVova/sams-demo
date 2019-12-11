@@ -5,10 +5,6 @@ import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.mapper.IDTOMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 @Component
 public class QuestionDTOMapper implements IDTOMapper<CreateQuestionDTO, Question> {
 
@@ -20,15 +16,6 @@ public class QuestionDTOMapper implements IDTOMapper<CreateQuestionDTO, Question
         dto.setLink(question.getLink());
 
         return dto;
-    }
-
-    @Override
-    public List<CreateQuestionDTO> mapToDTOList(List<Question> questionList) {
-
-        return questionList
-                .stream()
-                .map(this::mapToDTO)
-                .collect(toList());
     }
 
     @Override

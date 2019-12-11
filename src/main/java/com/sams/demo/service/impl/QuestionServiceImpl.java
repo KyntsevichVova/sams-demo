@@ -72,7 +72,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     @Transactional
-    public void save(CreateQuestionDTO questionDTO) throws SamsDemoException {
+    public Question save(CreateQuestionDTO questionDTO) throws SamsDemoException {
 
         LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
 
@@ -87,7 +87,7 @@ public class QuestionServiceImpl implements IQuestionService {
         question.setTitles(singletonList(title));
         title.setQuestion(question);
 
-        questionRepository.save(question);
+        return questionRepository.save(question);
     }
 
     @Override

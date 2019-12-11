@@ -1,5 +1,6 @@
 package com.sams.demo.model.dto;
 
+import com.sams.demo.model.enums.LocaleEnum;
 import lombok.*;
 
 @Data
@@ -10,5 +11,5 @@ import lombok.*;
 public class ReadTitleDTO extends BaseDTO {
 
     private String title;
-    private String locale;
+    private LocaleEnum locale;
 }

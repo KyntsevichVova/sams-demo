@@ -6,9 +6,12 @@ import com.sams.demo.model.error.ErrorMessage;
 import com.sams.demo.model.mapper.IDTOMapper;
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static com.sams.demo.model.response.enums.ResponseStatus.FAILURE;
@@ -18,12 +21,15 @@ import static com.sams.demo.model.response.enums.ResponseStatus.SUCCESS;
 public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
     private SamsDemoResponse<DTO> response;
+    private HttpHeaders headers;
     private HttpStatus httpStatus;
 
     private ResponseBuilder() {
+        this.headers = new HttpHeaders();
     }
 
     private ResponseBuilder(SamsDemoResponse<DTO> response) {
+        this();
         this.response = response;
     }
 
@@ -76,6 +82,20 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
         return this;
     }
 
+    public ResponseBuilder withLocation(String path, Long id) {
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentServletMapping()
+                .path(path)
+                .build()
+                .expand(id)
+                .toUri();
+
+        this.headers.setLocation(location);
+
+        return this;
+    }
+
     public ResponseBuilder<DTO, ENTITY> withHttpStatus(HttpStatus httpStatus) {
 
         this.httpStatus = httpStatus;
@@ -85,6 +105,6 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
     public ResponseEntity<SamsDemoResponse<DTO>> build() {
 
-        return new ResponseEntity<>(response, httpStatus);
+        return  new ResponseEntity<>(this.response, this.headers, this.httpStatus);
     }
 }

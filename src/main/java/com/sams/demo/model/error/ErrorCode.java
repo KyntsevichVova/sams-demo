@@ -10,4 +10,5 @@ public interface ErrorCode {
     String ENTITY_NOT_FOUND = "entity.not.found";
 
     String LOCALE_NOT_SUPPORTED = "locale.not.supported";
+    String PROCESS_LOCALE_ERROR = "process.locale.error";
 }

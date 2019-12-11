@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Locale;
 
+import static com.sams.demo.common.ApplicationConstant.QUESTION_ENTITY_LOCATION;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -73,10 +74,11 @@ public class QuestionController {
     public ResponseEntity createQuestion(
             @RequestBody @Valid CreateQuestionDTO questionDTO) throws SamsDemoException {
 
-        questionService.save(questionDTO);
+        Question question = questionService.save(questionDTO);
 
         return ResponseBuilder
                 .empty()
+                .withLocation(QUESTION_ENTITY_LOCATION, question.getId())
                 .withHttpStatus(CREATED)
                 .build();
     }

@@ -11,4 +11,6 @@ public interface ApplicationConstant {
     String LEVEL_PARAMETER = "level";
 
     int SUPPORTED_LOCALES = 2;
+
+    String QUESTION_ENTITY_LOCATION = "/api/v1/questions/{questionId}";
 }

@@ -25,8 +25,7 @@ public class ReadQuestionDTOMapper implements IDTOMapper<ReadQuestionDTO, Questi
 
         dto.setId(entity.getId());
         dto.setLink(entity.getLink());
-        //TODO enum or localized value ?
-        dto.setLevel(entity.getLevel().getType().name());
+        dto.setLevel(entity.getLevel().getType());
         dto.setTitles(titleDTOMapper.mapToDTOList(entity.getTitles()));
 
         return dto;
