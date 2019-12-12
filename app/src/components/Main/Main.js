@@ -113,13 +113,16 @@ function Main({ pageNumber, pageSize, filter }) {
     );
 
     const deleteCallback = React.useCallback((questionId) => {
-        API.delete({ url: `${questionId}` })
+        let headers = new Headers();
+        headers.append('Accept-Language', locale.full);
+
+        API.delete({ url: `${questionId}`, headers: headers })
             .then((response) => {
                 if (response.ok) {
                     setForceUpdate(!forceUpdate);
                 }
             });
-    }, [forceUpdate]);
+    }, [forceUpdate, locale.full]);
 
     return (
         <main className="d-flex flex-row justify-content-start pt-3">

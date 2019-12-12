@@ -3,6 +3,7 @@ package com.sams.demo.controller;
 import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.dto.ReadQuestionDTO;
+import com.sams.demo.model.dto.UpdateQuestionDTO;
 import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -86,10 +87,9 @@ public class QuestionController {
     @PutMapping("/{questionId}")
     public ResponseEntity<SamsDemoResponse<CreateQuestionDTO>> updateQuestion(
             @PathVariable(name = "questionId") Long questionId,
-            @RequestBody @Valid CreateQuestionDTO questionDTO,
-            Locale locale) throws SamsDemoException {
+            @RequestBody @Valid UpdateQuestionDTO questionDTO) throws SamsDemoException {
 
-        Question question = questionService.update(questionId, questionDTO, locale.toLanguageTag());
+        Question question = questionService.update(questionId, questionDTO);
 
         return ResponseBuilder
                 .<CreateQuestionDTO, Question>success()

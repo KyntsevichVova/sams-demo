@@ -1,7 +1,7 @@
 package com.sams.demo.model.mapper.impl;
 
 import com.sams.demo.model.dto.ReadQuestionDTO;
-import com.sams.demo.model.dto.ReadTitleDTO;
+import com.sams.demo.model.dto.TitleDTO;
 import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.entity.Title;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReadQuestionDTOMapper implements IDTOMapper<ReadQuestionDTO, Question> {
 
-    private IDTOMapper<ReadTitleDTO, Title> titleDTOMapper;
+    private IDTOMapper<TitleDTO, Title> titleDTOMapper;
 
     @Autowired
-    public ReadQuestionDTOMapper(IDTOMapper<ReadTitleDTO, Title> titleDTOMapper) {
+    public ReadQuestionDTOMapper(IDTOMapper<TitleDTO, Title> titleDTOMapper) {
         this.titleDTOMapper = titleDTOMapper;
     }
 

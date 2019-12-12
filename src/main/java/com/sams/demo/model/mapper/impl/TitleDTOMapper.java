@@ -1,6 +1,6 @@
 package com.sams.demo.model.mapper.impl;
 
-import com.sams.demo.model.dto.ReadTitleDTO;
+import com.sams.demo.model.dto.TitleDTO;
 import com.sams.demo.model.entity.Title;
 import com.sams.demo.model.mapper.IDTOMapper;
 import org.springframework.stereotype.Component;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import static com.sams.demo.model.enums.LocaleEnum.fromCode;
 
 @Component
-public class ReadTitleDTOMapper implements IDTOMapper<ReadTitleDTO, Title> {
+public class TitleDTOMapper implements IDTOMapper<TitleDTO, Title> {
 
     @Override
-    public ReadTitleDTO mapToDTO(Title entity) {
+    public TitleDTO mapToDTO(Title entity) {
 
-        ReadTitleDTO dto = new ReadTitleDTO();
+        TitleDTO dto = new TitleDTO();
 
         dto.setTitle(entity.getTitle());
         dto.setLocale(fromCode(entity.getLocale().getCode()));
@@ -22,7 +22,7 @@ public class ReadTitleDTOMapper implements IDTOMapper<ReadTitleDTO, Title> {
     }
 
     @Override
-    public Title mapToEntity(ReadTitleDTO entity) {
+    public Title mapToEntity(TitleDTO entity) {
         return null;
     }
 }

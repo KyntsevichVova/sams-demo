@@ -64,7 +64,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     className="form-control" 
                     id="question-titleEn" 
                     placeholder={ t('placeholder.question.title.en') } 
-                    value={question.title}
+                    value={question.titleEn}
                     name="titleEn"
                     onChange={changeHandler}
                 />
@@ -80,7 +80,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     className="form-control" 
                     id="question-titleRu" 
                     placeholder={ t('placeholder.question.title.ru') } 
-                    value={question.title}
+                    value={question.titleRu}
                     name="titleRu"
                     onChange={changeHandler}
                 />

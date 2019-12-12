@@ -2,6 +2,8 @@ package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.dto.ReadAllQuestionDTO;
+import com.sams.demo.model.dto.TitleDTO;
+import com.sams.demo.model.dto.UpdateQuestionDTO;
 import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -91,31 +93,18 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Question update(Long questionId, CreateQuestionDTO questionDTO, String locale) throws SamsDemoException {
+    @Transactional
+    public Question update(Long questionId, UpdateQuestionDTO questionDTO) throws SamsDemoException {
 
         Question question = findById(questionId);
 
-        Optional<Title> existingTitle = question.getTitles()
-                .stream()
-                .filter(title -> title.getLocale().getCode().equals(locale))
-                .findFirst();
+        LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
 
-        if (existingTitle.isPresent()) {
+        questionDTO.getTitles()
+                .forEach(titleDTO -> updateTitle(question, titleDTO));
 
-            Title title = existingTitle.get();
-            title.setTitle(questionDTO.getTitle());
-
-        } else {
-
-            Title title = new Title();
-            title.setTitle(questionDTO.getTitle());
-            title.setLocale(findRequiredLocale(question.getLevel(), locale));
-            title.setId(new TitleId());
-            title.getId().setLocaleId(title.getLocale().getId());
-            title.getId().setQuestionId(question.getId());
-            question.getTitles().add(title);
-            title.setQuestion(question);
-        }
+        question.setLink(questionDTO.getLink());
+        question.setLevel(level);
 
         questionRepository.save(question);
 
@@ -141,6 +130,32 @@ public class QuestionServiceImpl implements IQuestionService {
             return optionalLocale.get();
         } else {
             throw badRequestException(LOCALE_NOT_SUPPORTED, locale);
+        }
+    }
+
+    private void updateTitle(Question question, TitleDTO titleDTO) {
+
+        Optional<Title> existingTitle = question.getTitles()
+                .stream()
+                .filter(title -> title.getLocale().getCode().equals(titleDTO.getLocale().getValue()))
+                .findFirst();
+
+        if (existingTitle.isPresent()) {
+
+            Title title = existingTitle.get();
+            title.setTitle(titleDTO.getTitle());
+
+        } else {
+
+            Title title = new Title();
+            title.setTitle(titleDTO.getTitle());
+            title.setLocale(findRequiredLocale(question.getLevel(), titleDTO.getLocale().getValue()));
+            title.setId(new TitleId());
+            title.getId().setLocaleId(title.getLocale().getId());
+            title.getId().setQuestionId(question.getId());
+            question.getTitles().add(title);
+            title.setQuestion(question);
+
         }
     }
 }

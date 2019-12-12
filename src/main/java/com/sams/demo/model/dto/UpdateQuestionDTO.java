@@ -10,9 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class ReadQuestionDTO extends BaseDTO {
+public class UpdateQuestionDTO extends BaseDTO {
 
-    private Long id;
     private String link;
     private LevelType level;
     private List<TitleDTO> titles;

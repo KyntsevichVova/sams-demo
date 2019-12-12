@@ -16,6 +16,7 @@ function QuestionEdit({ match }) {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept-Language', locale.full);
+
         let body = {
             link: question.link,
             level: question.level,
@@ -58,12 +59,19 @@ function QuestionEdit({ match }) {
         }).then((response) => {
             if (response.ok) {
                 response.json().then((value) => {
+                    let data = value.data[0];
+                    let filterRu = data.titles.filter((value) => value.locale === "RU");
+                    let filterEn = data.titles.filter((value) => value.locale === "EN");
+                    let titleRu = (filterRu && filterRu[0] && filterRu[0].title) || "";
+                    let titleEn = (filterEn && filterEn[0] && filterEn[0].title) || "";
+
                     let question = {
-                        link: value.data[0].link,
-                        level: value.data[0].level,
-                        titleRu: value.data[0].titles[0],
-                        titleEn: value.data[0].titles[1]
+                        link: data.link,
+                        level: data.level,
+                        titleRu: titleRu,
+                        titleEn: titleEn
                     };
+                    
                     setQuestion(question);
                 });
             }

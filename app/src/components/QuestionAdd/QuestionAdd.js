@@ -15,16 +15,21 @@ function QuestionAdd() {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept-Language', locale.full);
 
+        let body = {
+            ...question,
+            locale: locale.short.toUpperCase()
+        };
+
         API.post({ 
             headers: headers,
-            body: JSON.stringify(question)
+            body: JSON.stringify(body)
         }).then((response) => {
             if (response.ok) {
                 setShouldRedirect(true);
             }
         });
 
-    }, [locale.full]);
+    }, [locale.full, locale.short]);
 
     const cancelCallback = React.useCallback(() => {
         setShouldRedirect(true);

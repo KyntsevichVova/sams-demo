@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class ReadTitleDTO extends BaseDTO {
+public class TitleDTO extends BaseDTO {
 
     private String title;
     private LocaleEnum locale;
