@@ -1,6 +1,9 @@
 package com.sams.demo.controller;
 
-import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.dto.CreateQuestionDTO;
+import com.sams.demo.model.dto.ReadAllQuestionDTO;
+import com.sams.demo.model.dto.ReadQuestionDTO;
+import com.sams.demo.model.dto.UpdateQuestionDTO;
 import com.sams.demo.model.entity.Question;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.mapper.IDTOMapper;
@@ -15,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Locale;
 
+import static com.sams.demo.common.ApplicationConstant.QUESTION_ENTITY_LOCATION;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -25,64 +30,70 @@ public class QuestionController {
 
     private IQuestionService questionService;
 
-    private IDTOMapper<QuestionDTO, Question> questionDTOMapper;
+    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
+    private IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper;
 
     @Autowired
     public QuestionController(IQuestionService questionService,
-                              IDTOMapper<QuestionDTO, Question> questionDTOMapper) {
+                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper,
+                              IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper) {
 
         this.questionService = questionService;
         this.questionDTOMapper = questionDTOMapper;
+        this.readQuestionDTOMapper = readQuestionDTOMapper;
     }
 
     @GetMapping
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findAllQuestions(
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findAllQuestions(
             @Level String level,
+            Locale locale,
             Pageable pageable) {
 
-        Page<Question> page = questionService.findAll(level, pageable);
+        Page<ReadAllQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
-                .withPageData(page, questionDTOMapper)
+                .<ReadAllQuestionDTO, Question>success()
+                .withPageData(page)
                 .withHttpStatus(OK)
                 .build();
     }
 
     @GetMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> findQuestionById(
+    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> findQuestionById(
             @PathVariable(name = "questionId") Long questionId) throws SamsDemoException {
 
         Question question = questionService.findById(questionId);
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
-                .withData(singletonList(question), questionDTOMapper)
+                .<ReadQuestionDTO, Question>success()
+                .withData(singletonList(question), readQuestionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
     }
 
     @PostMapping
-    public ResponseEntity createQuestion(@RequestBody @Valid QuestionDTO questionDTO) {
+    public ResponseEntity createQuestion(
+            @RequestBody @Valid CreateQuestionDTO questionDTO) throws SamsDemoException {
 
-        questionService.save(questionDTOMapper.mapToEntity(questionDTO));
+        Question question = questionService.save(questionDTO);
 
         return ResponseBuilder
                 .empty()
+                .withLocation(QUESTION_ENTITY_LOCATION, question.getId())
                 .withHttpStatus(CREATED)
                 .build();
     }
 
     @PutMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<QuestionDTO>> updateQuestion(
+    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> updateQuestion(
             @PathVariable(name = "questionId") Long questionId,
-            @RequestBody @Valid QuestionDTO questionDTO) throws SamsDemoException {
+            @RequestBody @Valid UpdateQuestionDTO questionDTO) throws SamsDemoException {
 
         Question question = questionService.update(questionId, questionDTO);
 
         return ResponseBuilder
-                .<QuestionDTO, Question>success()
-                .withData(singletonList(question), questionDTOMapper)
+                .<ReadQuestionDTO, Question>success()
+                .withData(singletonList(question), readQuestionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
     }

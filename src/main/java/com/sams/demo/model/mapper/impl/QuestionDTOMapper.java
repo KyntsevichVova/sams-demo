@@ -1,48 +1,29 @@
 package com.sams.demo.model.mapper.impl;
 
-import com.sams.demo.model.dto.QuestionDTO;
+import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.entity.Question;
-import com.sams.demo.model.entity.Question.Level;
 import com.sams.demo.model.mapper.IDTOMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
-public class QuestionDTOMapper implements IDTOMapper<QuestionDTO, Question> {
+public class QuestionDTOMapper implements IDTOMapper<CreateQuestionDTO, Question> {
 
     @Override
-    public QuestionDTO mapToDTO(Question question) {
+    public CreateQuestionDTO mapToDTO(Question question) {
 
-        QuestionDTO dto = new QuestionDTO();
+        CreateQuestionDTO dto = new CreateQuestionDTO();
 
-        dto.setId(question.getId());
-        dto.setTitle(question.getTitle());
         dto.setLink(question.getLink());
-        dto.setLevel(question.getLevel().name());
 
         return dto;
     }
 
     @Override
-    public List<QuestionDTO> mapToDTOList(List<Question> questionList) {
-
-        return questionList
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Question mapToEntity(QuestionDTO dto) {
+    public Question mapToEntity(CreateQuestionDTO dto) {
 
         Question question = new Question();
 
-        question.setId(dto.getId());
-        question.setTitle(dto.getTitle());
         question.setLink(dto.getLink());
-        question.setLevel(Level.valueOf(dto.getLevel()));
 
         return question;
     }

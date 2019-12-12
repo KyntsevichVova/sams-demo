@@ -1,28 +1,35 @@
 import React from 'react';
-import QuestionForm from '../QuestionForm/QuestionForm';
-import { QUESTIONS_ENDPOINT } from '../../lib/Constraints';
+import QuestionForm from './QuestionForm';
 import { Redirect } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { API } from '../../lib/API';
+import LocaleContext from '../../contexts/LocaleContext';
 
 function QuestionAdd() {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const { t } = useTranslation('forms');
+    const locale = React.useContext(LocaleContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
-        
-        fetch(`${QUESTIONS_ENDPOINT}`, {
-            method: 'POST',
-            body: JSON.stringify(question),
-            headers: headers
+        headers.append('Accept-Language', locale.full);
+
+        let body = {
+            ...question,
+            locale: locale.short.toUpperCase()
+        };
+
+        API.post({ 
+            headers: headers,
+            body: JSON.stringify(body)
         }).then((response) => {
             if (response.ok) {
                 setShouldRedirect(true);
             }
         });
 
-    }, []);
+    }, [locale.full, locale.short]);
 
     const cancelCallback = React.useCallback(() => {
         setShouldRedirect(true);

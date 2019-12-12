@@ -4,8 +4,9 @@ import './App.css';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
-import { PAGE_SIZES, FILTERS } from '../../lib/Constraints';
+import { PAGE_SIZES, FILTERS, LOCALE } from '../../lib/Constraints';
 import PageDispatch from '../../contexts/PageDispatch';
+import LocaleContext from '../../contexts/LocaleContext';
 import flag_russia from '../../flag_russia.png';
 import flag_uk from '../../flag_uk.png';
 import '../../lib/i18n';
@@ -32,9 +33,11 @@ function pageReducer(state, action) {
 
 function App() {
     const [state, dispatch] = React.useReducer(pageReducer, initialState);
+    const [locale, setLocale] = React.useState(LOCALE.EN);
     const { t, i18n } = useTranslation();
-    const changeLang = (lng) => {
-        i18n.changeLanguage(lng);
+    const changeLang = (locale) => {
+        i18n.changeLanguage(locale.short);
+        setLocale(locale);
     };
 
     return (
@@ -46,17 +49,17 @@ function App() {
                     <div className="d-flex flex-row justify-content-end">
                         <img 
                             src={ flag_russia } 
-                            className={`cursor-pointer${i18n.languages[0] !== 'ru' ? " opaque-5" : ""}`}
-                            alt="ru" 
-                            onClick={()=>{changeLang('ru')}}
+                            className={`cursor-pointer${i18n.languages[0] !== LOCALE.RU.short ? " opaque-5" : ""}`}
+                            alt={ LOCALE.RU.full } 
+                            onClick={ ()=>{changeLang(LOCALE.RU)} }
                             height="48"
                             width="48"
                         />
                         <img 
                             src={ flag_uk } 
-                            className={`cursor-pointer${i18n.languages[0] !== 'en' ? " opaque-5" : ""}`}
-                            alt="en" 
-                            onClick={()=>{changeLang('en')}}
+                            className={`cursor-pointer${i18n.languages[0] !== LOCALE.EN.short ? " opaque-5" : ""}`}
+                            alt={ LOCALE.EN.full } 
+                            onClick={ ()=>{changeLang(LOCALE.EN)} }
                             height="48"
                             width="48"
                         />
@@ -65,24 +68,26 @@ function App() {
 
                 <div className="content">
                     <PageDispatch.Provider value={dispatch}>
-                        <Switch>
-                            <Route path="/add">
-                                <QuestionAdd />
-                            </Route>
+                        <LocaleContext.Provider value={locale}>
+                            <Switch>
+                                <Route path="/add">
+                                    <QuestionAdd />
+                                </Route>
 
-                            <Route 
-                                path="/edit/:questionId" 
-                                component={QuestionEdit}
-                            />
-
-                            <Route exact path="/">
-                                <Main 
-                                    pageNumber={state.pageNumber}
-                                    pageSize={state.pageSize}
-                                    filter={state.filter}
+                                <Route 
+                                    path="/edit/:questionId" 
+                                    component={QuestionEdit}
                                 />
-                            </Route>
-                        </Switch>
+
+                                <Route exact path="/">
+                                    <Main 
+                                        pageNumber={state.pageNumber}
+                                        pageSize={state.pageSize}
+                                        filter={state.filter}
+                                    />
+                                </Route>
+                            </Switch>
+                        </LocaleContext.Provider>
                     </PageDispatch.Provider>
                 </div>
 

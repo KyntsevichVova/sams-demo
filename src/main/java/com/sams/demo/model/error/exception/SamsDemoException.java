@@ -19,14 +19,14 @@ public class SamsDemoException extends RuntimeException {
         this.errorMessageParams = errorMessageParams;
     }
 
-    public static SamsDemoException badRequestException(String message) {
+    public static SamsDemoException badRequestException(String message, String... errorMessageParams) {
 
-        return new SamsDemoException(message, BAD_REQUEST);
+        return new SamsDemoException(message, BAD_REQUEST, errorMessageParams);
     }
 
-    public static SamsDemoException internalServerException(String message) {
+    public static SamsDemoException internalServerException(String message, String... errorMessageParams) {
 
-        return new SamsDemoException(message, INTERNAL_SERVER_ERROR);
+        return new SamsDemoException(message, INTERNAL_SERVER_ERROR, errorMessageParams);
     }
 
     public static SamsDemoException entityNotFoundException(String message, String... errorMessageParams) {

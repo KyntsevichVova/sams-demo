@@ -1,0 +1,33 @@
+package com.sams.demo.model.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.Optional;
+
+import static com.sams.demo.model.error.ErrorCode.PROCESS_LOCALE_ERROR;
+import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
+import static java.util.stream.Stream.of;
+
+@Getter
+@AllArgsConstructor
+public enum LocaleEnum {
+
+    EN("en-US"),
+    RU("ru-RU");
+
+    private String value;
+
+    public static LocaleEnum fromCode(String code) {
+
+        Optional<LocaleEnum> locale = of(LocaleEnum.values())
+                .filter(le -> le.value.equalsIgnoreCase(code))
+                .findAny();
+
+        if (locale.isPresent()) {
+            return locale.get();
+        } else {
+            throw internalServerException(PROCESS_LOCALE_ERROR, code);
+        }
+    }
+}
