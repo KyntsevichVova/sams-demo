@@ -85,15 +85,15 @@ public class QuestionController {
     }
 
     @PutMapping("/{questionId}")
-    public ResponseEntity<SamsDemoResponse<CreateQuestionDTO>> updateQuestion(
+    public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> updateQuestion(
             @PathVariable(name = "questionId") Long questionId,
             @RequestBody @Valid UpdateQuestionDTO questionDTO) throws SamsDemoException {
 
         Question question = questionService.update(questionId, questionDTO);
 
         return ResponseBuilder
-                .<CreateQuestionDTO, Question>success()
-                .withData(singletonList(question), questionDTOMapper)
+                .<ReadQuestionDTO, Question>success()
+                .withData(singletonList(question), readQuestionDTOMapper)
                 .withHttpStatus(OK)
                 .build();
     }
