@@ -17,4 +17,6 @@ public interface ErrorCode {
     String LEVEL_TYPE_INVALID = "level.invalid";
 
     String UNEXPECTED_ERROR = "unexpected.error";
+
+    String USER_EXISTS = "user.exists";
 }

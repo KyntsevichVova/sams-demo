@@ -23,7 +23,7 @@ import static com.sams.demo.model.error.exception.SamsDemoException.*;
 import static java.util.Collections.singletonList;
 
 @Service
-public class QuestionServiceImpl implements IQuestionService {
+public class QuestionService implements IQuestionService {
 
     private final QuestionRepository questionRepository;
     private final LevelConRepository levelConRepository;
@@ -31,7 +31,7 @@ public class QuestionServiceImpl implements IQuestionService {
     private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
 
     @Autowired
-    public QuestionServiceImpl(
+    public QuestionService(
             QuestionRepository questionRepository,
             LevelConRepository levelConRepository,
             IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper) {
