@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.9.RELEASE</version>
+		<version>2.2.2.RELEASE</version>
 	</parent>
 
 	<groupId>com.sams</groupId>
@@ -19,6 +19,13 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<lombok.version>1.18.10</lombok.version>
+		<commons.version>3.9</commons.version>
+		<maven.compiler.version>3.8.1</maven.compiler.version>
+		<maven.frontend.version>1.8.0</maven.frontend.version>
+		<node.version>v10.16.3</node.version>
+		<maven.war.version>3.2.3</maven.war.version>
+		<maven.tomcat7.version>2.2</maven.tomcat7.version>
 	</properties>
 
 	<dependencies>
@@ -54,13 +61,13 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.10</version>
+			<version>${lombok.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.9</version>
+			<version>${commons.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -73,7 +80,7 @@
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven.compiler.version}</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -83,7 +90,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.8.0</version>
+				<version>${maven.frontend.version}</version>
 				<configuration>
 					<workingDirectory>./app</workingDirectory>
 				</configuration>
@@ -95,7 +102,7 @@
 						</goals>
 						<phase>generate-sources</phase>
 						<configuration>
-							<nodeVersion>v10.16.3</nodeVersion>
+							<nodeVersion>${node.version}</nodeVersion>
 						</configuration>
 					</execution>
 					<execution>
@@ -122,7 +129,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.2.3</version>
+				<version>${maven.war.version}</version>
 				<configuration>
 					<webResources>
 						<resource>
@@ -136,9 +143,9 @@
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
+				<version>${maven.tomcat7.version}</version>
 				<configuration>
-					<url>http://localhost:8085/manager/text</url>
+					<url>http://localhost:8080/manager/text</url>
 					<server>demoServer</server>
 					<path>/demo</path>
 					<update>true</update>

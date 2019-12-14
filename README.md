@@ -10,7 +10,7 @@ Questions can be filtered by interview level (e.g. Junior). Question repository 
 
 - Java 8.191
 - MySQL 8.0.13
-- Spring Boot 2.1.9
+- Spring Boot 2.2.2
 - Tomcat 8.5
 - NodeJS 10.16.3
 - ReactJS 16.12
@@ -31,7 +31,7 @@ You have to create database schema and populate it, you can do it by running SQL
 
 ### Tomcat
 
-Make sure you have an instance of Tomcat8 (or compatible with tomcat7-maven-plugin) running on `localhost:8085` 
+Make sure you have an instance of Tomcat8 (or compatible with tomcat7-maven-plugin) running on `localhost:8080` 
 (could be changed in `pom.xml`). Provide valid credentials in Maven `settings.xml` for server `demoServer` and Tomcat 
 user with `manager-gui,manager-script` roles. <br />
 
@@ -39,7 +39,7 @@ Deployment can be done by running `mvn tomcat7:redeploy` command or by placing b
 
 ### App
 
-If everything was done correctly then you should see the app running on `localhost:8085/demo`.
+If everything was done correctly then you should see the app running on `localhost:8080/demo`.
 
 ## Planned features
 
