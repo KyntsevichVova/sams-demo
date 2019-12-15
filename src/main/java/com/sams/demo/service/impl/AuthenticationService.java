@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,11 +25,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.List;
 
 import static com.sams.demo.model.enums.Role.USER;
+import static com.sams.demo.model.error.ErrorCode.USER_EMAIL_NOT_FOUND_ERROR;
 import static com.sams.demo.model.error.ErrorCode.USER_EXISTS;
+import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class AuthenticationService implements IAuthenticationService {
@@ -58,8 +63,17 @@ public class AuthenticationService implements IAuthenticationService {
         if (user == null) {
             throw new UsernameNotFoundException("ERROR!!!!!!!!!!!!!!!!!!!!11");
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-                new ArrayList<>());
+
+        List<GrantedAuthority> authorities = user.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole().getRole().name()))
+                .collect(toList());;
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .authorities(authorities)
+                .build();
     }
 
     @Override
@@ -67,7 +81,7 @@ public class AuthenticationService implements IAuthenticationService {
     public User signUp(AuthenticationManager authenticationManager, SignUpRequest signUpRequest) throws SamsDemoException {
 
         if(userRepository.findByEmail(signUpRequest.getEmail()) != null) {
-            throw SamsDemoException.badRequestException(USER_EXISTS, signUpRequest.getEmail());
+            throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
         }
 
         RoleCon role = roleConRepository.findByRole(USER);
@@ -109,13 +123,31 @@ public class AuthenticationService implements IAuthenticationService {
                             signInRequest.getEmail(),
                             signInRequest.getPassword()));
 
-        return new SignInResponse(jwtTokenProvider.generateToken(authentication));
+        User user = null;
+        if (authentication.isAuthenticated()) {
+            user = userRepository.findByEmail(signInRequest.getEmail());
+        }
+
+        if (user == null) {
+            throw badRequestException(USER_EMAIL_NOT_FOUND_ERROR, signInRequest.getEmail());
+        }
+
+        return new SignInResponse(jwtTokenProvider.generateToken(authentication, user));
     }
 
     @Override
     public String signIn(AuthenticationManager authenticationManager) {
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(authentication.getName());
+
+        if (user == null) {
+            throw badRequestException(USER_EMAIL_NOT_FOUND_ERROR, authentication.getName());
+        }
+
         return jwtTokenProvider.generateToken(
-                SecurityContextHolder.getContext().getAuthentication());
+                SecurityContextHolder.getContext().getAuthentication(), user);
     }
 }

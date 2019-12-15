@@ -22,4 +22,5 @@ public interface ErrorCode {
     String UNEXPECTED_ERROR = "unexpected.error";
 
     String USER_EXISTS = "user.exists";
+    String USER_EMAIL_NOT_FOUND_ERROR = "user.email.not.found.error";
 }

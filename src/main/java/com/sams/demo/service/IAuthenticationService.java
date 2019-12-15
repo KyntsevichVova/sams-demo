@@ -4,14 +4,17 @@ import com.sams.demo.model.dto.security.SignInRequest;
 import com.sams.demo.model.dto.security.SignInResponse;
 import com.sams.demo.model.dto.security.SignUpRequest;
 import com.sams.demo.model.entity.User;
+import com.sams.demo.model.error.exception.SamsDemoException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface IAuthenticationService extends UserDetailsService {
 
-    User signUp(AuthenticationManager authenticationManager, SignUpRequest signUpRequest);
+    User signUp(AuthenticationManager authenticationManager,
+                SignUpRequest signUpRequest) throws SamsDemoException;
 
-    SignInResponse signIn(AuthenticationManager authenticationManager, SignInRequest signInRequest);
+    SignInResponse signIn(AuthenticationManager authenticationManager,
+                          SignInRequest signInRequest) throws SamsDemoException;
 
-    String signIn(AuthenticationManager authenticationManager);
+    String signIn(AuthenticationManager authenticationManager) throws SamsDemoException;
 }
