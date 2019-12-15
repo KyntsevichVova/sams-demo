@@ -13,4 +13,6 @@ public interface ApplicationConstant {
     int SUPPORTED_LOCALES = 2;
 
     String QUESTION_ENTITY_LOCATION = "/api/v1/questions/{questionId}";
+
+    String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 }

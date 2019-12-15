@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import static com.sams.demo.model.error.ErrorCode.*;
 
@@ -22,10 +23,12 @@ public class CreateQuestionDTO extends BaseDTO {
 
     @NotNull(message = FIELD_MISSING)
     @NotBlank(message = FIELD_EMPTY)
+    @Size(min = 3, max = 255, message = FIELD_INVALID_LENGTH)
     private String title;
 
     @NotNull(message = FIELD_MISSING)
     @NotBlank(message = FIELD_EMPTY)
+    @Size(min = 3, max = 255, message = FIELD_INVALID_LENGTH)
     private String link;
 
     @NotNull(message = FIELD_MISSING)

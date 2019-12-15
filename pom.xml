@@ -21,6 +21,7 @@
 		<java.version>1.8</java.version>
 		<lombok.version>1.18.10</lombok.version>
 		<commons.version>3.9</commons.version>
+		<jjwt.version>0.9.1</jjwt.version>
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.frontend.version>1.8.0</maven.frontend.version>
 		<node.version>v10.16.3</node.version>
@@ -78,7 +79,7 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>${jjwt.version}</version>
 		</dependency>
 
 	</dependencies>

@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.Locale;
 
+import static com.sams.demo.model.error.ErrorCode.FIELD_INVALID_LENGTH;
 import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_ERROR;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -94,7 +96,11 @@ public class ErrorHandler {
 
             String message = messageSource.getMessage(
                     fe.getDefaultMessage(),
-                    new String [] {fe.getField()},
+                    FIELD_INVALID_LENGTH.equalsIgnoreCase(fe.getDefaultMessage())
+                    ? new String [] {
+                            requireNonNull(fe.getArguments())[2].toString(),
+                            requireNonNull(fe.getArguments())[1].toString()}
+                    : new String [] {fe.getField()},
                     locale);
 
             errorMessage.setField(fe.getField());

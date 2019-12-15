@@ -100,7 +100,8 @@ public class QuestionService implements IQuestionService {
 
         LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
 
-        questionDTO.getTitles()
+        questionDTO
+                .getTitles()
                 .forEach(titleDTO -> updateTitle(question, titleDTO));
 
         question.setLink(questionDTO.getLink());
@@ -155,7 +156,6 @@ public class QuestionService implements IQuestionService {
             title.getId().setQuestionId(question.getId());
             question.getTitles().add(title);
             title.setQuestion(question);
-
         }
     }
 }

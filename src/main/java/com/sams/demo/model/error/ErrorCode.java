@@ -5,6 +5,9 @@ public interface ErrorCode {
     String FIELD_MISSING = "field.missing";
     String FIELD_EMPTY = "field.empty";
     String FIELD_INVALID_VALUE = "field.invalid.value";
+    String FIELD_INVALID_LENGTH = "field.invalid.length";
+
+    String EMAIL_NOT_VALID = "email.not.valid";
 
     String ID_MISSING = "id.missing";
     String ACCESS_DATABASE_ERROR = "access.database.error";

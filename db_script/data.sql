@@ -1,3 +1,16 @@
+INSERT INTO `USER` (USER_ID, EMAIL, USERNAME, PASSWORD) VALUES
+(1, 'admin@demo.com', 'admin', '$2a$10$q.rsGmyzGmivHMCZ6ngZTOeTsZyyREffk/iARcK97BUx9TtQ1AxxG');
+
+INSERT INTO ROLE (ROLE_ID, ROLE) VALUES
+(1, 'USER'),
+(2, 'ADMIN'),
+(3, 'TRANSLATOR'),
+(4, 'MODERATOR');
+
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES
+(1, 1),
+(1, 2);
+
 INSERT INTO LOCALE (LOCALE_ID, LOCALE_CODE) VALUES
 (1, 'en-US'),
 (2, 'ru-RU');
@@ -11,7 +24,7 @@ INSERT INTO LEVEL_LOCALIZED (LEVEL_ID, LOCALE_ID, LEVEL_LOCALIZED) VALUES
 (1, 1, 'Junior'),
 (1, 2, 'Джуниор'),
 (2, 1, 'Middle'),
-(2, 2, 'Миддл'),
+(2, 2, 'Мидл'),
 (3, 1, 'Senior'),
 (3, 2, 'Сеньор');
 
