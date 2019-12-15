@@ -6,7 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity(name = "LEVEL_LOCALIZED")
+@Entity
 @Table(name = "LEVEL_LOCALIZED")
 @Data
 @EqualsAndHashCode(of = {"levelLocalized"}, callSuper = false)

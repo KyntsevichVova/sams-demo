@@ -3,15 +3,21 @@ package com.sams.demo.controller;
 import com.sams.demo.model.dto.security.SignInRequest;
 import com.sams.demo.model.dto.security.SignInResponse;
 import com.sams.demo.model.dto.security.SignUpRequest;
+import com.sams.demo.model.entity.User;
 import com.sams.demo.model.error.exception.SamsDemoException;
+import com.sams.demo.model.response.ResponseBuilder;
 import com.sams.demo.service.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+
+import static com.sams.demo.common.ApplicationConstant.USER_ENTITY_LOCATION;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 public class LoginController {
@@ -29,9 +35,16 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public void signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws SamsDemoException {
+    public ResponseEntity signUp(@RequestBody @Valid SignUpRequest signUpRequest) throws SamsDemoException {
 
-        authenticationService.signUp(signUpRequest);
+        User user = authenticationService.signUp(authenticationManager, signUpRequest);
+
+        return ResponseBuilder
+                .empty()
+                .withLocation(USER_ENTITY_LOCATION, user.getId())
+                .withAuthorization(authenticationService.signIn(authenticationManager))
+                .withHttpStatus(CREATED)
+                .build();
     }
 
     @PostMapping("/signin")

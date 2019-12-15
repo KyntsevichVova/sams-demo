@@ -96,6 +96,13 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
         return this;
     }
 
+    public ResponseBuilder withAuthorization(String token) {
+
+        this.headers.setBearerAuth(token);
+
+        return this;
+    }
+
     public ResponseBuilder<DTO, ENTITY> withHttpStatus(HttpStatus httpStatus) {
 
         this.httpStatus = httpStatus;

@@ -10,7 +10,7 @@ import java.util.List;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "QUESTION")
+@Entity
 @Table(name = "QUESTION")
 @Data
 @EqualsAndHashCode(of = {"id", "link", "level"}, callSuper = false)

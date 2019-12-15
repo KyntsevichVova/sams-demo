@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface IAuthenticationService extends UserDetailsService {
 
-    User signUp(SignUpRequest signUpRequest);
+    User signUp(AuthenticationManager authenticationManager, SignUpRequest signUpRequest);
 
     SignInResponse signIn(AuthenticationManager authenticationManager, SignInRequest signInRequest);
+
+    String signIn(AuthenticationManager authenticationManager);
 }

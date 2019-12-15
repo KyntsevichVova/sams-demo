@@ -24,11 +24,11 @@ public class SignUpRequest {
 
     @NotNull(message = FIELD_MISSING)
     @NotBlank(message = FIELD_EMPTY)
-    @Size(min = 3, max = 50, message = FIELD_INVALID_LENGTH)
+    @Size(min = 3, max = 255, message = FIELD_INVALID_LENGTH)
     private String username;
 
     @NotNull(message = FIELD_MISSING)
     @NotBlank(message = FIELD_EMPTY)
-    @Size(min = 3, max = 50, message = FIELD_INVALID_LENGTH)
+    @Size(min = 3, max = 255, message = FIELD_INVALID_LENGTH)
     private String password;
 }

@@ -3,10 +3,12 @@ package com.sams.demo.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "USER")
+@Entity
 @Table(name = "USER")
 @Data
 @NoArgsConstructor
@@ -24,9 +26,12 @@ public class User extends BaseEntity {
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
-    @Column(name = "USER_NAME", nullable = false)
+    @Column(name = "USERNAME", nullable = false)
     private String username;
 
     @Column(name = "PASSWORD", nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private List<UserRole> roles;
 }
