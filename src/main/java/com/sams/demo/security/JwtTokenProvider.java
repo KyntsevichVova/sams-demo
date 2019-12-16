@@ -3,6 +3,7 @@ package com.sams.demo.security;
 import com.sams.demo.model.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,31 +47,28 @@ public class JwtTokenProvider {
                 .build()
                 .toString();
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_ROLES, roles);
-        claims.put(CLAIM_METADATA, getEncoder().encodeToString(metadata.getBytes()));
+        Map<String, Object> claimsMap = new HashMap<>();
+        claimsMap.put(CLAIM_ROLES, roles);
+        claimsMap.put(CLAIM_METADATA, getEncoder().encodeToString(metadata.getBytes()));
 
-        /*SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secret);
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());*/
+        Claims claims = new DefaultClaims(claimsMap);
+        claims.setSubject(user.getEmail());
 
         return Jwts.builder()
-                .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(currentTimeMillis() + expiration))
                 .setClaims(claims)
                 .signWith(HS512, getEncoder().encodeToString(secret.getBytes()))
-                //.signWith(HS512, secret)
-                //.signWith(signatureAlgorithm, signingKey)
                 .compact();
     }
 
-    public Long getUserIdFromJWT(String token) {
+    public String getUserEmail(String token) {
+
         Claims claims = Jwts.parser()
                 .setSigningKey(getEncoder().encodeToString(secret.getBytes()))
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
 }

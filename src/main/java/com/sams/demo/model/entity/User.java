@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -32,6 +33,6 @@ public class User extends BaseEntity {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = ALL)
+    @OneToMany(fetch = EAGER, mappedBy = "user", cascade = ALL)
     private List<UserRole> roles;
 }

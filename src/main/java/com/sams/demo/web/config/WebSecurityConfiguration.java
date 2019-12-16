@@ -3,6 +3,7 @@ package com.sams.demo.web.config;
 import com.sams.demo.security.JwtTokenProvider;
 import com.sams.demo.service.IAuthenticationService;
 import com.sams.demo.web.filter.AuthenticationFilter;
+import com.sams.demo.web.filter.SkipUriFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private SkipUriFilter skipUriFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,7 +46,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationFilter authenticationFilter() {
-        return new AuthenticationFilter(authenticationService, jwtTokenProvider);
+        return new AuthenticationFilter(
+                authenticationService, jwtTokenProvider, skipUriFilter);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers(GET, "/api/v1/questions").permitAll()
-                    .antMatchers("/signin", "/signup").permitAll()
+                    .antMatchers("/signup", "/signin").permitAll()
                     .antMatchers("/api/v1/**").authenticated()
             .and()
                 .sessionManagement()

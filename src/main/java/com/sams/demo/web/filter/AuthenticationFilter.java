@@ -1,6 +1,7 @@
 package com.sams.demo.web.filter;
 
 import com.sams.demo.security.JwtTokenProvider;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+@AllArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
+
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private UserDetailsService userDetailsService;
     private JwtTokenProvider jwtTokenProvider;
-
-    public AuthenticationFilter(
-            UserDetailsService userDetailsService,
-            JwtTokenProvider jwtTokenProvider) {
-
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private SkipUriFilter skipUriFilter;
 
     @Override
     protected void doFilterInternal(
@@ -33,23 +33,33 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse httpServletResponse,
             FilterChain filterChain) throws ServletException, IOException {
 
-        final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
+        RequestWrapper requestWrapper =
+                new RequestWrapper(httpServletRequest, httpServletResponse);
 
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+        if (skipUriFilter.skipUriCheck(requestWrapper)) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } else {
 
-            jwtTokenProvider.getUserIdFromJWT(requestTokenHeader.replace("Bearer ", ""));
+            String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername("email");
+            if (isNotBlank(authorizationHeader)
+                    && authorizationHeader.startsWith(BEARER_PREFIX)) {
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                    = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                String email = jwtTokenProvider
+                        .getUserEmail(authorizationHeader.replace(BEARER_PREFIX, ""));
 
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                usernamePasswordAuthenticationToken
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
-
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
