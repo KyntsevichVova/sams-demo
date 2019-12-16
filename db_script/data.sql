@@ -1,5 +1,8 @@
 INSERT INTO `USER` (USER_ID, EMAIL, USERNAME, PASSWORD) VALUES
-(1, 'admin@demo.com', 'admin', '$2a$10$q.rsGmyzGmivHMCZ6ngZTOeTsZyyREffk/iARcK97BUx9TtQ1AxxG');
+(1, 'user@demo.com', 'user', '$2a$10$7aRvnzdG99xiIRpQsrJSl.Nifpd2mj4XwJT5xaoelp09Yyz5mrvKy'),
+(2, 'admin@demo.com', 'admin', '$2a$10$q.rsGmyzGmivHMCZ6ngZTOeTsZyyREffk/iARcK97BUx9TtQ1AxxG'),
+(3, 'translator@demo.com', 'translator', '$2a$10$PuKiF.IfL6bRmBDWI2MRO.xsx0Og.K23/rxdlEwUzZObS/MM12G.2'),
+(4, 'moderator@demo.com', 'moderator', '$2a$10$8U9EMfXR2vyzm.buo02uUes7zKYbRfb6nzs1iJshICOvHiEvqkyNO');
 
 INSERT INTO ROLE (ROLE_ID, ROLE) VALUES
 (1, 'USER'),
@@ -9,7 +12,12 @@ INSERT INTO ROLE (ROLE_ID, ROLE) VALUES
 
 INSERT INTO USER_ROLE (USER_ID, ROLE_ID) VALUES
 (1, 1),
-(1, 2);
+(2, 1),
+(2, 2),
+(3, 1),
+(3, 3),
+(4, 1),
+(4, 4);
 
 INSERT INTO LOCALE (LOCALE_ID, LOCALE_CODE) VALUES
 (1, 'en-US'),

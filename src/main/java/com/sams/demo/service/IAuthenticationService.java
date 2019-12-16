@@ -1,7 +1,6 @@
 package com.sams.demo.service;
 
 import com.sams.demo.model.dto.security.SignInRequest;
-import com.sams.demo.model.dto.security.SignInResponse;
 import com.sams.demo.model.dto.security.SignUpRequest;
 import com.sams.demo.model.entity.User;
 import com.sams.demo.model.error.exception.SamsDemoException;
@@ -13,8 +12,8 @@ public interface IAuthenticationService extends UserDetailsService {
     User signUp(AuthenticationManager authenticationManager,
                 SignUpRequest signUpRequest) throws SamsDemoException;
 
-    SignInResponse signIn(AuthenticationManager authenticationManager,
-                          SignInRequest signInRequest) throws SamsDemoException;
+    String signIn(AuthenticationManager authenticationManager,
+                  SignInRequest signInRequest) throws SamsDemoException;
 
     String signIn(AuthenticationManager authenticationManager) throws SamsDemoException;
 }

@@ -1,5 +1,6 @@
 package com.sams.demo.web.config;
 
+import com.sams.demo.security.JwtTokenProvider;
 import com.sams.demo.service.IAuthenticationService;
 import com.sams.demo.web.filter.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private IAuthenticationService authenticationService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,7 +42,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationFilter authenticationFilter() {
-        return new AuthenticationFilter(authenticationService);
+        return new AuthenticationFilter(authenticationService, jwtTokenProvider);
     }
 
     @Override

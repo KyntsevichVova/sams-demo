@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.Locale;
 
-import static com.sams.demo.model.error.ErrorCode.FIELD_INVALID_LENGTH;
-import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_ERROR;
+import static com.sams.demo.model.error.ErrorCode.*;
+import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -53,6 +54,12 @@ public class ErrorHandler {
                 .withErrorMessage(errors)
                 .withHttpStatus(BAD_REQUEST)
                 .build();
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity handle(BadCredentialsException ex, Locale locale) {
+
+        return handle(badRequestException(BAD_CREDENTIALS_ERROR), locale);
     }
 
     @ExceptionHandler(SamsDemoException.class)

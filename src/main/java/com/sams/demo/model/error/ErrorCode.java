@@ -20,7 +20,9 @@ public interface ErrorCode {
     String LEVEL_TYPE_INVALID = "level.invalid";
 
     String UNEXPECTED_ERROR = "unexpected.error";
+    String UNEXPECTED_AUTHENTICATION_ERROR = "unexpected.authentication.error";
 
     String USER_EXISTS = "user.exists";
-    String USER_EMAIL_NOT_FOUND_ERROR = "user.email.not.found.error";
+
+    String BAD_CREDENTIALS_ERROR = "bad.credentials.error";
 }

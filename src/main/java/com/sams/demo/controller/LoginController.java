@@ -1,7 +1,6 @@
 package com.sams.demo.controller;
 
 import com.sams.demo.model.dto.security.SignInRequest;
-import com.sams.demo.model.dto.security.SignInResponse;
 import com.sams.demo.model.dto.security.SignUpRequest;
 import com.sams.demo.model.entity.User;
 import com.sams.demo.model.error.exception.SamsDemoException;
@@ -18,6 +17,7 @@ import javax.validation.Valid;
 
 import static com.sams.demo.common.ApplicationConstant.USER_ENTITY_LOCATION;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 public class LoginController {
@@ -48,8 +48,12 @@ public class LoginController {
     }
 
     @PostMapping("/signin")
-    public SignInResponse signIn(@RequestBody @Valid SignInRequest signInRequest) throws SamsDemoException {
+    public ResponseEntity signIn(@RequestBody @Valid SignInRequest signInRequest) throws SamsDemoException {
 
-        return authenticationService.signIn(authenticationManager, signInRequest);
+        return ResponseBuilder
+                .empty()
+                .withAuthorization(authenticationService.signIn(authenticationManager, signInRequest))
+                .withHttpStatus(OK)
+                .build();
     }
 }

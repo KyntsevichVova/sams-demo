@@ -1,7 +1,6 @@
 package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.security.SignInRequest;
-import com.sams.demo.model.dto.security.SignInResponse;
 import com.sams.demo.model.dto.security.SignUpRequest;
 import com.sams.demo.model.entity.RoleCon;
 import com.sams.demo.model.entity.User;
@@ -28,10 +27,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static com.sams.demo.model.enums.Role.USER;
-import static com.sams.demo.model.error.ErrorCode.USER_EMAIL_NOT_FOUND_ERROR;
-import static com.sams.demo.model.error.ErrorCode.USER_EXISTS;
+import static com.sams.demo.model.error.ErrorCode.*;
 import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
+import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -61,7 +61,7 @@ public class AuthenticationService implements IAuthenticationService {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new UsernameNotFoundException("ERROR!!!!!!!!!!!!!!!!!!!!11");
+            throw new UsernameNotFoundException(email);
         }
 
         List<GrantedAuthority> authorities = user.getRoles()
@@ -78,7 +78,8 @@ public class AuthenticationService implements IAuthenticationService {
 
     @Override
     @Transactional
-    public User signUp(AuthenticationManager authenticationManager, SignUpRequest signUpRequest) throws SamsDemoException {
+    public User signUp(AuthenticationManager authenticationManager,
+                       SignUpRequest signUpRequest) throws SamsDemoException {
 
         if(userRepository.findByEmail(signUpRequest.getEmail()) != null) {
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
@@ -115,8 +116,8 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     @Override
-    public SignInResponse signIn(
-            AuthenticationManager authenticationManager, SignInRequest signInRequest) {
+    public String signIn(AuthenticationManager authenticationManager,
+                         SignInRequest signInRequest) throws SamsDemoException {
 
         Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -125,14 +126,15 @@ public class AuthenticationService implements IAuthenticationService {
 
         User user = null;
         if (authentication.isAuthenticated()) {
+
             user = userRepository.findByEmail(signInRequest.getEmail());
+
+            if (user == null) {
+                throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+            }
         }
 
-        if (user == null) {
-            throw badRequestException(USER_EMAIL_NOT_FOUND_ERROR, signInRequest.getEmail());
-        }
-
-        return new SignInResponse(jwtTokenProvider.generateToken(authentication, user));
+        return jwtTokenProvider.generateToken(authentication, requireNonNull(user));
     }
 
     @Override
@@ -144,7 +146,7 @@ public class AuthenticationService implements IAuthenticationService {
         User user = userRepository.findByEmail(authentication.getName());
 
         if (user == null) {
-            throw badRequestException(USER_EMAIL_NOT_FOUND_ERROR, authentication.getName());
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
         return jwtTokenProvider.generateToken(

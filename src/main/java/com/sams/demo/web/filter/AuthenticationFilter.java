@@ -1,5 +1,6 @@
 package com.sams.demo.web.filter;
 
+import com.sams.demo.security.JwtTokenProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,10 +16,15 @@ import java.io.IOException;
 
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public AuthenticationFilter(UserDetailsService userDetailsService) {
+    public AuthenticationFilter(
+            UserDetailsService userDetailsService,
+            JwtTokenProvider jwtTokenProvider) {
+
         this.userDetailsService = userDetailsService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -30,6 +36,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+
+            jwtTokenProvider.getUserIdFromJWT(requestTokenHeader.replace("Bearer ", ""));
 
             UserDetails userDetails = userDetailsService.loadUserByUsername("email");
 
