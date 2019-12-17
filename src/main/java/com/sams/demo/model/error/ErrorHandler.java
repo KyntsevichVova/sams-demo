@@ -27,8 +27,12 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RestControllerAdvice
 public class ErrorHandler {
 
+    private final MessageSource messageSource;
+
     @Autowired
-    private MessageSource messageSource;
+    public ErrorHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity handle(HttpMessageNotReadableException ex, Locale locale) {

@@ -2,6 +2,7 @@ package com.sams.demo.security;
 
 import com.sams.demo.model.entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,16 +54,16 @@ public class JwtTokenProvider {
 
         Claims claims = new DefaultClaims(claimsMap);
         claims.setSubject(user.getEmail());
+        claims.setIssuedAt(new Date());
+        claims.setExpiration(new Date(currentTimeMillis() + expiration));
 
         return Jwts.builder()
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(currentTimeMillis() + expiration))
                 .setClaims(claims)
                 .signWith(HS512, getEncoder().encodeToString(secret.getBytes()))
                 .compact();
     }
 
-    public String getUserEmail(String token) {
+    public String getUserEmail(String token) throws ExpiredJwtException {
 
         Claims claims = Jwts.parser()
                 .setSigningKey(getEncoder().encodeToString(secret.getBytes()))

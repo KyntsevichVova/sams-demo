@@ -5,6 +5,7 @@ import com.sams.demo.service.IAuthenticationService;
 import com.sams.demo.web.filter.AuthenticationFilter;
 import com.sams.demo.web.filter.SkipUriFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private SkipUriFilter skipUriFilter;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,7 +51,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationFilter authenticationFilter() {
         return new AuthenticationFilter(
-                authenticationService, jwtTokenProvider, skipUriFilter);
+                authenticationService, jwtTokenProvider, skipUriFilter, messageSource);
     }
 
     @Override

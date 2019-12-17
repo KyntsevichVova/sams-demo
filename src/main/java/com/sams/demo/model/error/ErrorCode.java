@@ -25,4 +25,6 @@ public interface ErrorCode {
     String USER_EXISTS = "user.exists";
 
     String BAD_CREDENTIALS_ERROR = "bad.credentials.error";
+
+    String SESSION_EXPIRED = "session.expired";
 }
