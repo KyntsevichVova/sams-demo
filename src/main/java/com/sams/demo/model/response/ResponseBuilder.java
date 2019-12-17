@@ -105,6 +105,6 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
     public ResponseEntity<SamsDemoResponse<DTO>> build() {
 
-        return  new ResponseEntity<>(this.response, this.headers, this.httpStatus);
+        return new ResponseEntity<>(this.response, this.headers, this.httpStatus);
     }
 }

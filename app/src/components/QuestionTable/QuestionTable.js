@@ -62,6 +62,10 @@ function QuestionTable({ questions, deleteCallback }) {
                                 >
                                     <FontAwesomeIcon icon={["far", "trash-alt"]} />
                                 </a>
+
+                                {!question.isFullyLocalized && 
+                                    <FontAwesomeIcon icon={["fas", "exclamation-triangle"]} className="mx-2" color="red" />
+                                }
                             </td>
                         </tr>
                     );
