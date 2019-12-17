@@ -13,4 +13,6 @@ public class ReadAllQuestionDTO extends BaseDTO {
     private String title;
     private String link;
     private String level;
+    private Boolean isFullyLocalized;
+
 }

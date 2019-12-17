@@ -1,5 +1,6 @@
 package com.sams.demo.service.impl;
 
+import com.sams.demo.common.ApplicationConstant;
 import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.dto.TitleDTO;
@@ -87,6 +88,8 @@ public class QuestionServiceImpl implements IQuestionService {
         Question question = questionDTOMapper.mapToEntity(questionDTO);
         question.setLevel(level);
         question.setTitles(singletonList(title));
+        question.setIsFullyLocalized(false);
+
         title.setQuestion(question);
 
         return questionRepository.save(question);
@@ -105,6 +108,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
         question.setLink(questionDTO.getLink());
         question.setLevel(level);
+        question.setIsFullyLocalized(question.getTitles().size() == ApplicationConstant.SUPPORTED_LOCALES);
 
         questionRepository.save(question);
 
