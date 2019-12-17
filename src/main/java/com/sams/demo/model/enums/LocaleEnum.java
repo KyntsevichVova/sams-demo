@@ -2,6 +2,7 @@ package com.sams.demo.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import static com.sams.demo.model.error.ErrorCode.PROCESS_LOCALE_ERROR;
 import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
 import static java.util.stream.Stream.of;
 
+@Slf4j
 @Getter
 @AllArgsConstructor
 public enum LocaleEnum {
@@ -27,6 +29,7 @@ public enum LocaleEnum {
         if (locale.isPresent()) {
             return locale.get();
         } else {
+            log.error("Internal server exception: process locale error, code = {}", code);
             throw internalServerException(PROCESS_LOCALE_ERROR, code);
         }
     }

@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query(value = "SELECT new com.sams.demo.model.dto.ReadAllQuestionDTO( " +
-            "q.id AS id, t.title AS title, q.link AS link, ll.levelLocalized AS level) " +
+            "q.id AS id, t.title AS title, q.link AS link, " +
+            "ll.levelLocalized AS level, q.isFullyLocalized AS isFullyLocalized) " +
             "FROM Question q JOIN q.titles t JOIN q.level.localizedLevels ll " +
             "WHERE t.locale.code = :locale AND ll.locale.code = :locale " +
             "AND q.level.type LIKE COALESCE(:level, '%')")

@@ -31,4 +31,8 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question", cascade = ALL)
     private List<Title> titles;
+
+    @Column(name = "IS_FULLY_LOCALIZED", nullable = false)
+    private Boolean isFullyLocalized;
+
 }
