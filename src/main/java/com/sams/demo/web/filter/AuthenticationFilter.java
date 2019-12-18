@@ -21,10 +21,13 @@ import java.io.IOException;
 import java.util.Locale;
 
 import static com.sams.demo.model.error.ErrorCode.SESSION_EXPIRED;
+import static com.sams.demo.model.error.ErrorCode.TOKEN_MISSING;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.US;
 import static java.util.Locale.forLanguageTag;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -34,8 +37,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String BEARER_TOKEN_EXPIRED =
-            "Bearer error=\"invalid_token\", error_description=\"The token is expired.\"";
+    private static final String BEARER_TOKEN_ERROR_PATTERN = "" +
+            "Bearer error=\"invalid_token\", error_description=\"%s\"";
+    private static final String BEARER_TOKEN_EXPIRED = "The token is expired.";
+    private static final String BEARER_TOKEN_MISSING = "The token is missing.";
 
     private UserDetailsService userDetailsService;
     private JwtTokenProvider jwtTokenProvider;
@@ -52,42 +57,56 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 new RequestWrapper(httpServletRequest, httpServletResponse);
 
         if (skipUriFilter.skipUriCheck(requestWrapper)) {
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
-        } else {
-
-            String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-
-            if (isNotBlank(authorizationHeader)
-                    && authorizationHeader.startsWith(BEARER_PREFIX)) {
-
-                String email;
-
-                try {
-                    email = jwtTokenProvider.getUserEmail(authorizationHeader.replace(BEARER_PREFIX, ""));
-                } catch (ExpiredJwtException ex) {
-
-                    handleUnauthorized(httpServletRequest, httpServletResponse);
-
-                    return;
-                }
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                        = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
 
             filterChain.doFilter(httpServletRequest, httpServletResponse);
+            return;
         }
+
+        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
+
+        if (isBlank(authorizationHeader)
+                || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+
+            handleUnauthorized(
+                    httpServletRequest,
+                    httpServletResponse,
+                    TOKEN_MISSING,
+                    format(BEARER_TOKEN_ERROR_PATTERN, BEARER_TOKEN_MISSING));
+
+            return;
+        }
+
+        String email;
+        try {
+            email = jwtTokenProvider.getUserEmail(authorizationHeader.replace(BEARER_PREFIX, ""));
+        } catch (ExpiredJwtException ex) {
+
+            handleUnauthorized(
+                    httpServletRequest,
+                    httpServletResponse,
+                    SESSION_EXPIRED,
+                    format(BEARER_TOKEN_ERROR_PATTERN, BEARER_TOKEN_EXPIRED));
+
+            return;
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        usernamePasswordAuthenticationToken
+                .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private void handleUnauthorized(HttpServletRequest httpServletRequest,
-                                    HttpServletResponse httpServletResponse) throws IOException {
+                                    HttpServletResponse httpServletResponse,
+                                    String payloadMessage,
+                                    String wwwAuthenticateHeaderMessage) throws IOException {
 
         String localeHeader = httpServletRequest.getHeader(ACCEPT_LANGUAGE);
         Locale locale = isNotBlank(localeHeader)
@@ -96,7 +115,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(messageSource.getMessage(
-                SESSION_EXPIRED,
+                payloadMessage,
                 null,
                 locale));
 
@@ -110,7 +129,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         httpServletResponse.setLocale(locale);
         httpServletResponse.setCharacterEncoding(UTF_8.name());
         httpServletResponse.addHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        httpServletResponse.addHeader(WWW_AUTHENTICATE, BEARER_TOKEN_EXPIRED);
+        httpServletResponse.addHeader(WWW_AUTHENTICATE, wwwAuthenticateHeaderMessage);
         httpServletResponse.setStatus(UNAUTHORIZED.value());
         httpServletResponse.getWriter().write(response);
     }

@@ -27,4 +27,6 @@ public interface ErrorCode {
     String BAD_CREDENTIALS_ERROR = "bad.credentials.error";
 
     String SESSION_EXPIRED = "session.expired";
+
+    String TOKEN_MISSING = "token.missing";
 }
