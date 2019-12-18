@@ -7,6 +7,8 @@ public interface ErrorCode {
     String FIELD_INVALID_VALUE = "field.invalid.value";
     String FIELD_INVALID_LENGTH = "field.invalid.length";
 
+    String COLLECTION_EMPTY = "collection.empty";
+
     String EMAIL_NOT_VALID = "email.not.valid";
 
     String ID_MISSING = "id.missing";

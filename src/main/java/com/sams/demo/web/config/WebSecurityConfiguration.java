@@ -17,7 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
+import static com.sams.demo.model.enums.Role.*;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.BeanIds.AUTHENTICATION_MANAGER;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -72,7 +73,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(GET, "/api/v1/questions").permitAll()
                     .antMatchers("/signup", "/signin").permitAll()
+                    //.antMatchers("/api/v1/questions/**")
+                    //    .access(add logic allowing owner do whatever)
+                    .antMatchers(GET, "/api/v1/questions/**")
+                        .hasAnyAuthority(ADMIN.name(), TRANSLATOR.name())
+                    .antMatchers(PUT, "/api/v1/questions/**")
+                        .hasAnyAuthority(ADMIN.name(), TRANSLATOR.name())
+                    .antMatchers(DELETE, "/api/v1/questions/**")
+                        .hasAnyAuthority(ADMIN.name(), MODERATOR.name())
                     .antMatchers("/api/v1/**").authenticated()
+                    .anyRequest().authenticated()
             .and()
                 .sessionManagement()
                 .sessionCreationPolicy(STATELESS);
