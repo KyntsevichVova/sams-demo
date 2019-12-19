@@ -15,7 +15,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query(value = "SELECT new com.sams.demo.model.dto.ReadAllQuestionDTO( " +
             "q.id AS id, t.title AS title, q.link AS link, " +
             "ll.levelLocalized AS level, q.isFullyLocalized AS isFullyLocalized, " +
-            "CASE WHEN q.user.id = :userId THEN TRUE ELSE NULL END) " +
+            "CASE WHEN q.user.id = :userId THEN TRUE ELSE FALSE END) " +
             "FROM Question q JOIN q.titles t JOIN q.level.localizedLevels ll " +
             "WHERE t.locale.code = :locale AND ll.locale.code = :locale " +
             "AND q.level.type LIKE COALESCE(:level, '%')")

@@ -1,6 +1,7 @@
 package com.sams.demo.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "USER")
-//@SQLDelete(sql = "UPDATE User SET isDeleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE User SET isDeleted = true WHERE id = ?")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

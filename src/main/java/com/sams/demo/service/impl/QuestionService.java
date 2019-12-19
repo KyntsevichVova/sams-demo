@@ -56,6 +56,7 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable) {
 
         log.debug("Entered [findAll] with level = {}, locale = {}, pageable = {}", level, locale, pageable);
@@ -70,10 +71,15 @@ public class QuestionService implements IQuestionService {
             userId = ((SecurityPrincipal)authentication.getPrincipal()).getUserId();
         }
 
-        return questionRepository.findAll(level, locale, userId, pageable);
+        try {
+            return questionRepository.findAll(level, locale, userId, pageable);
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
     }
 
     @Override
+    @Transactional(readOnly = true)
     @PreAuthorize(READ_QUESTION_ACL)
     public Question findById(Long questionId) throws SamsDemoException {
 
@@ -112,7 +118,6 @@ public class QuestionService implements IQuestionService {
         log.debug("Entered [save] with questionDTO = {}", questionDTO);
 
         LevelCon level;
-
         try {
             level = levelConRepository.findByType(questionDTO.getLevel());
         } catch (Exception ex) {
@@ -154,7 +159,11 @@ public class QuestionService implements IQuestionService {
 
         log.debug("Exited [save]");
 
-        return questionRepository.save(question);
+        try {
+            return questionRepository.save(question);
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
     }
 
     @Override
@@ -166,7 +175,12 @@ public class QuestionService implements IQuestionService {
 
         Question question = findById(questionId);
 
-        LevelCon level = levelConRepository.findByType(questionDTO.getLevel());
+        LevelCon level;
+        try {
+            level = levelConRepository.findByType(questionDTO.getLevel());
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
 
         questionDTO
                 .getTitles()
@@ -176,7 +190,11 @@ public class QuestionService implements IQuestionService {
         question.setLevel(level);
         question.setIsFullyLocalized(question.getTitles().size() == ApplicationConstant.SUPPORTED_LOCALES);
 
-        questionRepository.save(question);
+        try {
+            questionRepository.save(question);
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
 
         log.debug("Exited [update] with question = {}", question);
 
