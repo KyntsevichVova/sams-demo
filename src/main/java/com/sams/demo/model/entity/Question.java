@@ -22,6 +22,10 @@ public class Question extends BaseEntity {
     @Column(name = "QUESTION_ID", nullable = false)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
     @Column(name = "LINK", nullable = false)
     private String link;
 
@@ -34,5 +38,4 @@ public class Question extends BaseEntity {
 
     @Column(name = "IS_FULLY_LOCALIZED", nullable = false)
     private Boolean isFullyLocalized;
-
 }

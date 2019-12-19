@@ -2,14 +2,12 @@ package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.security.SignInRequest;
 import com.sams.demo.model.dto.security.SignUpRequest;
-import com.sams.demo.model.entity.RoleCon;
-import com.sams.demo.model.entity.User;
-import com.sams.demo.model.entity.UserRole;
-import com.sams.demo.model.entity.UserRoleId;
+import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.repository.RoleConRepository;
 import com.sams.demo.repository.UserRepository;
 import com.sams.demo.security.JwtTokenProvider;
+import com.sams.demo.security.SecurityPrincipal;
 import com.sams.demo.service.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +20,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 import static com.sams.demo.model.enums.Role.USER;
 import static com.sams.demo.model.error.ErrorCode.*;
@@ -69,11 +68,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .map(role -> new SimpleGrantedAuthority(role.getRole().getRole().name()))
                 .collect(toList());;
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .build();
+        return new SecurityPrincipal(user, authorities);
     }
 
     @Override
@@ -151,5 +146,32 @@ public class AuthenticationService implements IAuthenticationService {
 
         return jwtTokenProvider.generateToken(
                 SecurityContextHolder.getContext().getAuthentication(), user);
+    }
+
+    @Override
+    @Transactional
+    public boolean checkQuestionOwnerShip(Authentication authentication, Long questionId) {
+
+        SecurityPrincipal principal = (SecurityPrincipal) authentication.getPrincipal();
+
+        if (principal == null || principal.getUserId() == null || questionId == null) {
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+        }
+
+        Optional<User> optionalUser;
+        try {
+            optionalUser = userRepository.findById(principal.getUserId());
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
+
+        if (!optionalUser.isPresent()) {
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+        }
+
+        return optionalUser.get().getQuestions()
+                .stream()
+                .map(Question::getId)
+                .anyMatch(id -> id.equals(questionId));
     }
 }

@@ -1,6 +1,7 @@
 package com.sams.demo.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "USER")
+//@SQLDelete(sql = "UPDATE User SET isDeleted = true WHERE id = ?")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +35,13 @@ public class User extends BaseEntity {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
+    @Column(name = "IS_DELETED", nullable = false)
+    @Type(type = "yes_no")
+    private boolean isDeleted = false;
+
     @OneToMany(fetch = EAGER, mappedBy = "user", cascade = ALL)
     private List<UserRole> roles;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Question> questions;
 }

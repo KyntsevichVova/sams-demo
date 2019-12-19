@@ -3,13 +3,13 @@ package com.sams.demo.web.filter;
 import com.sams.demo.model.error.ErrorMessage;
 import com.sams.demo.model.response.ResponseBuilder;
 import com.sams.demo.security.JwtTokenProvider;
+import com.sams.demo.security.SecurityPrincipal;
+import com.sams.demo.service.IAuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,7 +42,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_TOKEN_EXPIRED = "The token is expired.";
     private static final String BEARER_TOKEN_MISSING = "The token is missing.";
 
-    private UserDetailsService userDetailsService;
+    private IAuthenticationService authenticationService;
     private JwtTokenProvider jwtTokenProvider;
     private SkipUriFilter skipUriFilter;
     private MessageSource messageSource;
@@ -90,10 +90,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        SecurityPrincipal principal =
+                (SecurityPrincipal)authenticationService.loadUserByUsername(email);
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 
         usernamePasswordAuthenticationToken
                 .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
