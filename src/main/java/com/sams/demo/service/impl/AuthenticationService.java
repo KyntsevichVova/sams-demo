@@ -66,7 +66,7 @@ public class AuthenticationService implements IAuthenticationService {
         List<GrantedAuthority> authorities = user.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole().getRole().name()))
-                .collect(toList());;
+                .collect(toList());
 
         return new SecurityPrincipal(user, authorities);
     }

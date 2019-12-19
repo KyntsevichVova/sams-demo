@@ -16,4 +16,6 @@ public interface ApplicationConstant {
     String USER_ENTITY_LOCATION = "/api/v1/users/{userId}";
 
     String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+
+    public static final String BEARER_PREFIX = "Bearer ";
 }

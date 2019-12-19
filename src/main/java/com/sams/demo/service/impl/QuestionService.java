@@ -19,6 +19,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +60,17 @@ public class QuestionService implements IQuestionService {
 
         log.debug("Entered [findAll] with level = {}, locale = {}, pageable = {}", level, locale, pageable);
 
-        return questionRepository.findAll(level, locale, pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Long userId = null;
+        if (authentication != null &&
+                authentication.getPrincipal() != null &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
+
+            userId = ((SecurityPrincipal)authentication.getPrincipal()).getUserId();
+        }
+
+        return questionRepository.findAll(level, locale, userId, pageable);
     }
 
     @Override

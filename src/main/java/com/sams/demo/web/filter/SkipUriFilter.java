@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+import static com.sams.demo.common.ApplicationConstant.BEARER_PREFIX;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.of;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -31,11 +34,19 @@ public class SkipUriFilter {
 
     public boolean skipUriCheck(RequestWrapper requestWrapper) {
 
-        return (GET.name().equals(requestWrapper.getRequest().getMethod())
+        String authorizationHeader = requestWrapper.getRequest().getHeader(AUTHORIZATION);
+
+        boolean isAuthorizationPresent =
+                isNotBlank(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX);
+
+            boolean skipUri =
+                (GET.name().equals(requestWrapper.getRequest().getMethod())
                     && skipGetUriCheckPattern.matcher(requestWrapper.getRequest().getRequestURI()).matches())
                 ||
                 (POST.name().equals(requestWrapper.getRequest().getMethod())
                     && skipPostUriCheckPattern.matcher(requestWrapper.getRequest().getRequestURI()).matches());
+
+        return skipUri && !isAuthorizationPresent;
     }
 
     private Pattern getPattern(String [] uri) {

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 
+import static com.sams.demo.common.ApplicationConstant.BEARER_PREFIX;
 import static com.sams.demo.model.error.ErrorCode.SESSION_EXPIRED;
 import static com.sams.demo.model.error.ErrorCode.TOKEN_MISSING;
 import static java.lang.String.format;
@@ -36,7 +37,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AllArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String BEARER_PREFIX = "Bearer ";
     private static final String BEARER_TOKEN_ERROR_PATTERN = "" +
             "Bearer error=\"invalid_token\", error_description=\"%s\"";
     private static final String BEARER_TOKEN_EXPIRED = "The token is expired.";
