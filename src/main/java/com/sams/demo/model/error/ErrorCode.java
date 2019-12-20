@@ -31,4 +31,6 @@ public interface ErrorCode {
     String SESSION_EXPIRED = "session.expired";
 
     String TOKEN_MISSING = "token.missing";
+
+    String ACCESS_DENIED = "access.denied";
 }

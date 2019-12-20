@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.sams.demo.model.error.ErrorCode.*;
+import static com.sams.demo.model.error.exception.SamsDemoException.accessDeniedException;
 import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -62,8 +64,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity handle(BadCredentialsException ex, Locale locale) {
-
         return handle(badRequestException(BAD_CREDENTIALS_ERROR), locale);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity handle(AccessDeniedException ex, Locale locale) {
+        return handle(accessDeniedException(), locale);
     }
 
     @ExceptionHandler(SamsDemoException.class)

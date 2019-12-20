@@ -1,11 +1,12 @@
 package com.sams.demo.model.error.exception;
 
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import static com.sams.demo.model.error.ErrorCode.ACCESS_DENIED;
 import static org.springframework.http.HttpStatus.*;
 
-@Data
+@Getter
 public class SamsDemoException extends RuntimeException {
 
     private final String message;
@@ -20,17 +21,18 @@ public class SamsDemoException extends RuntimeException {
     }
 
     public static SamsDemoException badRequestException(String message, String... errorMessageParams) {
-
         return new SamsDemoException(message, BAD_REQUEST, errorMessageParams);
     }
 
     public static SamsDemoException internalServerException(String message, String... errorMessageParams) {
-
         return new SamsDemoException(message, INTERNAL_SERVER_ERROR, errorMessageParams);
     }
 
     public static SamsDemoException entityNotFoundException(String message, String... errorMessageParams) {
-
         return new SamsDemoException(message, NOT_FOUND, errorMessageParams);
+    }
+
+    public static SamsDemoException accessDeniedException() {
+        return new SamsDemoException(ACCESS_DENIED, FORBIDDEN);
     }
 }
