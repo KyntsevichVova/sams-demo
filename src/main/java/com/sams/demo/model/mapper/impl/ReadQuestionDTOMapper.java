@@ -30,9 +30,4 @@ public class ReadQuestionDTOMapper implements IDTOMapper<ReadQuestionDTO, Questi
 
         return dto;
     }
-
-    @Override
-    public Question mapToEntity(ReadQuestionDTO entity) {
-        return null;
-    }
 }

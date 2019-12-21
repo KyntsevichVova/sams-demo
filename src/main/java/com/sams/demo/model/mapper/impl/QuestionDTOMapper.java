@@ -9,16 +9,6 @@ import org.springframework.stereotype.Component;
 public class QuestionDTOMapper implements IDTOMapper<CreateQuestionDTO, Question> {
 
     @Override
-    public CreateQuestionDTO mapToDTO(Question question) {
-
-        CreateQuestionDTO dto = new CreateQuestionDTO();
-
-        dto.setLink(question.getLink());
-
-        return dto;
-    }
-
-    @Override
     public Question mapToEntity(CreateQuestionDTO dto) {
 
         Question question = new Question();

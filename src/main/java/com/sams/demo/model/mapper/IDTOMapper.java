@@ -9,7 +9,9 @@ import static java.util.stream.Collectors.toList;
 
 public interface IDTOMapper<DTO extends BaseDTO, ENTITY extends BaseEntity> {
 
-    DTO mapToDTO(ENTITY entity);
+    default DTO mapToDTO(ENTITY entity) {
+        return null;
+    }
 
     default List<DTO> mapToDTOList(List<ENTITY> entityList) {
 
@@ -19,5 +21,7 @@ public interface IDTOMapper<DTO extends BaseDTO, ENTITY extends BaseEntity> {
                 .collect(toList());
     }
 
-    ENTITY mapToEntity(DTO entity);
+    default ENTITY mapToEntity(DTO entity) {
+        return null;
+    }
 }

@@ -4,10 +4,9 @@ import com.sams.demo.model.dto.security.SignInRequest;
 import com.sams.demo.model.dto.security.SignUpRequest;
 import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
-import com.sams.demo.repository.RoleConRepository;
-import com.sams.demo.repository.UserRepository;
 import com.sams.demo.security.JwtTokenProvider;
 import com.sams.demo.security.SecurityPrincipal;
+import com.sams.demo.service.IAuthenticationFacade;
 import com.sams.demo.service.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,10 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.sams.demo.model.enums.Role.USER;
-import static com.sams.demo.model.error.ErrorCode.*;
+import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_AUTHENTICATION_ERROR;
+import static com.sams.demo.model.error.ErrorCode.USER_EXISTS;
 import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
 import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
 import static java.util.Collections.singletonList;
@@ -36,20 +35,17 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
-    private UserRepository userRepository;
-    private RoleConRepository roleConRepository;
+    private IAuthenticationFacade authenticationFacade;
     private JwtTokenProvider jwtTokenProvider;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public AuthenticationService(
-            UserRepository userRepository,
-            RoleConRepository roleConRepository,
+            IAuthenticationFacade authenticationFacade,
             JwtTokenProvider jwtTokenProvider,
             PasswordEncoder passwordEncoder) {
 
-        this.userRepository = userRepository;
-        this.roleConRepository = roleConRepository;
+        this.authenticationFacade = authenticationFacade;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
     }
@@ -57,7 +53,7 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = userRepository.findByEmail(email);
+        User user = authenticationFacade.findUser(email);
 
         if (user == null) {
             throw new UsernameNotFoundException(email);
@@ -76,11 +72,17 @@ public class AuthenticationService implements IAuthenticationService {
     public User signUp(AuthenticationManager authenticationManager,
                        SignUpRequest signUpRequest) throws SamsDemoException {
 
-        if(userRepository.findByEmail(signUpRequest.getEmail()) != null) {
+        User existingUser = authenticationFacade.findUser(signUpRequest.getEmail());;
+
+        if(existingUser != null) {
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
         }
 
-        RoleCon role = roleConRepository.findByRole(USER);
+        RoleCon role = authenticationFacade.findRoleCon(USER);
+
+        if (role == null) {
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+        }
 
         UserRole userRole = new UserRole();
         userRole.setId(new UserRoleId());
@@ -96,7 +98,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         userRole.setUser(user);
 
-        user = userRepository.save(user);
+        user = authenticationFacade.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -122,7 +124,7 @@ public class AuthenticationService implements IAuthenticationService {
         User user = null;
         if (authentication.isAuthenticated()) {
 
-            user = userRepository.findByEmail(signInRequest.getEmail());
+            user = authenticationFacade.findUser(signInRequest.getEmail());
 
             if (user == null) {
                 throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
@@ -138,7 +140,7 @@ public class AuthenticationService implements IAuthenticationService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        User user = userRepository.findByEmail(authentication.getName());
+        User user = authenticationFacade.findUser(authentication.getName());
 
         if (user == null) {
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
@@ -158,19 +160,15 @@ public class AuthenticationService implements IAuthenticationService {
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
-        Optional<User> optionalUser;
-        try {
-            optionalUser = userRepository.findById(principal.getUserId());
-        } catch (Exception ex) {
-            throw internalServerException(ACCESS_DATABASE_ERROR);
-        }
+        Question question = authenticationFacade.findQuestion(questionId);
 
-        if (!optionalUser.isPresent()) {
+        User user = authenticationFacade.findUser(principal.getUserId());
+
+        if (user == null || question == null) {
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
-        return optionalUser.get().getQuestions()
-                .stream()
+        return user.getQuestions().stream()
                 .map(Question::getId)
                 .anyMatch(id -> id.equals(questionId));
     }

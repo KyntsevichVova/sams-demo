@@ -30,16 +30,13 @@ public class QuestionController {
 
     private IQuestionService questionService;
 
-    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
     private IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper;
 
     @Autowired
     public QuestionController(IQuestionService questionService,
-                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper,
                               IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper) {
 
         this.questionService = questionService;
-        this.questionDTOMapper = questionDTOMapper;
         this.readQuestionDTOMapper = readQuestionDTOMapper;
     }
 
@@ -47,7 +44,7 @@ public class QuestionController {
     public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findAllQuestions(
             @Level String level,
             Locale locale,
-            Pageable pageable) {
+            Pageable pageable) throws SamsDemoException {
 
         Page<ReadAllQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
 
@@ -99,7 +96,8 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{questionId}")
-    public ResponseEntity deleteQuestion(@PathVariable(name = "questionId") Long questionId) {
+    public ResponseEntity deleteQuestion(
+            @PathVariable(name = "questionId") Long questionId) throws SamsDemoException{
 
         questionService.delete(questionId);
 

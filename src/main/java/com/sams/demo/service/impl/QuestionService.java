@@ -57,7 +57,8 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable) {
+    public Page<ReadAllQuestionDTO> findAll(
+            String level, String locale, Pageable pageable) throws SamsDemoException {
 
         log.debug("Entered [findAll] with level = {}, locale = {}, pageable = {}", level, locale, pageable);
 
@@ -109,6 +110,11 @@ public class QuestionService implements IQuestionService {
         log.debug("Exited [findById] with question = {}", optionalQuestion.get());
 
         return optionalQuestion.get();
+    }
+
+    @Override
+    public Question findByIdAndByPassProxy(Long questionId) throws SamsDemoException {
+        return this.findById(questionId);
     }
 
     @Override
@@ -203,7 +209,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @PreAuthorize(DELETE_QUESTION_ACL)
-    public void delete(Long questionId) {
+    public void delete(Long questionId) throws SamsDemoException {
 
         log.debug("Entered [delete]");
 
