@@ -12,6 +12,8 @@ public interface IQuestionService {
 
     Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable) throws SamsDemoException;
 
+    Page<ReadAllQuestionDTO> findAllForTranslation(String locale, Pageable pageable) throws SamsDemoException;
+
     Question findById(Long questionId) throws SamsDemoException;
 
     Question findByIdAndByPassProxy(Long questionId) throws SamsDemoException;

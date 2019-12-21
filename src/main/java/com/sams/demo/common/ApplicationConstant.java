@@ -17,5 +17,5 @@ public interface ApplicationConstant {
 
     String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 
-    public static final String BEARER_PREFIX = "Bearer ";
+    String BEARER_PREFIX = "Bearer ";
 }

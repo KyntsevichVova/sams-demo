@@ -23,4 +23,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                                      @Param("locale") String locale,
                                      @Param("userId") Long userId,
                                      Pageable pageable);
+
+    @Query(value = "SELECT new com.sams.demo.model.dto.ReadAllQuestionDTO( " +
+            "q.id AS id, t.title AS title, q.link AS link, ll.levelLocalized AS level, " +
+            "q.isFullyLocalized AS isFullyLocalized, CAST(NULL AS boolean)) " +
+            "FROM Question q JOIN q.titles t JOIN q.level.localizedLevels ll " +
+            "WHERE t.locale.code = :locale AND ll.locale.code = :locale " +
+            "AND q.isFullyLocalized IS FALSE")
+    Page<ReadAllQuestionDTO> findAllForTranslation(@Param("locale") String locale,
+                                                   Pageable pageable);
 }

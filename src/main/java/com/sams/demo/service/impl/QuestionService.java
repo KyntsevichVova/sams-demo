@@ -81,6 +81,20 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('TRANSLATOR')")
+    public Page<ReadAllQuestionDTO> findAllForTranslation(String locale, Pageable pageable) throws SamsDemoException {
+
+        log.debug("Entered [findAllForTranslation] with pageable = {}", pageable);
+
+        try {
+            return questionRepository.findAllForTranslation(locale,pageable);
+        } catch (Exception ex) {
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     @PreAuthorize(READ_QUESTION_ACL)
     public Question findById(Long questionId) throws SamsDemoException {
 

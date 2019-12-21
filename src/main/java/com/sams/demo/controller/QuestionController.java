@@ -29,7 +29,6 @@ import static org.springframework.http.HttpStatus.*;
 public class QuestionController {
 
     private IQuestionService questionService;
-
     private IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper;
 
     @Autowired
@@ -47,6 +46,21 @@ public class QuestionController {
             Pageable pageable) throws SamsDemoException {
 
         Page<ReadAllQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
+
+        return ResponseBuilder
+                .<ReadAllQuestionDTO, Question>success()
+                .withPageData(page)
+                .withHttpStatus(OK)
+                .build();
+    }
+
+    @GetMapping("/translate")
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findQuestionsForTranslation(
+            Locale locale,
+            Pageable pageable) throws SamsDemoException {
+
+        Page<ReadAllQuestionDTO> page = questionService
+                .findAllForTranslation(locale.toLanguageTag(), pageable);
 
         return ResponseBuilder
                 .<ReadAllQuestionDTO, Question>success()
