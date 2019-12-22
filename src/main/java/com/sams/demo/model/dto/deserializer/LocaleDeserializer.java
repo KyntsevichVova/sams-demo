@@ -21,7 +21,6 @@ public class LocaleDeserializer extends JsonDeserializer<LocaleEnum> {
             DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
 
         LocaleEnum localeEnum;
-
         try {
             localeEnum = LocaleEnum.valueOf(jsonParser.getText().toUpperCase());
         } catch (Exception ex) {

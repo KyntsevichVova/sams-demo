@@ -45,7 +45,7 @@ public class AuthenticationFacade implements IAuthenticationFacade {
 
     @Override
     public User findUser(Long userId) {
-        return userService.findById(userId);
+        return userService.findByIdAndByPassProxy(userId);
     }
 
     @Override

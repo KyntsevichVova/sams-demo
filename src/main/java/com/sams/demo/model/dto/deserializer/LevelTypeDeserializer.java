@@ -21,7 +21,6 @@ public class LevelTypeDeserializer extends JsonDeserializer<LevelType> {
             DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
 
         LevelType levelType;
-
         try {
             levelType = LevelType.valueOf(jsonParser.getText().toUpperCase());
         } catch (Exception ex) {

@@ -38,7 +38,7 @@ public class User extends BaseEntity {
 
     @Column(name = "IS_DELETED", nullable = false)
     @Type(type = "yes_no")
-    private boolean isDeleted = false;
+    private Boolean isDeleted = false;
 
     @OneToMany(fetch = EAGER, mappedBy = "user", cascade = ALL)
     private List<UserRole> roles;

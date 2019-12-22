@@ -1,13 +1,11 @@
 package com.sams.demo.service.impl;
 
-import com.sams.demo.common.ApplicationConstant;
 import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.dto.TitleDTO;
 import com.sams.demo.model.dto.UpdateQuestionDTO;
 import com.sams.demo.model.entity.*;
 import com.sams.demo.model.error.exception.SamsDemoException;
-import com.sams.demo.model.mapper.IDTOMapper;
 import com.sams.demo.repository.LevelConRepository;
 import com.sams.demo.repository.QuestionRepository;
 import com.sams.demo.repository.UserRepository;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.sams.demo.common.ApplicationConstant.SUPPORTED_LOCALES;
 import static com.sams.demo.model.error.ErrorCode.*;
 import static com.sams.demo.model.error.exception.SamsDemoException.*;
 import static com.sams.demo.security.SecurityExpression.*;
@@ -40,19 +39,15 @@ public class QuestionService implements IQuestionService {
     private final LevelConRepository levelConRepository;
     private final UserRepository userRepository;
 
-    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
-
     @Autowired
     public QuestionService(
             QuestionRepository questionRepository,
             LevelConRepository levelConRepository,
-            UserRepository userRepository,
-            IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper) {
+            UserRepository userRepository) {
 
         this.questionRepository = questionRepository;
         this.levelConRepository = levelConRepository;
         this.userRepository = userRepository;
-        this.questionDTOMapper = questionDTOMapper;
     }
 
     @Override
@@ -101,6 +96,7 @@ public class QuestionService implements IQuestionService {
         log.debug("Entered [findById] with questionId = {}", questionId);
 
         if (questionId == null) {
+
             log.error("Bad request exception: ID is missing");
             throw badRequestException(ID_MISSING);
         }
@@ -114,6 +110,7 @@ public class QuestionService implements IQuestionService {
         }
 
         if (!optionalQuestion.isPresent()) {
+
             log.error("Entity not found exception: {}, {}", Question.class.getSimpleName(), questionId.toString());
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,
@@ -150,8 +147,9 @@ public class QuestionService implements IQuestionService {
         title.setId(new TitleId());
         title.getId().setLocaleId(title.getLocale().getId());
 
-        Question question = questionDTOMapper.mapToEntity(questionDTO);
+        Question question = new Question();
         question.setLevel(level);
+        question.setLink(questionDTO.getLink());
         question.setTitles(singletonList(title));
         question.setIsFullyLocalized(false);
 
@@ -208,7 +206,7 @@ public class QuestionService implements IQuestionService {
 
         question.setLink(questionDTO.getLink());
         question.setLevel(level);
-        question.setIsFullyLocalized(question.getTitles().size() == ApplicationConstant.SUPPORTED_LOCALES);
+        question.setIsFullyLocalized(question.getTitles().size() == SUPPORTED_LOCALES);
 
         try {
             questionRepository.save(question);
@@ -242,6 +240,7 @@ public class QuestionService implements IQuestionService {
     }
 
     private Locale findRequiredLocale(LevelCon level, String locale) throws SamsDemoException {
+
         Optional<Locale> optionalLocale = level
                 .getLocalizedLevels()
                 .stream()

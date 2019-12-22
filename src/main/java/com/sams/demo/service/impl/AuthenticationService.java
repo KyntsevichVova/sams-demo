@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.sams.demo.model.enums.Role.USER;
 import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_AUTHENTICATION_ERROR;
@@ -61,7 +62,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         List<GrantedAuthority> authorities = user.getRoles()
                 .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole().getRole().name()))
+                .map(role -> new SimpleGrantedAuthority(role.getRoleCon().getRole().name()))
                 .collect(toList());
 
         return new SecurityPrincipal(user, authorities);
@@ -78,16 +79,16 @@ public class AuthenticationService implements IAuthenticationService {
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
         }
 
-        RoleCon role = authenticationFacade.findRoleCon(USER);
+        RoleCon roleCon = authenticationFacade.findRoleCon(USER);
 
-        if (role == null) {
+        if (roleCon == null) {
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
         UserRole userRole = new UserRole();
         userRole.setId(new UserRoleId());
-        userRole.getId().setRoleId(role.getId());
-        userRole.setRole(role);
+        userRole.getId().setRoleId(roleCon.getId());
+        userRole.setRoleCon(roleCon);
 
         User user = User.builder()
                 .email(signUpRequest.getEmail())
@@ -171,5 +172,26 @@ public class AuthenticationService implements IAuthenticationService {
         return user.getQuestions().stream()
                 .map(Question::getId)
                 .anyMatch(id -> id.equals(questionId));
+    }
+
+    @Override
+    @Transactional
+    public boolean checkUserOwnerShip(Authentication authentication, Long userId) {
+
+        SecurityPrincipal principal = (SecurityPrincipal) authentication.getPrincipal();
+
+        if (principal == null || principal.getUserId() == null || userId == null) {
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+        }
+
+        User user = authenticationFacade.findUser(userId);
+
+        User authenticatedUser = authenticationFacade.findUser(principal.getUserId());
+
+        if (user == null || authenticatedUser == null) {
+            throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
+        }
+
+        return Objects.equals(user.getId(), authenticatedUser.getId());
     }
 }

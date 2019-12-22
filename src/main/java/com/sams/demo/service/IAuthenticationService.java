@@ -19,4 +19,6 @@ public interface IAuthenticationService extends UserDetailsService {
     String signIn(AuthenticationManager authenticationManager) throws SamsDemoException;
 
     boolean checkQuestionOwnerShip(Authentication authentication, Long questionId);
+
+    boolean checkUserOwnerShip(Authentication authentication, Long userId);
 }

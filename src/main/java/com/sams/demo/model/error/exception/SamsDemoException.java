@@ -14,6 +14,7 @@ public class SamsDemoException extends RuntimeException {
     private final String [] errorMessageParams;
 
     private SamsDemoException(String message, HttpStatus status, String... errorMessageParams) {
+
         super(message);
         this.message = message;
         this.status = status;

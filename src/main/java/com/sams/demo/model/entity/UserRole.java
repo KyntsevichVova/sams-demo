@@ -25,5 +25,5 @@ public class UserRole extends BaseEntity implements Serializable {
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "ROLE_ID", updatable = false, insertable = false)
-    private RoleCon role;
+    private RoleCon roleCon;
 }
