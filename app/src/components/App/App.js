@@ -11,6 +11,8 @@ import flag_russia from '../../flag_russia.png';
 import flag_uk from '../../flag_uk.png';
 import '../../lib/i18n';
 import { useTranslation } from 'react-i18next';
+import SignIn from '../SignIn/SignIn';
+import SignUp from '../SignUp/SignUp';
 
 const initialState = {
     pageNumber: 0, 
@@ -77,6 +79,16 @@ function App() {
                                 <Route 
                                     path="/edit/:questionId" 
                                     component={QuestionEdit}
+                                />
+
+                                <Route 
+                                    path="/signin"
+                                    component={SignIn}
+                                />
+
+                                <Route
+                                    path="/signup"
+                                    component={SignUp}
                                 />
 
                                 <Route exact path="/">

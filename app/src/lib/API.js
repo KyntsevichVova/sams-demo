@@ -14,7 +14,7 @@ function buildParams(params) {
     return paramsArray ? `?${paramsArray.join('&')}` : '';
 }
 
-export const METHOD = {
+const METHOD = {
     GET: 'GET',
     POST: 'POST',
     PUT: 'PUT',
