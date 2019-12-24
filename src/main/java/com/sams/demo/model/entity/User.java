@@ -13,7 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "USER")
-@SQLDelete(sql = "UPDATE User SET isDeleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE USER SET IS_DELETED = 'Y' WHERE USER_ID = ?")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
