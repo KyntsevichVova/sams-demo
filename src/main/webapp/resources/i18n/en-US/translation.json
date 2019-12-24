@@ -1,6 +1,12 @@
 {
-  "main": {
-    "title": "Java Interview Notes",
-    "author": "Vladimir Kuntsevich"
-  }
+    "main": {
+        "title": "Java Interview Notes",
+        "author": "Vladimir Kuntsevich"
+    },
+
+    "nav": {
+        "signin": "Sign in",
+        "signup": "Sign up",
+        "signout": "Sign out"
+    }
 }
