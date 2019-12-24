@@ -1,9 +1,9 @@
 import React from 'react';
-import QuestionForm from './QuestionForm';
-import { Redirect } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { API } from '../../lib/API';
+import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
+import { API } from '../../lib/API';
+import QuestionForm from './QuestionForm';
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);

@@ -1,40 +1,21 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import LocaleContext from '../../contexts/LocaleContext';
+import PageInfoDispatchContext from '../../contexts/PageInfoDispatchContext';
+import flag_russia from '../../img/flag_russia.png';
+import flag_uk from '../../img/flag_uk.png';
+import { LOCALE } from '../../lib/Constraints';
+import { usePageInfoReducer } from '../../reducers/PageInfoReducer';
 import Main from '../Main/Main';
-import './App.css';
-import { HashRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
-import { PAGE_SIZES, FILTERS, LOCALE } from '../../lib/Constraints';
-import PageDispatch from '../../contexts/PageInfoDispatchContext';
-import LocaleContext from '../../contexts/LocaleContext';
-import flag_russia from '../../flag_russia.png';
-import flag_uk from '../../flag_uk.png';
-import '../../lib/i18n';
-import { useTranslation } from 'react-i18next';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
-
-const pageInfoInitialState = {
-    pageNumber: 0, 
-    pageSize: PAGE_SIZES[0],
-    filter: FILTERS[0].filter
-};
-
-function pageInfoReducer(state, action) {
-    switch (action.type) {
-        case 'pageNumber':
-            return { ...state, pageNumber: action.pageNumber };
-        case 'pageSize':
-            return { ...state, pageSize: action.pageSize };
-        case 'filter':
-            return { ...state, filter: action.filter };
-        default:
-            throw new Error();
-    }
-}
+import './App.css';
 
 function App() {
-    const [pageInfoState, pageInfoDispatch] = React.useReducer(pageInfoReducer, pageInfoInitialState);
+    const [pageInfoState, pageInfoDispatch] = usePageInfoReducer();
     const [locale, setLocale] = React.useState(LOCALE.EN);
     const { t, i18n } = useTranslation();
     const changeLang = (locale) => {
@@ -69,7 +50,7 @@ function App() {
                 </nav>
 
                 <div className="content">
-                    <PageDispatch.Provider value={pageInfoDispatch}>
+                    <PageInfoDispatchContext.Provider value={pageInfoDispatch}>
                         <LocaleContext.Provider value={locale}>
                             <Switch>
                                 <Route path="/add">
@@ -100,7 +81,7 @@ function App() {
                                 </Route>
                             </Switch>
                         </LocaleContext.Provider>
-                    </PageDispatch.Provider>
+                    </PageInfoDispatchContext.Provider>
                 </div>
 
                 <footer className="footer mt-5">

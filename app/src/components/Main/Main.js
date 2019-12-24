@@ -1,16 +1,16 @@
 import React from 'react';
-import './Main.css';
-import QuestionTable from '../QuestionTable/QuestionTable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Trans } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import LocaleContext from '../../contexts/LocaleContext';
+import { useFilterCallback, usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
+import { API } from '../../lib/API';
+import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
+import Dropdown from '../Dropdown/Dropdown';
 import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
-import Dropdown from '../Dropdown/Dropdown';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
-import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
-import { Trans } from 'react-i18next';
-import { API } from '../../lib/API';
-import LocaleContext from '../../contexts/LocaleContext';
-import { usePageNumberCallback, usePageSizeCallback, useFilterCallback } from '../../hooks/PageInfoHooks';
+import QuestionTable from '../QuestionTable/QuestionTable';
+import './Main.css';
 
 function Main({ pageNumber, pageSize, filter }) {
     const [pageData, setPageData] = React.useState({});

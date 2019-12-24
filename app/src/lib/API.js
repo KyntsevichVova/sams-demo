@@ -30,8 +30,10 @@ function doRequest(
         body = null 
     }
 ) {
+    let jwt = sessionStorage.getItem("jwt") || "";
     const init = {
-        method: method
+        method: method,
+        headers: {...headers, 'Authorization': jwt}
     };
     if (headers) {
         init.headers = headers;
