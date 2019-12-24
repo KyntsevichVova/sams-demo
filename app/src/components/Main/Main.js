@@ -7,52 +7,19 @@ import Dropdown from '../Dropdown/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
-import PageDispatch from '../../contexts/PageDispatch';
 import { Trans } from 'react-i18next';
 import { API } from '../../lib/API';
 import LocaleContext from '../../contexts/LocaleContext';
-
-function usePageNumber() {
-    const dispatchPageParams = React.useContext(PageDispatch);
-
-    return React.useCallback((pageNumber) => {
-        dispatchPageParams({
-            type: 'pageNumber',
-            pageNumber: pageNumber
-        });
-    }, [dispatchPageParams]); 
-}
-
-function usePageSize() {
-    const dispatchPageParams = React.useContext(PageDispatch);
-
-    return React.useCallback((pageSize) => {
-        dispatchPageParams({
-            type: 'pageSize',
-            pageSize: pageSize
-        });
-    }, [dispatchPageParams]);
-}
-
-function useFilter() {
-    const dispatchPageParams = React.useContext(PageDispatch);
-
-    return React.useCallback((filter) => {
-        dispatchPageParams({
-            type: 'filter',
-            filter: filter
-        });
-    }, [dispatchPageParams]);
-}
+import { usePageNumberCallback, usePageSizeCallback, useFilterCallback } from '../../hooks/PageInfoHooks';
 
 function Main({ pageNumber, pageSize, filter }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
     const locale = React.useContext(LocaleContext);
 
-    const setPageNumberCallback = usePageNumber();
-    const setPageSizeCallback = usePageSize();
-    const setFilterCallback = useFilter();
+    const setPageNumberCallback = usePageNumberCallback();
+    const setPageSizeCallback = usePageSizeCallback();
+    const setFilterCallback = useFilterCallback();
     
     React.useEffect(() => {
         let params = {
@@ -188,8 +155,7 @@ function Main({ pageNumber, pageSize, filter }) {
                         <QuestionTable 
                             questions={pageData.data || []} 
                             deleteCallback={deleteCallback}
-                        />
-                        
+                        /> 
                         {nav}
                     </div>
                 </div>

@@ -5,7 +5,7 @@ import { HashRouter, Switch, Route } from 'react-router-dom';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
 import { PAGE_SIZES, FILTERS, LOCALE } from '../../lib/Constraints';
-import PageDispatch from '../../contexts/PageDispatch';
+import PageDispatch from '../../contexts/PageInfoDispatchContext';
 import LocaleContext from '../../contexts/LocaleContext';
 import flag_russia from '../../flag_russia.png';
 import flag_uk from '../../flag_uk.png';
@@ -14,13 +14,13 @@ import { useTranslation } from 'react-i18next';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
 
-const initialState = {
+const pageInfoInitialState = {
     pageNumber: 0, 
     pageSize: PAGE_SIZES[0],
     filter: FILTERS[0].filter
 };
 
-function pageReducer(state, action) {
+function pageInfoReducer(state, action) {
     switch (action.type) {
         case 'pageNumber':
             return { ...state, pageNumber: action.pageNumber };
@@ -34,7 +34,7 @@ function pageReducer(state, action) {
 }
 
 function App() {
-    const [state, dispatch] = React.useReducer(pageReducer, initialState);
+    const [pageInfoState, pageInfoDispatch] = React.useReducer(pageInfoReducer, pageInfoInitialState);
     const [locale, setLocale] = React.useState(LOCALE.EN);
     const { t, i18n } = useTranslation();
     const changeLang = (locale) => {
@@ -69,7 +69,7 @@ function App() {
                 </nav>
 
                 <div className="content">
-                    <PageDispatch.Provider value={dispatch}>
+                    <PageDispatch.Provider value={pageInfoDispatch}>
                         <LocaleContext.Provider value={locale}>
                             <Switch>
                                 <Route path="/add">
@@ -93,9 +93,9 @@ function App() {
 
                                 <Route exact path="/">
                                     <Main 
-                                        pageNumber={state.pageNumber}
-                                        pageSize={state.pageSize}
-                                        filter={state.filter}
+                                        pageNumber={pageInfoState.pageNumber}
+                                        pageSize={pageInfoState.pageSize}
+                                        filter={pageInfoState.filter}
                                     />
                                 </Route>
                             </Switch>
