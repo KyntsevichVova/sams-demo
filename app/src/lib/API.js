@@ -14,7 +14,7 @@ function buildParams(params) {
     return paramsArray ? `?${paramsArray.join('&')}` : '';
 }
 
-export const METHOD = {
+const METHOD = {
     GET: 'GET',
     POST: 'POST',
     PUT: 'PUT',
@@ -30,8 +30,10 @@ function doRequest(
         body = null 
     }
 ) {
+    let jwt = sessionStorage.getItem("jwt") || "";
     const init = {
-        method: method
+        method: method,
+        headers: {...headers, 'Authorization': jwt}
     };
     if (headers) {
         init.headers = headers;
