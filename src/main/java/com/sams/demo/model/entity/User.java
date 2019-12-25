@@ -1,5 +1,6 @@
 package com.sams.demo.model.entity;
 
+import com.sams.demo.model.entity.listener.UserListener;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
@@ -14,6 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "USER")
 @SQLDelete(sql = "UPDATE USER SET IS_DELETED = 'Y' WHERE USER_ID = ?")
+@EntityListeners(UserListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

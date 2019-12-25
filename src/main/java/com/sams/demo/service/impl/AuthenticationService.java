@@ -95,6 +95,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .username(signUpRequest.getUsername())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .roles(singletonList(userRole))
+                .isDeleted(false)
                 .build();
 
         userRole.setUser(user);

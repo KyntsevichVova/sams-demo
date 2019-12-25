@@ -1,4 +1,5 @@
 INSERT INTO `USER` (USER_ID, EMAIL, USERNAME, PASSWORD, IS_DELETED) VALUES
+(-1, 'ANONYMOUS', 'ANONYMOUS', 'ANONYMOUS', 'N'),
 (1, 'user@demo.com', 'user', '$2a$10$7aRvnzdG99xiIRpQsrJSl.Nifpd2mj4XwJT5xaoelp09Yyz5mrvKy', 'N'),
 (2, 'admin@demo.com', 'admin', '$2a$10$q.rsGmyzGmivHMCZ6ngZTOeTsZyyREffk/iARcK97BUx9TtQ1AxxG', 'N'),
 (3, 'translator@demo.com', 'translator', '$2a$10$PuKiF.IfL6bRmBDWI2MRO.xsx0Og.K23/rxdlEwUzZObS/MM12G.2', 'N'),
