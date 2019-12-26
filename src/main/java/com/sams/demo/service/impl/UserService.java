@@ -136,6 +136,5 @@ public class UserService implements IUserService {
         }
 
         log.debug("Exited [delete]");
-
     }
 }

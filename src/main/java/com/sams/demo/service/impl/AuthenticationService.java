@@ -73,7 +73,7 @@ public class AuthenticationService implements IAuthenticationService {
     public User signUp(AuthenticationManager authenticationManager,
                        SignUpRequest signUpRequest) throws SamsDemoException {
 
-        User existingUser = authenticationFacade.findUser(signUpRequest.getEmail());;
+        User existingUser = authenticationFacade.findUser(signUpRequest.getEmail());
 
         if(existingUser != null) {
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
@@ -95,6 +95,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .username(signUpRequest.getUsername())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .roles(singletonList(userRole))
+                .isDeleted(false)
                 .build();
 
         userRole.setUser(user);
