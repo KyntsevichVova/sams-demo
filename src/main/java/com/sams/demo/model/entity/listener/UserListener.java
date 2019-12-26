@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PreRemove;
 
 import static com.sams.demo.common.ApplicationConstant.ANONYMOUS_USER_ID;
+import static com.sams.demo.model.error.ErrorCode.ENTITY_NOT_FOUND;
+import static com.sams.demo.model.error.exception.SamsDemoException.entityNotFoundException;
 import static java.lang.String.format;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
@@ -26,6 +28,14 @@ public class UserListener implements ApplicationContextAware {
     @PreRemove
     @Transactional(propagation = MANDATORY)
     public void resetUserQuestions(User user) {
+
+        if (user.getIsDeleted()) {
+
+            throw entityNotFoundException(
+                    ENTITY_NOT_FOUND,
+                    User.class.getSimpleName(),
+                    user.getId().toString());
+        }
 
         EntityManager entityManager = getEntityManager();
 

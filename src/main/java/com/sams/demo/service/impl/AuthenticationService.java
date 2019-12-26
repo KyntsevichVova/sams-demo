@@ -29,6 +29,7 @@ import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_AUTHENTICATION_ERRO
 import static com.sams.demo.model.error.ErrorCode.USER_EXISTS;
 import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
 import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -75,7 +76,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         User existingUser = authenticationFacade.findUser(signUpRequest.getEmail());
 
-        if(existingUser != null) {
+        if(existingUser != null && !existingUser.getIsDeleted()) {
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
         }
 
@@ -95,8 +96,13 @@ public class AuthenticationService implements IAuthenticationService {
                 .username(signUpRequest.getUsername())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .roles(singletonList(userRole))
+                .questions(emptyList())
                 .isDeleted(false)
                 .build();
+
+        if(existingUser != null && existingUser.getIsDeleted()) {
+            user.setId(existingUser.getId());
+        }
 
         userRole.setUser(user);
 
