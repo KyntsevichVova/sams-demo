@@ -33,7 +33,7 @@ function App() {
                 <div className="App">
 
                     <AppNavbar 
-                        currentLang={i18n.languages[0]}
+                        currentLang={locale.full}
                         changeLangCallback={changeLangCallback}
                     />
 

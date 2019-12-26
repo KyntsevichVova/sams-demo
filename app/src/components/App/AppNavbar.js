@@ -20,7 +20,7 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                     <div className="d-flex justify-content-end">
                         <img
                             src={ flag_russia } 
-                            className={`cursor-pointer${currentLang !== LOCALE.RU.short ? " opaque-5" : ""}`}
+                            className={`cursor-pointer${currentLang !== LOCALE.RU.full ? " opaque-5" : ""}`}
                             alt={ LOCALE.RU.full } 
                             onClick={ ()=>{changeLangCallback(LOCALE.RU)} }
                             height="32"
@@ -28,7 +28,7 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                         />
                         <img
                             src={ flag_uk } 
-                            className={`cursor-pointer${currentLang !== LOCALE.EN.short ? " opaque-5" : ""}`}
+                            className={`cursor-pointer${currentLang !== LOCALE.EN.full ? " opaque-5" : ""}`}
                             alt={ LOCALE.EN.full } 
                             onClick={ ()=>{changeLangCallback(LOCALE.EN)} }
                             height="32"
