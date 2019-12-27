@@ -1,11 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Redirect } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
 import { BASE_URL } from '../../lib/Constraints';
 
 function SignIn() {
     const [user, setUser] = React.useState({login: "", password: ""});
+    const [redirect, setRedirect] = React.useState({should: false, to: "/"});
+
     const { userDispatch } = React.useContext(UserContext);
     const { t } = useTranslation('auth');
 
@@ -27,6 +30,7 @@ function SignIn() {
             if (response.status === 200) {
                 let token = response.headers.get('Authorization');
                 userDispatch({type: 'signin', token: token});
+                setRedirect({should: true, to: "/"});
             }
         });
     }, [userDispatch]);
@@ -77,6 +81,7 @@ function SignIn() {
                     </button>
                 </div>
             </div>
+            {redirect.should && <Redirect to={redirect.to}/>}
         </div>
     );
 }
