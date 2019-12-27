@@ -12,8 +12,8 @@ function QuestionAdd() {
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept-Language', locale.full);
+        headers.set('Content-Type', 'application/json');
+        headers.set('Accept-Language', locale.full);
 
         let body = {
             ...question,

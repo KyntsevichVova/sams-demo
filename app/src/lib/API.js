@@ -26,18 +26,16 @@ function doRequest(
     { 
         url = "", 
         params = {}, 
-        headers = null, 
+        headers = new Headers(), 
         body = null 
     }
 ) {
     let jwt = sessionStorage.getItem("jwt") || "";
+    headers.set('Authorization', jwt);
     const init = {
         method: method,
-        headers: {...headers, 'Authorization': jwt}
+        headers: headers
     };
-    if (headers) {
-        init.headers = headers;
-    }
     if (body) {
         init.body = body;
     }

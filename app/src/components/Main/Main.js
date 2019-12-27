@@ -29,7 +29,7 @@ function Main({ pageNumber, pageSize, filter }) {
         };
 
         let headers = new Headers();
-        headers.append('Accept-Language', locale.full);
+        headers.set('Accept-Language', locale.full);
 
         API.get({ params: params, headers: headers })
             .then((data) => {
@@ -81,7 +81,7 @@ function Main({ pageNumber, pageSize, filter }) {
 
     const deleteCallback = React.useCallback((questionId) => {
         let headers = new Headers();
-        headers.append('Accept-Language', locale.full);
+        headers.set('Accept-Language', locale.full);
 
         API.delete({ url: `${questionId}`, headers: headers })
             .then((response) => {
