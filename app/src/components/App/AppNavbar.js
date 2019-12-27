@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import UserContext from '../../contexts/UserContext';
 import flag_russia from '../../img/flag_russia.png';
 import flag_uk from '../../img/flag_uk.png';
@@ -40,7 +40,9 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                             ? (
                                 <>
                                     <span className="text-white mr-1">
-                                        {`Hello, ${userState.username}`}
+                                        <Trans i18nKey="nav.hello">
+                                            Hello, {{username: userState.username}}
+                                        </Trans>
                                     </span>
                                     <button 
                                         className="btn btn-primary border border-white ml-1"
@@ -57,7 +59,7 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                                     <button 
                                         className="btn btn-primary border border-white mr-1"
                                         onClick={() => {
-                                            userDispatch({type: 'signin', username: "placeholder"});
+                                            // TODO: redirect
                                         }}
                                     >
                                         { t('nav.signin') }
@@ -65,7 +67,7 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                                     <button 
                                         className="btn btn-primary border border-white ml-1"
                                         onClick={() => {
-                                            userDispatch({type: 'signup', username: "placeholder"});
+                                            // TODO: redirect
                                         }}
                                     >
                                         { t('nav.signup') }

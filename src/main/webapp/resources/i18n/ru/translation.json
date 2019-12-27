@@ -7,6 +7,7 @@
     "nav": {
         "signin": "Войти",
         "signup": "Зарегистрироваться",
-        "signout": "Выйти"
+        "signout": "Выйти",
+        "hello": "Привет, {{username}}"
     }
 }

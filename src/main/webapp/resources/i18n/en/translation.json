@@ -7,6 +7,7 @@
     "nav": {
         "signin": "Sign in",
         "signup": "Sign up",
-        "signout": "Sign out"
+        "signout": "Sign out",
+        "hello": "Hello, {{username}}"
     }
 }

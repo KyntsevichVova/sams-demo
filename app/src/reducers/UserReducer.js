@@ -2,16 +2,19 @@ import React from 'react';
 
 const userInitialState = {
     loggedIn: false,
-    username: ""
+    username: "",
+    token: ""
 };
 
 function userReducer(state, action) {
     switch (action.type) {
         case 'signin':
-            return { loggedIn: true, username: action.username };
-        case 'signup':
-            return { loggedIn: true, username: action.username };
+            sessionStorage.setItem('jwt', action.token);
+            let [headers, payload, sign] = action.token.substr(7).split('.').map((value, index) => index < 2 ? JSON.parse(atob(value)) : value);
+            let username = JSON.parse(atob(payload.metadata)).username;
+            return { loggedIn: true, username: username, token: action.token };
         case 'signout':
+            sessionStorage.removeItem('jwt');
             return userInitialState;
         default:
             throw new Error();

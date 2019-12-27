@@ -24,6 +24,7 @@ const METHOD = {
 function doRequest(
     method, 
     { 
+        endpoint = QUESTIONS_ENDPOINT,
         url = "", 
         params = {}, 
         headers = new Headers(), 
@@ -40,7 +41,7 @@ function doRequest(
         init.body = body;
     }
     return fetch(
-        `${QUESTIONS_ENDPOINT}${url ? `/${url}` : ""}${buildParams(params)}`,
+        `${endpoint}${url ? `/${url}` : ""}${buildParams(params)}`,
         init
     );
 
