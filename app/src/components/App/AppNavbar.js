@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import flag_russia from '../../img/flag_russia.png';
 import flag_uk from '../../img/flag_uk.png';
@@ -8,7 +8,6 @@ import { LOCALE } from '../../lib/Constraints';
 
 function AppNavbar({ currentLang, changeLangCallback }) {
     const { userState, userDispatch } = React.useContext(UserContext);
-    const [redirect, setRedirect] = React.useState({should: false, to: "/"});
 
     const { t } = useTranslation();
 
@@ -58,29 +57,26 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                             ) 
                             : (
                                 <>
-                                    <button 
-                                        className="btn btn-primary border border-white mr-1"
-                                        onClick={() => {
-                                            setRedirect({should: true, to: "/signin"});
-                                        }}
-                                    >
-                                        { t('nav.signin') }
-                                    </button>
-                                    <button 
-                                        className="btn btn-primary border border-white ml-1"
-                                        onClick={() => {
-                                            setRedirect({should: true, to: "/signup"});
-                                        }}
-                                    >
-                                        { t('nav.signup') }
-                                    </button>
+                                    <Link to="/signin">
+                                        <button 
+                                            className="btn btn-primary border border-white mr-1"
+                                        >
+                                            { t('nav.signin') }
+                                        </button>
+                                    </Link>
+                                    <Link to="/signup">
+                                        <button 
+                                            className="btn btn-primary border border-white ml-1"
+                                        >
+                                            { t('nav.signup') }
+                                        </button>
+                                    </Link>
                                 </>
                             )
                         }
                     </div>
                 </div>
             </div>
-            {redirect.should && <Redirect to={redirect.to}/>}
         </nav>
     );
 }
