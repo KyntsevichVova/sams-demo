@@ -36,7 +36,7 @@ function SignIn() {
     }, [userDispatch]);
 
     return (
-        <div className="container">
+        <div className="container auth-form">
             <div className="d-flex flex-column">
                 <div className="form-group">
                     <label htmlFor="email">

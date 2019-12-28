@@ -63,3 +63,7 @@
 .opaque-5 {
     opacity: 0.5;
 }
+
+.auth-form {
+    max-width: 540px;
+}

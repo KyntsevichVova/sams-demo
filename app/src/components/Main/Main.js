@@ -55,7 +55,7 @@ function Main({ pageNumber, pageSize, filter }) {
     const totalElements = pageData.total || 0;
     const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
     const firstOnPage = pageNumber * pageSize + 1;
-    const lastOnPage = Math.min(totalElements, firstOnPage + pageSize);
+    const lastOnPage = Math.min(totalElements, firstOnPage + pageSize - 1);
 
     const paginationNav = React.useMemo(() => {
         return (

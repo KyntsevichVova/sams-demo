@@ -6,7 +6,7 @@ import { API } from '../../lib/API';
 import { BASE_URL } from '../../lib/Constraints';
 
 function SignUp() {
-    const [user, setUser] = React.useState({email: "", login: "", password: ""});
+    const [user, setUser] = React.useState({email: "", username: "", password: ""});
     const [redirect, setRedirect] = React.useState({should: false, to: "/"});
 
     const { userDispatch } = React.useContext(UserContext);
@@ -36,7 +36,7 @@ function SignUp() {
     }, [userDispatch]);
 
     return (
-        <div className="container">
+        <div className="container auth-form">
             <div className="d-flex flex-column">
                 <div className="form-group">
                     <label htmlFor="email">
@@ -55,17 +55,17 @@ function SignUp() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="login">
-                        { t('label.login') }
+                    <label htmlFor="username">
+                        { t('label.username') }
                     </label>
 
                     <input 
                         type="text" 
                         className="form-control" 
-                        id="login" 
-                        placeholder={ t('placeholder.login') }
-                        value={user.login}
-                        name="login"
+                        id="username" 
+                        placeholder={ t('placeholder.username') }
+                        value={user.username}
+                        name="username"
                         onChange={changeHandler}
                     />
                 </div>
