@@ -18,7 +18,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             "CASE WHEN q.user.id = :userId THEN TRUE ELSE FALSE END) " +
             "FROM Question q JOIN q.titles t JOIN q.level.localizedLevels ll " +
             "WHERE t.locale.code = :locale AND ll.locale.code = :locale " +
-            "AND q.level.type LIKE COALESCE(:level, '%')")
+            "AND q.level.type LIKE COALESCE(:level, '%') " +
+            "AND (q.user.id = :userId OR q.user.id <> :userId) ")
     Page<ReadAllQuestionDTO> findAll(@Param("level") String level,
                                      @Param("locale") String locale,
                                      @Param("userId") Long userId,

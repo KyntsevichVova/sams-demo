@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.sams.demo.common.ApplicationConstant.ANONYMOUS_USER_ID;
 import static com.sams.demo.common.ApplicationConstant.SUPPORTED_LOCALES;
 import static com.sams.demo.model.error.ErrorCode.*;
 import static com.sams.demo.model.error.exception.SamsDemoException.*;
@@ -59,7 +60,7 @@ public class QuestionService implements IQuestionService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Long userId = null;
+        Long userId = ANONYMOUS_USER_ID;
         if (authentication != null &&
                 authentication.getPrincipal() != null &&
                 !(authentication instanceof AnonymousAuthenticationToken)) {
@@ -70,6 +71,8 @@ public class QuestionService implements IQuestionService {
         try {
             return questionRepository.findAll(level, locale, userId, pageable);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [findAll]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -77,13 +80,16 @@ public class QuestionService implements IQuestionService {
     @Override
     @Transactional(readOnly = true)
     @PreAuthorize("hasAuthority('TRANSLATOR')")
-    public Page<ReadAllQuestionDTO> findAllForTranslation(String locale, Pageable pageable) throws SamsDemoException {
+    public Page<ReadAllQuestionDTO> findAllForTranslation(
+            String locale, Pageable pageable) throws SamsDemoException {
 
         log.debug("Entered [findAllForTranslation] with pageable = {}", pageable);
 
         try {
             return questionRepository.findAllForTranslation(locale,pageable);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [findAllForTranslation]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -97,7 +103,7 @@ public class QuestionService implements IQuestionService {
 
         if (questionId == null) {
 
-            log.error("Bad request exception: ID is missing");
+            log.error("Bad request exception [findById]: questionId is missing");
             throw badRequestException(ID_MISSING);
         }
 
@@ -105,13 +111,16 @@ public class QuestionService implements IQuestionService {
         try {
             optionalQuestion = questionRepository.findById(questionId);
         } catch (Exception ex) {
-            log.error("Internal server exception: database access error");
+
+            log.error("Internal server exception [findById]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
         if (!optionalQuestion.isPresent()) {
 
-            log.error("Entity not found exception: {}, {}", Question.class.getSimpleName(), questionId.toString());
+            log.error("Entity not found exception [findById]: {}, {}",
+                    Question.class.getSimpleName(), questionId.toString());
+
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,
                     Question.class.getSimpleName(),
@@ -125,6 +134,9 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public Question findByIdAndByPassProxy(Long questionId) throws SamsDemoException {
+
+        log.debug("Entered [findByIdAndByPassProxy] with questionId = {}", questionId);
+
         return this.findById(questionId);
     }
 
@@ -138,6 +150,8 @@ public class QuestionService implements IQuestionService {
         try {
             level = levelConRepository.findByType(questionDTO.getLevel());
         } catch (Exception ex) {
+
+            log.error("Internal server exception [save]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -159,6 +173,9 @@ public class QuestionService implements IQuestionService {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (securityPrincipal == null) {
+
+            log.error("Internal server exception [save]: " +
+                    "unexpected error - securityPrincipal is null but method is secured");
             throw internalServerException(UNEXPECTED_ERROR);
         }
 
@@ -166,20 +183,25 @@ public class QuestionService implements IQuestionService {
         try {
             optionalUser = userRepository.findById(securityPrincipal.getUserId());
         } catch (Exception ex) {
+
+            log.error("Internal server exception [save]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
         if (!optionalUser.isPresent()) {
+
+            log.error("Internal server exception [save]: " +
+                    "unexpected error - user is null but method is secured");
             throw internalServerException(UNEXPECTED_ERROR);
         }
 
         question.setUser(optionalUser.get());
 
-        log.debug("Exited [save]");
-
         try {
             return questionRepository.save(question);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [save]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -197,6 +219,8 @@ public class QuestionService implements IQuestionService {
         try {
             level = levelConRepository.findByType(questionDTO.getLevel());
         } catch (Exception ex) {
+
+            log.error("Internal server exception [update]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -209,14 +233,12 @@ public class QuestionService implements IQuestionService {
         question.setIsFullyLocalized(question.getTitles().size() == SUPPORTED_LOCALES);
 
         try {
-            questionRepository.save(question);
+            return questionRepository.save(question);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [update]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
-
-        log.debug("Exited [update] with question = {}", question);
-
-        return question;
     }
 
     @Override
@@ -229,14 +251,14 @@ public class QuestionService implements IQuestionService {
             questionRepository.deleteById(questionId);
         } catch (EmptyResultDataAccessException ex) {
 
+            log.error("Entity not found exception [delete]: {}, {}",
+                    Question.class.getSimpleName(), questionId.toString());
+
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,
                     Question.class.getSimpleName(),
                     questionId.toString());
         }
-
-        log.debug("Exited [delete]");
-
     }
 
     private Locale findRequiredLocale(LevelCon level, String locale) throws SamsDemoException {
@@ -251,6 +273,7 @@ public class QuestionService implements IQuestionService {
         if (optionalLocale.isPresent()) {
             return optionalLocale.get();
         } else {
+
             log.error("Locale not supported exception: {}", locale);
             throw badRequestException(LOCALE_NOT_SUPPORTED, locale);
         }

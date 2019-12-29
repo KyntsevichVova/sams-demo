@@ -41,6 +41,8 @@ public class UserService implements IUserService {
         try {
             return userRepository.findAll(pageable);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [findAll]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -54,7 +56,7 @@ public class UserService implements IUserService {
 
         if (userId == null) {
 
-            log.error("Bad request exception: ID is missing");
+            log.error("Bad request exception: userId is missing");
             throw badRequestException(ID_MISSING);
         }
 
@@ -62,13 +64,16 @@ public class UserService implements IUserService {
         try {
             optionalUser = userRepository.findById(userId);
         } catch (Exception ex) {
-            log.error("Internal server exception: database access error");
+
+            log.error("Internal server exception [findById]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
         if (!optionalUser.isPresent()) {
 
-            log.error("Entity not found exception: {}, {}", User.class.getSimpleName(), userId.toString());
+            log.error("Entity not found exception: {}, {}",
+                    User.class.getSimpleName(), userId.toString());
+
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,
                     User.class.getSimpleName(),
@@ -82,6 +87,9 @@ public class UserService implements IUserService {
 
     @Override
     public User findByIdAndByPassProxy(Long userId) throws SamsDemoException {
+
+        log.debug("Entered [findByIdAndByPassProxy] with questionId = {}", userId);
+
         return this.findById(userId);
     }
 
@@ -89,9 +97,13 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     public User findByEmail(String email) throws SamsDemoException {
 
+        log.debug("Entered [findByEmail] with email = {}", email);
+
         try {
             return userRepository.findByEmail(email);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [findByEmail]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -109,14 +121,12 @@ public class UserService implements IUserService {
         user.setUsername(userDTO.getUsername());
 
         try {
-            userRepository.save(user);
+            return userRepository.save(user);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [update]: database access error");
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
-
-        log.debug("Exited [update] with user = {}", user);
-
-        return user;
     }
 
     @Override
@@ -129,12 +139,13 @@ public class UserService implements IUserService {
             userRepository.deleteById(userId);
         } catch (EmptyResultDataAccessException ex) {
 
+            log.error("Entity not found exception [delete]: {}, {}",
+                    User.class.getSimpleName(), userId.toString());
+
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,
                     User.class.getSimpleName(),
                     userId.toString());
         }
-
-        log.debug("Exited [delete]");
     }
 }
