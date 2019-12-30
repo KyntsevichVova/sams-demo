@@ -1,6 +1,7 @@
 package com.sams.demo.model.entity.listener;
 
 import com.sams.demo.model.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,6 +18,7 @@ import static java.lang.String.format;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 
+@Slf4j
 @Component
 public class UserListener implements ApplicationContextAware {
 
@@ -30,6 +32,9 @@ public class UserListener implements ApplicationContextAware {
     public void resetUserQuestions(User user) {
 
         if (user.getIsDeleted()) {
+
+            log.error("Entity not found exception [resetUserQuestions]: {}, {}",
+                    User.class.getSimpleName(), user.getId().toString());
 
             throw entityNotFoundException(
                     ENTITY_NOT_FOUND,

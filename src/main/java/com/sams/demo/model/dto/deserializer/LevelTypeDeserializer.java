@@ -24,6 +24,7 @@ public class LevelTypeDeserializer extends JsonDeserializer<LevelType> {
         try {
             levelType = LevelType.valueOf(jsonParser.getText().toUpperCase());
         } catch (Exception ex) {
+
             log.error("Bad request exception: level type is invalid, level = {}", jsonParser.getText());
             throw badRequestException(LEVEL_TYPE_INVALID, jsonParser.getText());
         }

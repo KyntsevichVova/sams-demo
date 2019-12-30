@@ -7,6 +7,7 @@ import com.sams.demo.security.SecurityPrincipal;
 import com.sams.demo.service.IAuthenticationService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,7 @@ import java.util.Locale;
 import static com.sams.demo.common.ApplicationConstant.BEARER_PREFIX;
 import static com.sams.demo.model.error.ErrorCode.SESSION_EXPIRED;
 import static com.sams.demo.model.error.ErrorCode.TOKEN_MISSING;
+import static com.sams.demo.model.error.ErrorHandler.EXCEPTION_DETAILS_PATTERN;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
@@ -34,6 +36,7 @@ import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @AllArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
@@ -80,6 +83,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         try {
             email = jwtTokenProvider.getUserEmail(authorizationHeader.replace(BEARER_PREFIX, ""));
         } catch (ExpiredJwtException ex) {
+
+            log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
 
             handleUnauthorized(
                     httpServletRequest,

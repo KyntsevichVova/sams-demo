@@ -10,6 +10,7 @@ import com.sams.demo.repository.UserRepository;
 import com.sams.demo.service.IAuthenticationFacade;
 import com.sams.demo.service.IQuestionService;
 import com.sams.demo.service.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import static com.sams.demo.model.enums.Role.USER;
 import static com.sams.demo.model.error.ErrorCode.ACCESS_DATABASE_ERROR;
 import static com.sams.demo.model.error.exception.SamsDemoException.internalServerException;
 
+@Slf4j
 @Service
 public class AuthenticationFacade implements IAuthenticationFacade {
 
@@ -40,16 +42,25 @@ public class AuthenticationFacade implements IAuthenticationFacade {
 
     @Override
     public Question findQuestion(Long questionId) throws SamsDemoException {
+
+        log.debug("Entered [findQuestion] with questionId = {}", questionId);
+
         return questionService.findByIdAndByPassProxy(questionId);
     }
 
     @Override
     public User findUser(Long userId) {
+
+        log.debug("Entered [findUser] with userId = {}", userId);
+
         return userService.findByIdAndByPassProxy(userId);
     }
 
     @Override
     public User findUser(String email) throws SamsDemoException {
+
+        log.debug("Entered [findUser] with email = {}", email);
+
         return userService.findByEmail(email);
     }
 
@@ -59,6 +70,8 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         try {
             return userRepository.save(user);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [save]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -69,6 +82,8 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         try {
             return roleConRepository.findByRole(USER);
         } catch (Exception ex) {
+
+            log.error("Internal server exception [findRoleCon]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }

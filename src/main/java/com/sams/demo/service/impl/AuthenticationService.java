@@ -8,6 +8,7 @@ import com.sams.demo.security.JwtTokenProvider;
 import com.sams.demo.security.SecurityPrincipal;
 import com.sams.demo.service.IAuthenticationFacade;
 import com.sams.demo.service.IAuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
@@ -55,9 +57,15 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
+        log.debug("Entered [loadUserByUsername] with email = {}", email);
+
         User user = authenticationFacade.findUser(email);
 
         if (user == null) {
+
+            log.error("Throwing UsernameNotFoundException exception [loadUserByUsername]: " +
+                    "unexpected error - user is null");
+
             throw new UsernameNotFoundException(email);
         }
 
@@ -77,12 +85,16 @@ public class AuthenticationService implements IAuthenticationService {
         User existingUser = authenticationFacade.findUser(signUpRequest.getEmail());
 
         if(existingUser != null && !existingUser.getIsDeleted()) {
+
+            log.error("Bad request exception [signUp]: active user is exist: {}", signUpRequest.getEmail());
             throw badRequestException(USER_EXISTS, signUpRequest.getEmail());
         }
 
         RoleCon roleCon = authenticationFacade.findRoleCon(USER);
 
         if (roleCon == null) {
+
+            log.error("Internal server exception [signUp]: unexpected error - roleCon is null");
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
@@ -135,6 +147,8 @@ public class AuthenticationService implements IAuthenticationService {
             user = authenticationFacade.findUser(signInRequest.getEmail());
 
             if (user == null) {
+
+                log.error("Internal server exception [signIn]: unexpected error - user is null");
                 throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
             }
         }
@@ -151,6 +165,8 @@ public class AuthenticationService implements IAuthenticationService {
         User user = authenticationFacade.findUser(authentication.getName());
 
         if (user == null) {
+
+            log.error("Internal server exception [signIn]: unexpected error - user is null");
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
@@ -165,6 +181,10 @@ public class AuthenticationService implements IAuthenticationService {
         SecurityPrincipal principal = (SecurityPrincipal) authentication.getPrincipal();
 
         if (principal == null || principal.getUserId() == null || questionId == null) {
+
+            log.error("Internal server exception [checkQuestionOwnerShip]: unexpected error - " +
+                    "principal or principal.getUserId() or questionId is null");
+
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
@@ -173,6 +193,9 @@ public class AuthenticationService implements IAuthenticationService {
         User user = authenticationFacade.findUser(principal.getUserId());
 
         if (user == null || question == null) {
+
+            log.error("Internal server exception [checkQuestionOwnerShip]: unexpected error - " +
+                    "user or question is null");
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
@@ -188,6 +211,10 @@ public class AuthenticationService implements IAuthenticationService {
         SecurityPrincipal principal = (SecurityPrincipal) authentication.getPrincipal();
 
         if (principal == null || principal.getUserId() == null || userId == null) {
+
+            log.error("Internal server exception [checkQuestionOwnerShip]: unexpected error - " +
+                    "principal or principal.getUserId() or userId is null");
+
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 
@@ -196,6 +223,10 @@ public class AuthenticationService implements IAuthenticationService {
         User authenticatedUser = authenticationFacade.findUser(principal.getUserId());
 
         if (user == null || authenticatedUser == null) {
+
+            log.error("Internal server exception [checkQuestionOwnerShip]: unexpected error - " +
+                    "user or authenticatedUser is null");
+
             throw internalServerException(UNEXPECTED_AUTHENTICATION_ERROR);
         }
 

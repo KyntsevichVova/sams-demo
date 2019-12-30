@@ -29,6 +29,7 @@ public enum LocaleEnum {
         if (locale.isPresent()) {
             return locale.get();
         } else {
+
             log.error("Internal server exception: process locale error, code = {}", code);
             throw internalServerException(PROCESS_LOCALE_ERROR, code);
         }

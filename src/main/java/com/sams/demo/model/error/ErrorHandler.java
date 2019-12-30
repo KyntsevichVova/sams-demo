@@ -2,6 +2,7 @@ package com.sams.demo.model.error;
 
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.response.ResponseBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,18 @@ import java.util.Locale;
 import static com.sams.demo.model.error.ErrorCode.*;
 import static com.sams.demo.model.error.exception.SamsDemoException.accessDeniedException;
 import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
+import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
+
+    public static final String EXCEPTION_DETAILS_PATTERN = "Handled exception details: %s";
 
     private final MessageSource messageSource;
 
@@ -49,6 +54,8 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handle(MethodArgumentNotValidException ex, Locale locale) {
 
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
         List<ErrorMessage> errors = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -64,16 +71,24 @@ public class ErrorHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity handle(BadCredentialsException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
         return handle(badRequestException(BAD_CREDENTIALS_ERROR), locale);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity handle(AccessDeniedException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
         return handle(accessDeniedException(), locale);
     }
 
     @ExceptionHandler(SamsDemoException.class)
     public ResponseEntity handle(SamsDemoException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(messageSource.getMessage(
@@ -89,6 +104,8 @@ public class ErrorHandler {
     }
 
     private ResponseEntity handleUnknownReasonException(Exception ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(messageSource.getMessage(

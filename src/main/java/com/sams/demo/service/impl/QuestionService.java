@@ -72,7 +72,7 @@ public class QuestionService implements IQuestionService {
             return questionRepository.findAll(level, locale, userId, pageable);
         } catch (Exception ex) {
 
-            log.error("Internal server exception [findAll]: database access error");
+            log.error("Internal server exception [findAll]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -89,7 +89,7 @@ public class QuestionService implements IQuestionService {
             return questionRepository.findAllForTranslation(locale,pageable);
         } catch (Exception ex) {
 
-            log.error("Internal server exception [findAllForTranslation]: database access error");
+            log.error("Internal server exception [findAllForTranslation]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -112,7 +112,7 @@ public class QuestionService implements IQuestionService {
             optionalQuestion = questionRepository.findById(questionId);
         } catch (Exception ex) {
 
-            log.error("Internal server exception [findById]: database access error");
+            log.error("Internal server exception [findById]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -151,7 +151,7 @@ public class QuestionService implements IQuestionService {
             level = levelConRepository.findByType(questionDTO.getLevel());
         } catch (Exception ex) {
 
-            log.error("Internal server exception [save]: database access error");
+            log.error("Internal server exception [save]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -176,6 +176,7 @@ public class QuestionService implements IQuestionService {
 
             log.error("Internal server exception [save]: " +
                     "unexpected error - securityPrincipal is null but method is secured");
+
             throw internalServerException(UNEXPECTED_ERROR);
         }
 
@@ -184,7 +185,7 @@ public class QuestionService implements IQuestionService {
             optionalUser = userRepository.findById(securityPrincipal.getUserId());
         } catch (Exception ex) {
 
-            log.error("Internal server exception [save]: database access error");
+            log.error("Internal server exception [save]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -192,6 +193,7 @@ public class QuestionService implements IQuestionService {
 
             log.error("Internal server exception [save]: " +
                     "unexpected error - user is null but method is secured");
+
             throw internalServerException(UNEXPECTED_ERROR);
         }
 
@@ -201,7 +203,7 @@ public class QuestionService implements IQuestionService {
             return questionRepository.save(question);
         } catch (Exception ex) {
 
-            log.error("Internal server exception [save]: database access error");
+            log.error("Internal server exception [save]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -220,7 +222,7 @@ public class QuestionService implements IQuestionService {
             level = levelConRepository.findByType(questionDTO.getLevel());
         } catch (Exception ex) {
 
-            log.error("Internal server exception [update]: database access error");
+            log.error("Internal server exception [update]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
 
@@ -236,7 +238,7 @@ public class QuestionService implements IQuestionService {
             return questionRepository.save(question);
         } catch (Exception ex) {
 
-            log.error("Internal server exception [update]: database access error");
+            log.error("Internal server exception [update]: database access error {}", ex.getMessage());
             throw internalServerException(ACCESS_DATABASE_ERROR);
         }
     }
@@ -274,7 +276,7 @@ public class QuestionService implements IQuestionService {
             return optionalLocale.get();
         } else {
 
-            log.error("Locale not supported exception: {}", locale);
+            log.error("Bad request exception [findRequiredLocale]: locale not supported exception: {}", locale);
             throw badRequestException(LOCALE_NOT_SUPPORTED, locale);
         }
     }
