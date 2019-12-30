@@ -16,4 +16,5 @@ public class ReadQuestionDTO extends BaseDTO {
     private String link;
     private LevelType level;
     private List<TitleDTO> titles;
+    private Boolean isOwner;
 }
