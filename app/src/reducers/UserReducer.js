@@ -3,7 +3,7 @@ import React from 'react';
 const userInitialState = {
     loggedIn: false,
     username: "",
-    token: ""
+    roles: []
 };
 
 function userReducer(state, action) {
@@ -12,7 +12,8 @@ function userReducer(state, action) {
             sessionStorage.setItem('jwt', action.token);
             let [headers, payload, sign] = action.token.substr(7).split('.').map((value, index) => index < 2 ? JSON.parse(atob(value)) : value);
             let username = JSON.parse(atob(payload.metadata)).username;
-            return { loggedIn: true, username: username, token: action.token };
+            let roles = payload.roles;
+            return { loggedIn: true, username: username, roles: roles };
         case 'signout':
             sessionStorage.removeItem('jwt');
             return userInitialState;

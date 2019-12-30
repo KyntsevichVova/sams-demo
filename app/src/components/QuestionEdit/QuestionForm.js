@@ -1,10 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LEVELS } from '../../lib/Constraints';
+import UserContext from '../../contexts/UserContext';
+import { LEVELS, ROLE } from '../../lib/Constraints';
 
-function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
-    const [question, setQuestion] = React.useState(initState || {titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter});
+function QuestionForm({ initState, okCallback, cancelCallback }) {
+    const [question, setQuestion] = React.useState(initState || {titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter, isOwner: false});
     const { t } = useTranslation('forms');
+    const { userState } = React.useContext(UserContext);
     
     const changeHandler = (event) => {
         setQuestion({...question, [event.target.name]: event.target.value});
@@ -15,6 +17,16 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
             setQuestion(initState);
         }
     }, [initState]);
+
+    const isDisabled = !(
+        userState.loggedIn
+        && (
+            (userState.roles.includes(ROLE.USER) && (!question || (question && question.isOwner)))
+            || (userState.roles.includes(ROLE.TRANSLATOR))
+            || (userState.roles.includes(ROLE.MODERATOR) && (!question || (question && question.isOwner)))
+            || (userState.roles.includes(ROLE.ADMIN))
+        )
+    );
 
     return (
         <div className="d-flex flex-column">
@@ -30,6 +42,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                                 value={level.filter}
                                 onClick={changeHandler}
                                 key={level.filter}
+                                disabled={isDisabled}
                             >
                                 { t(`level.${level.text}`) }
                             </button>   
@@ -51,6 +64,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     value={question.link}
                     name="link"
                     onChange={changeHandler}
+                    disabled={isDisabled}
                 />
             </div>
 
@@ -67,6 +81,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     value={question.titleEn}
                     name="titleEn"
                     onChange={changeHandler}
+                    disabled={isDisabled}
                 />
             </div>
 
@@ -83,6 +98,7 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     value={question.titleRu}
                     name="titleRu"
                     onChange={changeHandler}
+                    disabled={isDisabled}
                 />
             </div>
             
@@ -92,15 +108,16 @@ function QuestionForm({ initState, okTitle = "OK", cancelTitle = "Cancel", okCal
                     onClick={() => {
                         okCallback(question);
                     }}
+                    disabled={isDisabled}
                 >
-                    {okTitle}
+                    { t('edit.ok') }
                 </button>
 
                 <button 
                     className="btn btn-secondary mx-3" 
                     onClick={cancelCallback}
                 >
-                    {cancelTitle}
+                    { t('common.cancel') }
                 </button>
             </div>
         </div>

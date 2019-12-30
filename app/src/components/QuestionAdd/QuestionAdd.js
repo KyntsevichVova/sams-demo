@@ -1,14 +1,14 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
+import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
 import QuestionForm from './QuestionForm';
 
 function QuestionAdd() {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
-    const { t } = useTranslation('forms');
     const locale = React.useContext(LocaleContext);
+    const { userState } = React.useContext(UserContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
@@ -37,10 +37,10 @@ function QuestionAdd() {
 
     return (
         <>
+            {!userState.loggedIn && <Redirect to="/"/>}
+
             <div className="container">
                 <QuestionForm
-                    okTitle={ t('add.ok') }
-                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                 />

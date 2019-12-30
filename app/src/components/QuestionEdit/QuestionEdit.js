@@ -1,16 +1,17 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
+import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
+import { ROLE } from '../../lib/Constraints';
 import QuestionForm from './QuestionForm';
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const [question, setQuestion] = React.useState(undefined);
     const questionId = match.params.questionId || 0;
-    const { t } = useTranslation('forms');
     const locale = React.useContext(LocaleContext);
+    const { userState } = React.useContext(UserContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
@@ -69,7 +70,8 @@ function QuestionEdit({ match }) {
                         link: data.link,
                         level: data.level,
                         titleRu: titleRu,
-                        titleEn: titleEn
+                        titleEn: titleEn,
+                        isOwner: data.isOwner
                     };
                     
                     setQuestion(question);
@@ -81,10 +83,21 @@ function QuestionEdit({ match }) {
 
     return (
         <>
+            {
+                !(  
+                    userState.loggedIn
+                    && (
+                        (userState.roles.includes(ROLE.USER) && (!question || (question && question.isOwner)))
+                        || (userState.roles.includes(ROLE.TRANSLATOR))
+                        || (userState.roles.includes(ROLE.MODERATOR))
+                        || (userState.roles.includes(ROLE.ADMIN))
+                    )
+                )
+                && <Redirect to="/" />
+            }
+
             <div className="container">
                 <QuestionForm
-                    okTitle={ t('edit.ok') }
-                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                     initState={question}

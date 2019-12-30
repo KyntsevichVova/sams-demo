@@ -2,9 +2,12 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import UserContext from '../../contexts/UserContext';
+import { ROLE } from '../../lib/Constraints';
 
 function QuestionTable({ questions, deleteCallback }) {
     const { t } = useTranslation('table');
+    const { userState } = React.useContext(UserContext);
 
     return (
         <table className="table table-fixed">
@@ -38,7 +41,7 @@ function QuestionTable({ questions, deleteCallback }) {
                             </td>
 
                             <td>
-                                {question.level[0].toUpperCase() + question.level.substr(1)}
+                                {question.level}
                             </td>
 
                             <td>
@@ -51,17 +54,39 @@ function QuestionTable({ questions, deleteCallback }) {
                                     <FontAwesomeIcon icon={["fas", "external-link-alt"]} />
                                 </a>
 
-                                <Link to={`/edit/${question.id}`}>
-                                    <FontAwesomeIcon icon={["far", "edit"]} className="text-info mx-2" />
-                                </Link>
+                                {
+                                    userState.loggedIn 
+                                    && (
+                                        (userState.roles.includes(ROLE.USER) && question.isOwner) 
+                                        || userState.roles.includes(ROLE.TRANSLATOR) 
+                                        || userState.roles.includes(ROLE.MODERATOR) 
+                                        || userState.roles.includes(ROLE.ADMIN)
+                                    ) 
+                                    && (
+                                        <Link to={`/edit/${question.id}`}>
+                                            <FontAwesomeIcon icon={["far", "edit"]} className="text-info mx-2" />
+                                        </Link>
+                                    )
+                                }
 
-                                <a 
-                                    className="text-danger mx-2" 
-                                    href="#"
-                                    onClick={() => {deleteCallback(question.id)}}
-                                >
-                                    <FontAwesomeIcon icon={["far", "trash-alt"]} />
-                                </a>
+                                {
+                                    userState.loggedIn 
+                                    && (
+                                        (userState.roles.includes(ROLE.USER) && question.isOwner) 
+                                        || (userState.roles.includes(ROLE.TRANSLATOR) && question.isOwner)
+                                        || userState.roles.includes(ROLE.MODERATOR) 
+                                        || userState.roles.includes(ROLE.ADMIN)
+                                    ) 
+                                    && (
+                                        <a 
+                                            className="text-danger mx-2" 
+                                            href="#"
+                                            onClick={() => {deleteCallback(question.id)}}
+                                        >
+                                            <FontAwesomeIcon icon={["far", "trash-alt"]} />
+                                        </a>
+                                    )
+                                }
 
                                 {!question.isFullyLocalized && 
                                     <FontAwesomeIcon icon={["fas", "exclamation-triangle"]} className="mx-2" color="red" />

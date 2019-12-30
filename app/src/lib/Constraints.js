@@ -28,3 +28,10 @@ export const LOCALE = {
         short: 'ru'
     }
 };
+
+export const ROLE = {
+    USER: "USER",
+    TRANSLATOR: "TRANSLATOR",
+    MODERATOR: "MODERATOR",
+    ADMIN: "ADMIN"
+};

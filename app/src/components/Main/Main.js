@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
+import UserContext from '../../contexts/UserContext';
 import { useFilterCallback, usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
 import { API } from '../../lib/API';
 import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
@@ -16,6 +17,7 @@ function Main({ pageNumber, pageSize, filter }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
     const locale = React.useContext(LocaleContext);
+    const { userState } = React.useContext(UserContext);
 
     const setPageNumberCallback = usePageNumberCallback();
     const setPageSizeCallback = usePageSizeCallback();
@@ -122,12 +124,18 @@ function Main({ pageNumber, pageSize, filter }) {
                                     entries
                                 </Trans>
                             </span>
-
-                            <Link to="/add">
-                                <button className="btn btn-primary mx-5">
-                                    <FontAwesomeIcon icon={["fas", "plus"]} />
-                                </button>
-                            </Link>
+                            
+                            {
+                                userState.loggedIn
+                                && (
+                                    <Link to="/add">
+                                        <button className="btn btn-primary mx-5">
+                                            <FontAwesomeIcon icon={["fas", "plus"]} />
+                                        </button>
+                                    </Link>
+                                )
+                            }
+                            
                         </div>
 
                         <div className="d-flex flex-row justify-content-end w-50">

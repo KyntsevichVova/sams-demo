@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LEVELS } from '../../lib/Constraints';
 
-function QuestionForm({ okTitle = "OK", cancelTitle = "Cancel", okCallback, cancelCallback }) {
+function QuestionForm({ okCallback, cancelCallback }) {
     const [question, setQuestion] = React.useState({title: "", link: "", level: LEVELS[0].filter});
     const { t } = useTranslation('forms');
     
@@ -71,14 +71,14 @@ function QuestionForm({ okTitle = "OK", cancelTitle = "Cancel", okCallback, canc
                         okCallback(question);
                     }}
                 >
-                    {okTitle}
+                    { t('add.ok') }
                 </button>
 
                 <button 
                     className="btn btn-secondary mx-3" 
                     onClick={cancelCallback}
                 >
-                    {cancelTitle}
+                    { t('common.cancel') }
                 </button>
             </div>
         </div>
