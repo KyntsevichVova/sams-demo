@@ -1,9 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
-import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
-import { ROLE } from '../../lib/Constraints';
+import { LEVELS } from '../../lib/Constraints';
 import QuestionForm from './QuestionForm';
 
 function QuestionEdit({ match }) {
@@ -11,7 +10,6 @@ function QuestionEdit({ match }) {
     const [question, setQuestion] = React.useState(undefined);
     const questionId = match.params.questionId || 0;
     const locale = React.useContext(LocaleContext);
-    const { userState } = React.useContext(UserContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
@@ -76,6 +74,8 @@ function QuestionEdit({ match }) {
                     
                     setQuestion(question);
                 });
+            } else {
+                setQuestion({titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter, isOwner: false});
             }
         });
 
@@ -83,19 +83,6 @@ function QuestionEdit({ match }) {
 
     return (
         <>
-            {
-                !(  
-                    userState.loggedIn
-                    && (
-                        (userState.roles.includes(ROLE.USER) && (!question || (question && question.isOwner)))
-                        || (userState.roles.includes(ROLE.TRANSLATOR))
-                        || (userState.roles.includes(ROLE.MODERATOR))
-                        || (userState.roles.includes(ROLE.ADMIN))
-                    )
-                )
-                && <Redirect to="/" />
-            }
-
             <div className="container">
                 <QuestionForm
                     okCallback={okCallback}
