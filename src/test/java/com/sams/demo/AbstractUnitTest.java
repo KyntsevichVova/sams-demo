@@ -1,5 +1,10 @@
 package com.sams.demo;
 
+import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.entity.RoleCon;
+import com.sams.demo.model.entity.User;
+import com.sams.demo.model.entity.UserRole;
+import com.sams.demo.model.enums.Role;
 import com.sams.demo.service.impl.QuestionService;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,9 +15,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import java.util.List;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest(classes = {DemoApplication.class})
@@ -22,16 +33,23 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 })
 public abstract class AbstractUnitTest {
 
-    private Pair<String, String> user = new ImmutablePair<>("user@demo.com", "user");
-    private Pair<String, String> admin = new ImmutablePair<>("admin@demo.com", "admin");
-    private Pair<String, String> moderator = new ImmutablePair<>("moderator@demo.com", "moderator");
-    private Pair<String, String> translator = new ImmutablePair<>("translator@demo.com", "translator");
+    protected Pair<String, String> userCreds =
+            new ImmutablePair<>("user@demo.com", "user");
+    protected Pair<String, String> adminCreds =
+            new ImmutablePair<>("admin@demo.com", "admin");
+    protected Pair<String, String> moderatorCreds =
+            new ImmutablePair<>("moderator@demo.com", "moderator");
+    protected Pair<String, String> translatorCreds =
+            new ImmutablePair<>("translator@demo.com", "translator");
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     protected QuestionService questionService;
+
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
 
     @AfterEach
     public void cleanUpAuthentication() {
@@ -40,19 +58,19 @@ public abstract class AbstractUnitTest {
     }
 
     protected void authenticateAsUser() {
-        authenticate(user.getKey(), user.getValue());
+        authenticate(userCreds.getKey(), userCreds.getValue());
     }
 
     protected void authenticateAsAdmin() {
-        authenticate(admin.getKey(), admin.getValue());
+        authenticate(adminCreds.getKey(), adminCreds.getValue());
     }
 
     protected void authenticateAsModerator() {
-        authenticate(moderator.getKey(), moderator.getValue());
+        authenticate(moderatorCreds.getKey(), moderatorCreds.getValue());
     }
 
     protected void authenticateAsTranslator() {
-        authenticate(translator.getKey(), translator.getValue());
+        authenticate(translatorCreds.getKey(), translatorCreds.getValue());
     }
 
     private void authenticate(String email, String password) {
@@ -61,5 +79,44 @@ public abstract class AbstractUnitTest {
                 new UsernamePasswordAuthenticationToken(email, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    protected User mockUser(Pair<String, String> creds, long[] questionIds, Role... roles) {
+
+        List<UserRole> userRoles = Stream.of(roles)
+                .map(this::mapToUserRole)
+                .collect(toList());
+
+        List<Question> questions = LongStream.of(questionIds)
+                .boxed()
+                .map(this::mapToQuestion)
+                .collect(toList());
+
+        return User.builder()
+                .id(questionIds[0])
+                .email(creds.getKey())
+                .username(creds.getValue())
+                .password(passwordEncoder.encode(creds.getValue()))
+                .roles(userRoles)
+                .questions(questions)
+                .isDeleted(false)
+                .build();
+    }
+
+    private UserRole mapToUserRole(Role role) {
+
+        UserRole userRole = new UserRole();
+        userRole.setRoleCon(new RoleCon());
+        userRole.getRoleCon().setRole(role);
+
+        return userRole;
+    }
+
+    private Question mapToQuestion(long questionId) {
+
+        Question question = new Question();
+        question.setId(questionId);
+
+        return question;
     }
 }

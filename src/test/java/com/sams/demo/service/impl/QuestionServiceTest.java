@@ -5,8 +5,11 @@ import com.sams.demo.TestBeanConfiguration;
 import com.sams.demo.model.dto.CreateQuestionDTO;
 import com.sams.demo.model.dto.ReadAllQuestionDTO;
 import com.sams.demo.model.entity.Question;
+import com.sams.demo.model.entity.User;
 import com.sams.demo.model.error.exception.SamsDemoException;
+import com.sams.demo.repository.LevelConRepository;
 import com.sams.demo.repository.QuestionRepository;
+import com.sams.demo.repository.UserRepository;
 import com.sams.demo.security.SecurityPrincipal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,10 +25,13 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static com.sams.demo.common.ApplicationConstant.*;
 import static com.sams.demo.model.enums.LevelType.SENIOR;
 import static com.sams.demo.model.enums.LocaleEnum.EN;
+import static com.sams.demo.model.enums.Role.TRANSLATOR;
+import static com.sams.demo.model.enums.Role.USER;
 import static com.sams.demo.model.error.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -204,17 +210,14 @@ class QuestionServiceTest {
                     () -> questionService.findAllForTranslation(EN.getValue(), allResultsPageable));
         }
 
-        @Test
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
         @DisplayName("Translator has access")
-        void findAllForTranslation_authenticatedAsTranslator_withDefaultLocaleAndDefaultPageable() {
+        void findAllForTranslation_authenticatedAsTranslator_withDefaultLocaleAndDefaultPageable(
+                CreateQuestionDTO dto) {
 
             //given
             authenticateAsTranslator();
-            CreateQuestionDTO dto = new CreateQuestionDTO();
-            dto.setTitle(NEW_TITLE);
-            dto.setLink(NEW_LINK);
-            dto.setLocale(EN);
-            dto.setLevel(SENIOR);
             questionService.save(dto);
 
             //when
@@ -232,17 +235,14 @@ class QuestionServiceTest {
                     questions.getContent().get(0).getLevel().toUpperCase());
         }
 
-        @Test
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
         @DisplayName("Translator can change page parameters")
-        void findAllForTranslation_authenticatedAsTranslator_withDefaultLocaleAndAllResultsPageable() {
+        void findAllForTranslation_authenticatedAsTranslator_withDefaultLocaleAndAllResultsPageable(
+                CreateQuestionDTO dto) {
 
             //given
             authenticateAsTranslator();
-            CreateQuestionDTO dto = new CreateQuestionDTO();
-            dto.setTitle(NEW_TITLE);
-            dto.setLink(NEW_LINK);
-            dto.setLocale(EN);
-            dto.setLevel(SENIOR);
             questionService.save(dto);
 
             //when
@@ -480,6 +480,105 @@ class QuestionServiceTest {
     }
 
     @Nested
+    @DisplayName("QuestionService - save()")
+    class Save extends AbstractUnitTest {
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        @DisplayName("Anonymous user has no access")
+        void save_notAuthenticated_hasNoAccess(CreateQuestionDTO dto) {
+
+            //when
+            assertThrows(AuthenticationCredentialsNotFoundException.class,
+                    () -> questionService.save(dto));
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        @DisplayName("Registered user has access")
+        void save_authenticatedAsUser_hasAccess(CreateQuestionDTO dto) {
+
+            //given
+            authenticateAsUser();
+            Long userId = ((SecurityPrincipal) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal()).getUserId();
+
+            //when
+            Question question = questionService.save(dto);
+
+            //then
+            assertEquals(dto.getTitle(), question.getTitles().get(0).getTitle());
+            assertEquals(dto.getLocale().getValue(), question.getTitles().get(0).getLocale().getCode());
+            assertEquals(dto.getLink(), question.getLink());
+            assertEquals(dto.getLevel(), question.getLevel().getType());
+            assertEquals(userId, question.getUser().getId());
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        @DisplayName("Admin has access")
+        void save_authenticatedAsAdmin_hasAccess(CreateQuestionDTO dto) {
+
+            //given
+            authenticateAsAdmin();
+            Long userId = ((SecurityPrincipal) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal()).getUserId();
+
+            //when
+            Question question = questionService.save(dto);
+
+            //then
+            assertEquals(dto.getTitle(), question.getTitles().get(0).getTitle());
+            assertEquals(dto.getLocale().getValue(), question.getTitles().get(0).getLocale().getCode());
+            assertEquals(dto.getLink(), question.getLink());
+            assertEquals(dto.getLevel(), question.getLevel().getType());
+            assertEquals(userId, question.getUser().getId());
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        @DisplayName("Translator has access")
+        void save_authenticatedAsTranslator_hasAccess(CreateQuestionDTO dto) {
+
+            //given
+            authenticateAsTranslator();
+            Long userId = ((SecurityPrincipal) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal()).getUserId();
+
+            //when
+            Question question = questionService.save(dto);
+
+            //then
+            assertEquals(dto.getTitle(), question.getTitles().get(0).getTitle());
+            assertEquals(dto.getLocale().getValue(), question.getTitles().get(0).getLocale().getCode());
+            assertEquals(dto.getLink(), question.getLink());
+            assertEquals(dto.getLevel(), question.getLevel().getType());
+            assertEquals(userId, question.getUser().getId());
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        @DisplayName("Moderator has access")
+        void save_authenticatedAsModerator_hasAccess(CreateQuestionDTO dto) {
+
+            //given
+            authenticateAsModerator();
+            Long userId = ((SecurityPrincipal) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal()).getUserId();
+
+            //when
+            Question question = questionService.save(dto);
+
+            //then
+            assertEquals(dto.getTitle(), question.getTitles().get(0).getTitle());
+            assertEquals(dto.getLocale().getValue(), question.getTitles().get(0).getLocale().getCode());
+            assertEquals(dto.getLink(), question.getLink());
+            assertEquals(dto.getLevel(), question.getLevel().getType());
+            assertEquals(userId, question.getUser().getId());
+        }
+    }
+
+    @Nested
     class Delete extends AbstractUnitTest {
 
         @Test
@@ -503,6 +602,12 @@ class QuestionServiceTest {
 
         @Autowired
         private QuestionRepository mockQuestionRepository;
+
+        @Autowired
+        private LevelConRepository mockLevelConRepository;
+
+        @Autowired
+        private UserRepository mockUserRepository;
 
         @Test
         void findAll_throwsException() {
@@ -529,6 +634,13 @@ class QuestionServiceTest {
         void findAllForTranslation_throwsException() {
 
             //Given
+            User user = mockUser(translatorCreds, TRANSLATOR_QUESTION_IDS, USER, TRANSLATOR);
+
+            when(mockUserRepository
+                    .findByEmail(
+                            eq(user.getEmail())))
+                    .thenReturn(user);
+
             authenticateAsTranslator();
 
             when(mockQuestionRepository
@@ -550,6 +662,13 @@ class QuestionServiceTest {
         void findById_throwsException() {
 
             //Given
+            User user = mockUser(userCreds, USER_QUESTION_IDS, USER);
+
+            when(mockUserRepository
+                    .findByEmail(
+                            eq(user.getEmail())))
+                    .thenReturn(user);
+
             authenticateAsUser();
 
             when(mockQuestionRepository
@@ -560,6 +679,34 @@ class QuestionServiceTest {
             //when
             SamsDemoException exception = assertThrows(SamsDemoException.class,
                     () -> questionServiceWithMock.findById(USER_QUESTION_IDS[0]));
+
+            //then
+            assertEquals(ACCESS_DATABASE_ERROR, exception.getMessage());
+            assertEquals(INTERNAL_SERVER_ERROR, exception.getStatus());
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#provideCreateQuestionDTO")
+        void save_throwsException_whenSearchLevel(CreateQuestionDTO dto) {
+
+            //Given
+            User user = mockUser(userCreds, USER_QUESTION_IDS, USER);
+
+            when(mockUserRepository
+                    .findByEmail(
+                            eq(user.getEmail())))
+                    .thenReturn(user);
+
+            authenticateAsUser();
+
+            when(mockLevelConRepository
+                    .findByType(
+                            eq(dto.getLevel())))
+                    .thenThrow(new RuntimeException(ACCESS_DATABASE_EXCEPTION_MESSAGE));
+
+            //when
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
+                    () -> questionServiceWithMock.save(dto));
 
             //then
             assertEquals(ACCESS_DATABASE_ERROR, exception.getMessage());
@@ -589,5 +736,16 @@ class QuestionServiceTest {
 
     static LongStream moderatorQuestionIds() {
         return LongStream.of(MODERATOR_QUESTION_IDS);
+    }
+
+    static Stream<CreateQuestionDTO> provideCreateQuestionDTO() {
+
+        CreateQuestionDTO dto = new CreateQuestionDTO();
+        dto.setTitle(NEW_TITLE);
+        dto.setLink(NEW_LINK);
+        dto.setLocale(EN);
+        dto.setLevel(SENIOR);
+
+        return Stream.of(dto);
     }
 }

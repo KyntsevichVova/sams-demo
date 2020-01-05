@@ -142,6 +142,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional
+    @PreAuthorize(CREATE_QUESTION_ACL)
     public Question save(CreateQuestionDTO questionDTO) throws SamsDemoException {
 
         log.debug("Entered [save] with questionDTO = {}", questionDTO);
@@ -169,16 +170,19 @@ public class QuestionService implements IQuestionService {
 
         title.setQuestion(question);
 
-        SecurityPrincipal  securityPrincipal = (SecurityPrincipal)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
-        if (securityPrincipal == null) {
+        if (authentication == null || authentication.getPrincipal() == null) {
 
             log.error("Internal server exception [save]: " +
                     "unexpected error - securityPrincipal is null but method is secured");
 
             throw internalServerException(UNEXPECTED_ERROR);
         }
+
+        SecurityPrincipal  securityPrincipal =
+                (SecurityPrincipal) authentication.getPrincipal();
 
         Optional<User> optionalUser;
         try {
