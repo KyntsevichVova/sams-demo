@@ -26,10 +26,12 @@ import java.util.stream.LongStream;
 import static com.sams.demo.common.ApplicationConstant.*;
 import static com.sams.demo.model.enums.LevelType.SENIOR;
 import static com.sams.demo.model.enums.LocaleEnum.EN;
+import static com.sams.demo.model.error.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.http.HttpStatus.*;
 
 class QuestionServiceTest {
 
@@ -413,6 +415,68 @@ class QuestionServiceTest {
             //then
             assertEquals(id, question.getId());
         }
+
+        @Test
+        @DisplayName("ACL should throw internal server error when questionId is null")
+        void findById_withAnyAuthentication_shouldThrowExceptionWhenIdIsNull() {
+
+            //Given
+            authenticateAsUser();
+
+            //when
+            SamsDemoException exception =
+                    assertThrows(SamsDemoException.class, () -> questionService.findById(null));
+
+            //then
+            assertEquals(UNEXPECTED_AUTHENTICATION_ERROR, exception.getMessage());
+            assertEquals(INTERNAL_SERVER_ERROR, exception.getStatus());
+        }
+
+        @Test
+        @DisplayName("ACL should throw not found exception when questionId not exists")
+        void findById_withAnyAuthentication_shouldThrowExceptionWhenIdNotExists() {
+
+            //Given
+            authenticateAsAdmin();
+
+            //when
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
+                    () -> questionService.findById(-ADMIN_QUESTION_IDS[0]));
+
+            //then
+            assertEquals(ENTITY_NOT_FOUND, exception.getMessage());
+            assertEquals(NOT_FOUND, exception.getStatus());
+        }
+    }
+
+    @Nested
+    @DisplayName("QuestionService - findByIdAndByPassProxy() - used by ACL")
+    class FindByIdAndByPassProxy extends AbstractUnitTest {
+
+        @ParameterizedTest
+        @MethodSource("com.sams.demo.service.impl.QuestionServiceTest#differentOwnerQuestionIds")
+        @DisplayName("ACL should by pass proxy and have access")
+        void findByIdAndByPassProxy_notAuthenticated_hasAccess(long id) {
+
+            //when
+            Question question = questionService.findByIdAndByPassProxy(id);
+
+            //then
+            assertEquals(id, question.getId());
+        }
+
+        @Test
+        @DisplayName("ACL should throw bad request when questionId is null")
+        void findByIdAndByPassProxy_notAuthenticated_hasAccess() {
+
+            //when
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
+                    () -> questionService.findByIdAndByPassProxy(null));
+
+            //then
+            assertEquals(ID_MISSING, exception.getMessage());
+            assertEquals(BAD_REQUEST, exception.getStatus());
+        }
     }
 
     @Nested
@@ -453,8 +517,12 @@ class QuestionServiceTest {
                     .thenThrow(new RuntimeException(ACCESS_DATABASE_EXCEPTION_MESSAGE));
 
             //when
-            assertThrows(SamsDemoException.class,
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
                     () -> questionServiceWithMock.findAll(null, EN.getValue(), defaultPageable));
+
+            //then
+            assertEquals(ACCESS_DATABASE_ERROR, exception.getMessage());
+            assertEquals(INTERNAL_SERVER_ERROR, exception.getStatus());
         }
 
         @Test
@@ -470,8 +538,32 @@ class QuestionServiceTest {
                     .thenThrow(new RuntimeException(ACCESS_DATABASE_EXCEPTION_MESSAGE));
 
             //when
-            assertThrows(SamsDemoException.class,
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
                     () -> questionServiceWithMock.findAllForTranslation(EN.getValue(), defaultPageable));
+
+            //then
+            assertEquals(ACCESS_DATABASE_ERROR, exception.getMessage());
+            assertEquals(INTERNAL_SERVER_ERROR, exception.getStatus());
+        }
+
+        @Test
+        void findById_throwsException() {
+
+            //Given
+            authenticateAsUser();
+
+            when(mockQuestionRepository
+                    .findById(
+                            eq(USER_QUESTION_IDS[0])))
+                    .thenThrow(new RuntimeException(ACCESS_DATABASE_EXCEPTION_MESSAGE));
+
+            //when
+            SamsDemoException exception = assertThrows(SamsDemoException.class,
+                    () -> questionServiceWithMock.findById(USER_QUESTION_IDS[0]));
+
+            //then
+            assertEquals(ACCESS_DATABASE_ERROR, exception.getMessage());
+            assertEquals(INTERNAL_SERVER_ERROR, exception.getStatus());
         }
     }
 
