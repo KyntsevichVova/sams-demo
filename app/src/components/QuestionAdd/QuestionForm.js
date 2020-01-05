@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LEVELS } from '../../lib/Constraints';
+import ErrorInput from '../../components/ErrorInput/ErrorInput'
 
-function QuestionForm({ okCallback, cancelCallback }) {
+function QuestionForm({ okCallback, cancelCallback, errors }) {
     const [question, setQuestion] = React.useState({title: "", link: "", level: LEVELS[0].filter});
     const { t } = useTranslation('forms');
     
@@ -37,7 +38,7 @@ function QuestionForm({ okCallback, cancelCallback }) {
                     { t('label.question.answerLink') }
                 </label>
 
-                <input 
+                <ErrorInput 
                     type="text" 
                     className="form-control" 
                     id="question-link" 
@@ -45,6 +46,7 @@ function QuestionForm({ okCallback, cancelCallback }) {
                     value={question.link}
                     name="link"
                     onChange={changeHandler}
+                    errors={errors.link}
                 />
             </div>
 
@@ -53,7 +55,7 @@ function QuestionForm({ okCallback, cancelCallback }) {
                     { t('label.question.title.common') }
                 </label>
 
-                <input 
+                <ErrorInput 
                     type="text" 
                     className="form-control" 
                     id="question-title" 
@@ -61,6 +63,7 @@ function QuestionForm({ okCallback, cancelCallback }) {
                     value={question.title}
                     name="title"
                     onChange={changeHandler}
+                    errors={errors.title}
                 />
             </div>
             
