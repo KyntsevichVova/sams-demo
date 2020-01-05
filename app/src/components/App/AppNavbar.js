@@ -58,18 +58,18 @@ function AppNavbar({ currentLang, changeLangCallback }) {
                             : (
                                 <>
                                     <Link to="/signin">
-                                        <button 
+                                        <div 
                                             className="btn btn-primary border border-white mr-1"
                                         >
                                             { t('nav.signin') }
-                                        </button>
+                                        </div>
                                     </Link>
                                     <Link to="/signup">
-                                        <button 
+                                        <div 
                                             className="btn btn-primary border border-white ml-1"
                                         >
                                             { t('nav.signup') }
-                                        </button>
+                                        </div>
                                     </Link>
                                 </>
                             )

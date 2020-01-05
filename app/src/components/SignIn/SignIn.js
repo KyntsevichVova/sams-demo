@@ -1,15 +1,22 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
-import { BASE_URL, STORAGE_JWT } from '../../lib/Constraints';
+import { BASE_URL, STATUS, STORAGE_JWT } from '../../lib/Constraints';
+import { errorFor } from '../../lib/Errors';
+import ErrorInput from '../ErrorInput/ErrorInput';
+
+const initialErrors = {...errorFor('email'), ...errorFor('password')};
 
 function SignIn() {
-    const [user, setUser] = React.useState({login: "", password: ""});
+    const [user, setUser] = React.useState({email: "", password: ""});
     const [redirect, setRedirect] = React.useState({should: false, to: "/"});
+    const [errors, setErrors] = React.useState(initialErrors);
 
     const { userDispatch } = React.useContext(UserContext);
+    const locale = React.useContext(LocaleContext);
     const { t } = useTranslation('auth');
 
     const changeHandler = (event) => {
@@ -20,6 +27,7 @@ function SignIn() {
         sessionStorage.removeItem(STORAGE_JWT);
         let headers = new Headers();
         headers.set('Content-Type', 'application/json');
+        headers.set('Accept-Language', locale.full);
         let body = user;
 
         API.post({
@@ -32,9 +40,31 @@ function SignIn() {
                 let token = response.headers.get('Authorization');
                 userDispatch({type: 'signin', token: token});
                 setRedirect({should: true, to: "/"});
+                setErrors(initialErrors);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        let newErrors = {
+                            ...errorFor(
+                                'email',
+                                result.errorData
+                                    .filter((value) => value.field === 'email')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'password',
+                                result.errorData
+                                    .filter((value) => value.field === 'password')
+                                    .map((value) => value.message)
+                            )
+                        }
+
+                        setErrors(newErrors);
+                    }
+                });
             }
         });
-    }, [userDispatch]);
+    }, [userDispatch, locale.full]);
 
     return (
         <div className="container auth-form">
@@ -44,14 +74,15 @@ function SignIn() {
                         { t('label.email') }
                     </label>
 
-                    <input 
+                    <ErrorInput
                         type="email" 
-                        className="form-control" 
+                        className="form-control"
                         id="email" 
                         placeholder={ t('placeholder.email') }
                         value={user.email}
                         name="email"
                         onChange={changeHandler}
+                        errors={errors.email}
                     />
                 </div>
 
@@ -60,7 +91,7 @@ function SignIn() {
                         { t('label.password') }
                     </label>
 
-                    <input 
+                    <ErrorInput 
                         type="password" 
                         className="form-control" 
                         id="password" 
@@ -68,6 +99,7 @@ function SignIn() {
                         value={user.password}
                         name="password"
                         onChange={changeHandler}
+                        errors={errors.password}
                     />
                 </div>
                 

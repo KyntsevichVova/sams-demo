@@ -37,3 +37,8 @@ export const ROLE = {
 };
 
 export const STORAGE_JWT = "jwt";
+
+export const STATUS = {
+    SUCCESS: "SUCCESS",
+    FAILURE: "FAILURE"
+};

@@ -1,15 +1,22 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
-import { BASE_URL } from '../../lib/Constraints';
+import { BASE_URL, STATUS, STORAGE_JWT } from '../../lib/Constraints';
+import { errorFor } from '../../lib/Errors';
+import ErrorInput from '../ErrorInput/ErrorInput';
+
+const initialErrors = {...errorFor('email'), ...errorFor('password'), ...errorFor('username')};
 
 function SignUp() {
     const [user, setUser] = React.useState({email: "", username: "", password: ""});
     const [redirect, setRedirect] = React.useState({should: false, to: "/"});
+    const [errors, setErrors] = React.useState(initialErrors);
 
     const { userDispatch } = React.useContext(UserContext);
+    const locale = React.useContext(LocaleContext);
     const { t } = useTranslation('auth');
 
     const changeHandler = (event) => {
@@ -20,6 +27,7 @@ function SignUp() {
         sessionStorage.removeItem(STORAGE_JWT);
         let headers = new Headers();
         headers.set('Content-Type', 'application/json');
+        headers.set('Accept-Language', locale.full);
         let body = user;
 
         API.post({
@@ -32,9 +40,37 @@ function SignUp() {
                 let token = response.headers.get('Authorization');
                 userDispatch({type: 'signin', token: token});
                 setRedirect({should: true, to: "/"});
+                setErrors(initialErrors);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        let newErrors = {
+                            ...errorFor(
+                                'email',
+                                result.errorData
+                                    .filter((value) => value.field === 'email')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'password',
+                                result.errorData
+                                    .filter((value) => value.field === 'password')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'username',
+                                result.errorData
+                                    .filter((value) => value.field === 'username')
+                                    .map((value) => value.message)
+                            )
+                        }
+
+                        setErrors(newErrors);
+                    }
+                });
             }
         });
-    }, [userDispatch]);
+    }, [userDispatch, locale.full]);
 
     return (
         <div className="container auth-form">
@@ -44,7 +80,7 @@ function SignUp() {
                         { t('label.email') }
                     </label>
 
-                    <input 
+                    <ErrorInput 
                         type="email" 
                         className="form-control" 
                         id="email" 
@@ -52,6 +88,7 @@ function SignUp() {
                         value={user.email}
                         name="email"
                         onChange={changeHandler}
+                        errors={errors.email}
                     />
                 </div>
 
@@ -60,7 +97,7 @@ function SignUp() {
                         { t('label.username') }
                     </label>
 
-                    <input 
+                    <ErrorInput 
                         type="text" 
                         className="form-control" 
                         id="username" 
@@ -68,6 +105,7 @@ function SignUp() {
                         value={user.username}
                         name="username"
                         onChange={changeHandler}
+                        errors={errors.username}
                     />
                 </div>
 
@@ -76,7 +114,7 @@ function SignUp() {
                         { t('label.password') }
                     </label>
 
-                    <input 
+                    <ErrorInput 
                         type="password" 
                         className="form-control" 
                         id="password" 
@@ -84,6 +122,7 @@ function SignUp() {
                         value={user.password}
                         name="password"
                         onChange={changeHandler}
+                        errors={errors.password}
                     />
                 </div>
                 
