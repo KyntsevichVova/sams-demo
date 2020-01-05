@@ -17,6 +17,7 @@ function SignUp() {
     };
 
     const okCallback = React.useCallback((user) => {
+        sessionStorage.removeItem(STORAGE_JWT);
         let headers = new Headers();
         headers.set('Content-Type', 'application/json');
         let body = user;

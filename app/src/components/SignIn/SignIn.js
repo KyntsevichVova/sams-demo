@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
-import { BASE_URL } from '../../lib/Constraints';
+import { BASE_URL, STORAGE_JWT } from '../../lib/Constraints';
 
 function SignIn() {
     const [user, setUser] = React.useState({login: "", password: ""});
@@ -17,6 +17,7 @@ function SignIn() {
     };
     
     const okCallback = React.useCallback((user) => {
+        sessionStorage.removeItem(STORAGE_JWT);
         let headers = new Headers();
         headers.set('Content-Type', 'application/json');
         let body = user;

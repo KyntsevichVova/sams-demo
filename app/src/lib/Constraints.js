@@ -35,3 +35,5 @@ export const ROLE = {
     MODERATOR: "MODERATOR",
     ADMIN: "ADMIN"
 };
+
+export const STORAGE_JWT = "jwt";
