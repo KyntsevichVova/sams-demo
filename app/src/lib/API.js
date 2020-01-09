@@ -1,4 +1,5 @@
-import { QUESTIONS_ENDPOINT, STORAGE_JWT } from './Constraints';
+import { QUESTIONS_ENDPOINT } from './Constraints';
+import JWT from './JWT';
 
 function buildParams(params) {
     let paramsArray = [];
@@ -31,8 +32,7 @@ function doRequest(
         body = null 
     }
 ) {
-    let jwt = sessionStorage.getItem(STORAGE_JWT) || "";
-    headers.set('Authorization', jwt);
+    headers.set('Authorization', JWT.getStorage());
     const init = {
         method: method,
         headers: headers

@@ -4,8 +4,9 @@ import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
-import { BASE_URL, STATUS, STORAGE_JWT } from '../../lib/Constraints';
+import { BASE_URL, STATUS } from '../../lib/Constraints';
 import { errorFor } from '../../lib/Errors';
+import JWT from '../../lib/JWT';
 import ErrorInput from '../ErrorInput/ErrorInput';
 
 const initialErrors = {...errorFor('email'), ...errorFor('password'), ...errorFor('username')};
@@ -24,7 +25,7 @@ function SignUp() {
     };
 
     const okCallback = React.useCallback((user) => {
-        sessionStorage.removeItem(STORAGE_JWT);
+        JWT.clearStorage();
         let headers = new Headers();
         headers.set('Content-Type', 'application/json');
         headers.set('Accept-Language', locale.full);

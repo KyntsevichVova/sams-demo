@@ -1,5 +1,5 @@
 import React from 'react';
-import { STORAGE_JWT } from '../lib/Constraints';
+import JWT from '../lib/JWT';
 
 const userInitialState = {
     loggedIn: false,
@@ -10,13 +10,14 @@ const userInitialState = {
 function userReducer(state, action) {
     switch (action.type) {
         case 'signin':
-            sessionStorage.setItem(STORAGE_JWT, action.token);
-            let [headers, payload, sign] = action.token.substr(7).split('.').map((value, index) => index < 2 ? JSON.parse(atob(value)) : value);
-            let username = JSON.parse(atob(payload.metadata)).username;
-            let roles = payload.roles;
-            return { loggedIn: true, username: username, roles: roles };
+            JWT.setStorage(action.token);
+            return {
+                loggedIn: true,
+                username: JWT.payload.metadata.username,
+                roles: JWT.payload.roles
+            };
         case 'signout':
-            sessionStorage.removeItem(STORAGE_JWT);
+            JWT.clearStorage();
             return userInitialState;
         default:
             throw new Error();
@@ -24,5 +25,13 @@ function userReducer(state, action) {
 }
 
 export function useUserReducer() {
-    return React.useReducer(userReducer, userInitialState);
+    let initialState = userInitialState;
+    if (!JWT.tokenExpired()) {
+        initialState = {
+            loggedIn: true,
+            username: JWT.payload.metadata.username,
+            roles: JWT.payload.roles
+        };
+    }
+    return React.useReducer(userReducer, initialState);
 }
