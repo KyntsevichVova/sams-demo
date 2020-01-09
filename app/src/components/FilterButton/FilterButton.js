@@ -5,7 +5,7 @@ function FilterButton({ filter, currentFilter, onClick, className, children }) {
     let btnClass = classNames('btn', 
         {
             'btn-primary': filter === currentFilter,
-            'btn-default': !(filter === currentFilter)
+            'btn-light': !(filter === currentFilter)
         },
         className
     );

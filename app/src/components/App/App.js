@@ -1,18 +1,21 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { HashRouter, Route, Switch } from 'react-router-dom';
+import UserEdit from '../../components/UserEdit/UserEdit';
 import LocaleContext from '../../contexts/LocaleContext';
 import PageInfoDispatchContext from '../../contexts/PageInfoDispatchContext';
 import UserContext from '../../contexts/UserContext';
-import { LOCALE } from '../../lib/Constraints';
+import { LOCALE, ROLE, TABS } from '../../lib/Constraints';
 import JWT from '../../lib/JWT';
 import { usePageInfoReducer } from '../../reducers/PageInfoReducer';
 import { useUserReducer } from '../../reducers/UserReducer';
-import Main from '../Main/Main';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
+import QuestionsTab from '../QuestionsTab/QuestionsTab';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
+import TabPanel from '../TabPanel/TabPanel';
+import UsersTab from '../UsersTab/UsersTab';
 import './App.css';
 import AppNavbar from './AppNavbar';
 
@@ -50,6 +53,18 @@ function App() {
         }
     }, [userDispatch]);
 
+    React.useEffect(() => {
+        if (userState.roles.includes(ROLE.ADMIN)) {
+            pageInfoDispatch({ type: 'useTabs', useTabs: true });
+        } else {
+            pageInfoDispatch({ type: 'useTabs', useTabs: false });
+        }
+    }, [pageInfoDispatch, userState]);
+
+    const clickTabCallback = React.useCallback((index) => {
+        pageInfoDispatch({ type: 'tabIndex', tabIndex: index });
+    }, [pageInfoDispatch]);
+
     return (
         <HashRouter>
             <UserContext.Provider value={{userState: userState, userDispatch: userDispatch}}>
@@ -64,7 +79,7 @@ function App() {
                         <PageInfoDispatchContext.Provider value={pageInfoDispatch}>
                             <LocaleContext.Provider value={locale}>
                                 <Switch>
-                                    <Route path="/add">
+                                    <Route exact path="/add">
                                         <QuestionAdd />
                                     </Route>
 
@@ -73,22 +88,61 @@ function App() {
                                         component={QuestionEdit}
                                     />
 
+                                    <Route
+                                        path="/edit-user/:userId"
+                                        component={UserEdit}
+                                    />
+
                                     <Route 
-                                        path="/signin"
+                                        exact path="/signin"
                                         component={SignIn}
                                     />
 
                                     <Route
-                                        path="/signup"
+                                        exact path="/signup"
                                         component={SignUp}
                                     />
 
                                     <Route exact path="/">
-                                        <Main 
-                                            pageNumber={pageInfoState.pageNumber}
-                                            pageSize={pageInfoState.pageSize}
-                                            filter={pageInfoState.filter}
-                                        />
+
+                                        {pageInfoState.useTabs
+                                            ? (
+                                                <>
+                                                    <TabPanel
+                                                        tabIndex={pageInfoState.tabIndex}
+                                                        tabTitles={TABS.ADMIN}
+                                                        clickTabCallback={clickTabCallback}
+                                                    />
+                                                    {
+                                                        (pageInfoState.tabIndex === 0)
+                                                        && (
+                                                            <QuestionsTab 
+                                                                pageNumber={pageInfoState.pageNumber}
+                                                                pageSize={pageInfoState.pageSize}
+                                                                filter={pageInfoState.filter}
+                                                            />
+                                                        )
+                                                    }
+                                                    {
+                                                        (pageInfoState.tabIndex === 1)
+                                                        && (
+                                                            <UsersTab
+                                                                pageNumber={pageInfoState.pageNumber}
+                                                                pageSize={pageInfoState.pageSize}
+                                                            />
+                                                        )
+                                                    }
+                                                </>
+                                            )
+                                            : (
+                                                <QuestionsTab 
+                                                    pageNumber={pageInfoState.pageNumber}
+                                                    pageSize={pageInfoState.pageSize}
+                                                    filter={pageInfoState.filter}
+                                                />
+                                            )
+                                        }
+                                        
                                     </Route>
                                 </Switch>
                             </LocaleContext.Provider>

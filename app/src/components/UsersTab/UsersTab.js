@@ -1,39 +1,32 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
-import UserContext from '../../contexts/UserContext';
-import { useFilterCallback, usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
+import { usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
 import { API } from '../../lib/API';
-import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
+import { PAGE_SIZES, USERS_ENDPOINT } from '../../lib/Constraints';
 import Dropdown from '../Dropdown/Dropdown';
-import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
-import QuestionTable from '../QuestionTable/QuestionTable';
-import './Main.css';
+import UserTable from './UserTable';
 
-function Main({ pageNumber, pageSize, filter }) {
+function UsersTab({ pageNumber, pageSize }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
     const locale = React.useContext(LocaleContext);
-    const { userState } = React.useContext(UserContext);
 
     const setPageNumberCallback = usePageNumberCallback();
     const setPageSizeCallback = usePageSizeCallback();
-    const setFilterCallback = useFilterCallback();
     
     React.useEffect(() => {
         let params = {
             pageSize: pageSize,
-            pageNum: pageNumber,
-            level: filter === 'all' ? null : filter
+            pageNum: pageNumber
         };
 
         let headers = new Headers();
         headers.set('Accept-Language', locale.full);
 
-        API.get({ params: params, headers: headers })
+        API.get({ endpoint: USERS_ENDPOINT, params: params, headers: headers })
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
@@ -42,17 +35,7 @@ function Main({ pageNumber, pageSize, filter }) {
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, filter, setPageNumberCallback, forceUpdate, locale.full]);
-
-    const filterAside = React.useMemo(() => {
-        return (
-            <FilterAside 
-                filters={FILTERS}
-                currentFilter={filter}
-                setFilterCallback={setFilterCallback}
-            />
-        );
-    }, [filter, setFilterCallback]);
+    }, [pageNumber, pageSize, setPageNumberCallback, forceUpdate, locale.full]);
 
     const totalElements = pageData.total || 0;
     const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
@@ -81,11 +64,11 @@ function Main({ pageNumber, pageSize, filter }) {
         </nav>
     );
 
-    const deleteCallback = React.useCallback((questionId) => {
+    const deleteCallback = React.useCallback((userId) => {
         let headers = new Headers();
         headers.set('Accept-Language', locale.full);
 
-        API.delete({ url: `${questionId}`, headers: headers })
+        API.delete({ endpoint: USERS_ENDPOINT, url: `${userId}`, headers: headers })
             .then((response) => {
                 if (response.ok) {
                     setForceUpdate(!forceUpdate);
@@ -123,19 +106,7 @@ function Main({ pageNumber, pageSize, filter }) {
                                     
                                     entries
                                 </Trans>
-                            </span>
-                            
-                            {
-                                userState.loggedIn
-                                && (
-                                    <Link to="/add">
-                                        <div className="btn btn-primary mx-5">
-                                            <FontAwesomeIcon icon={["fas", "plus"]} />
-                                        </div>
-                                    </Link>
-                                )
-                            }
-                            
+                            </span>                            
                         </div>
 
                         <div className="d-flex flex-row justify-content-end w-50">
@@ -156,12 +127,12 @@ function Main({ pageNumber, pageSize, filter }) {
 
                 <div className="row">
                     <div className="col-2">
-                        {filterAside}
+                        
                     </div>
 
                     <div className="col-10 d-flex flex-column">
-                        <QuestionTable 
-                            questions={pageData.data || []} 
+                        <UserTable 
+                            users={pageData.data || []} 
                             deleteCallback={deleteCallback}
                         /> 
                         {nav}
@@ -173,4 +144,4 @@ function Main({ pageNumber, pageSize, filter }) {
     );
 }
 
-export default Main;
+export default UsersTab;

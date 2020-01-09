@@ -20,6 +20,11 @@
             },
             "answerLink": "Link to answer",
             "level": "Question level"
+        },
+
+        "user": {
+            "email": "Email",
+            "username": "Username"
         }
     },
 
@@ -32,6 +37,11 @@
             },
             "answerLink": "Enter URL",
             "level": "Enter question level"
+        },
+
+        "user": {
+            "email": "Enter email",
+            "username": "Enter username"
         }
     },
 
@@ -39,5 +49,12 @@
         "junior": "Junior",
         "middle": "Middle",
         "senior": "Senior"
+    },
+
+    "role": {
+        "USER": "User",
+        "TRANSLATOR": "Translator",
+        "MODERATOR": "Moderator",
+        "ADMIN": "Admin"
     }
 }

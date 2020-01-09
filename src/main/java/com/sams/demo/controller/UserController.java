@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<SamsDemoResponse<ReadUserDTO>> updateQuestion(
+    public ResponseEntity<SamsDemoResponse<ReadUserDTO>> updateUser(
             @PathVariable(name = "userId") Long userId,
             @RequestBody @Valid UpdateUserDTO userDTO) throws SamsDemoException {
 

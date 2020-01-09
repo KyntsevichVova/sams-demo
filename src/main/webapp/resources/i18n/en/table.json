@@ -1,7 +1,10 @@
 {
     "header": {
         "title": "Title",
-        "level": "Level"
+        "level": "Level",
+        "email": "Email",
+        "username": "Username",
+        "roles": "Roles"
     },
 
     "entries": {
@@ -14,5 +17,12 @@
         "junior": "Junior",
         "middle": "Middle",
         "senior": "Senior"
+    },
+
+    "role": {
+        "USER": "User",
+        "TRANSLATOR": "Translator",
+        "MODERATOR": "Moderator",
+        "ADMIN": "Admin"
     }
 }

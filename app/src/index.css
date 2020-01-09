@@ -15,3 +15,7 @@ code {
 .content {
   flex: 1 0 auto;
 }
+
+.noselect {
+  user-select: none;
+}

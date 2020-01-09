@@ -2,6 +2,7 @@ export const BASE_SUBDIR = "demo";
 export const BASE_URL = `/${BASE_SUBDIR}`;
 export const API_URL = `${BASE_URL}/api/v1`;
 export const QUESTIONS_ENDPOINT = `${API_URL}/questions`;
+export const USERS_ENDPOINT = `${API_URL}/users`;
 
 export const FILTERS = [
     {filter: "all", text: "all"},
@@ -41,4 +42,8 @@ export const STORAGE_JWT = "jwt";
 export const STATUS = {
     SUCCESS: "SUCCESS",
     FAILURE: "FAILURE"
+};
+
+export const TABS = {
+    ADMIN: ['admin.questions', 'admin.users']
 };
