@@ -5,6 +5,7 @@ import LocaleContext from '../../contexts/LocaleContext';
 import PageInfoDispatchContext from '../../contexts/PageInfoDispatchContext';
 import UserContext from '../../contexts/UserContext';
 import { LOCALE } from '../../lib/Constraints';
+import JWT from '../../lib/JWT';
 import { usePageInfoReducer } from '../../reducers/PageInfoReducer';
 import { useUserReducer } from '../../reducers/UserReducer';
 import Main from '../Main/Main';
@@ -26,6 +27,28 @@ function App() {
         i18n.changeLanguage(locale.short);
         setLocale(locale);
     }, [i18n]);
+
+    React.useEffect(() => {
+        let token = JWT.getStorage();
+
+        if (token) {
+            JWT.updateToken(token);
+        }
+
+        if (JWT.tokenExpired()) {
+            userDispatch({ type: 'signout' });
+        }
+
+        let interval = setInterval(() => {
+            if (JWT.tokenExpired()) {
+                userDispatch({ type: 'signout' });
+            }
+        }, 30 * 60 * 1000);
+        
+        return () => {
+            clearInterval(interval);
+        }
+    }, [userDispatch]);
 
     return (
         <HashRouter>
