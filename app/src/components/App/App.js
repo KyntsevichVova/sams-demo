@@ -32,7 +32,7 @@ function App() {
         let token = JWT.getStorage();
 
         if (token) {
-            JWT.updateToken(token);
+            userDispatch({ type: 'signin', token: token })
         }
 
         if (JWT.tokenExpired()) {
