@@ -111,9 +111,9 @@ function Main({ pageNumber, pageSize, filter }) {
                                         {PAGE_SIZES.map((value) => {
                                             return (
                                                 <button 
-                                                className="dropdown-item" 
-                                                onClick={() => {setPageSizeCallback(value)}}
-                                                key={value.toString()}
+                                                    className="dropdown-item" 
+                                                    onClick={() => {setPageSizeCallback(value)}}
+                                                    key={value.toString()}
                                                 >
                                                     {value}
                                                 </button>
@@ -129,9 +129,9 @@ function Main({ pageNumber, pageSize, filter }) {
                                 userState.loggedIn
                                 && (
                                     <Link to="/add">
-                                        <button className="btn btn-primary mx-5">
+                                        <div className="btn btn-primary mx-5">
                                             <FontAwesomeIcon icon={["fas", "plus"]} />
-                                        </button>
+                                        </div>
                                     </Link>
                                 )
                             }
