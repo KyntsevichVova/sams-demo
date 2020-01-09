@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import { API } from '../../lib/API';
 import { LEVELS, STATUS } from '../../lib/Constraints';
-import { errorFor } from '../../lib/Errors';
+import { errorFor, fireGlobalErrors } from '../../lib/Errors';
 import QuestionForm from './QuestionForm';
 
 const initialErrors = {
@@ -72,6 +72,8 @@ function QuestionEdit({ match }) {
                         }
 
                         setErrors(newErrors);
+
+                        fireGlobalErrors(result.errorData);
                     }
                 });
             }
@@ -111,6 +113,12 @@ function QuestionEdit({ match }) {
                     setQuestion(question);
                 });
             } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
+
                 setQuestion({titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter, isOwner: false});
             }
         });

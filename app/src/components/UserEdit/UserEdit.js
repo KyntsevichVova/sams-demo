@@ -2,7 +2,8 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import { API } from '../../lib/API';
-import { ROLE, USERS_ENDPOINT } from '../../lib/Constraints';
+import { ROLE, STATUS, USERS_ENDPOINT } from '../../lib/Constraints';
+import { fireGlobalErrors } from '../../lib/Errors';
 import UserForm from './UserForm';
 
 function UserEdit({ match }) {
@@ -39,6 +40,12 @@ function UserEdit({ match }) {
         }).then((response) => {
             if (response.ok) {
                 setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
             }
         });
 
@@ -78,6 +85,11 @@ function UserEdit({ match }) {
                     setUser(user);
                 });
             } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
                 setUser({});
             }
         });

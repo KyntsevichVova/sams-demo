@@ -5,7 +5,7 @@ import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { API } from '../../lib/API';
 import { BASE_URL, STATUS } from '../../lib/Constraints';
-import { errorFor } from '../../lib/Errors';
+import { errorFor, fireGlobalErrors } from '../../lib/Errors';
 import JWT from '../../lib/JWT';
 import ErrorInput from '../ErrorInput/ErrorInput';
 
@@ -67,6 +67,8 @@ function SignUp() {
                         }
 
                         setErrors(newErrors);
+
+                        fireGlobalErrors(result.errorData);
                     }
                 });
             }

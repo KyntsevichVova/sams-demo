@@ -6,3 +6,7 @@ export function errorFor(name, messages = []) {
         }
     };
 }
+
+export function fireGlobalErrors(errors) {
+    errors.filter((value) => !value.field).map((value) => alert(value.message));
+}

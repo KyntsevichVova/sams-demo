@@ -4,7 +4,8 @@ import { Trans } from 'react-i18next';
 import LocaleContext from '../../contexts/LocaleContext';
 import { usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
 import { API } from '../../lib/API';
-import { PAGE_SIZES, USERS_ENDPOINT } from '../../lib/Constraints';
+import { PAGE_SIZES, STATUS, USERS_ENDPOINT } from '../../lib/Constraints';
+import { fireGlobalErrors } from '../../lib/Errors';
 import Dropdown from '../Dropdown/Dropdown';
 import PaginationNav from '../PaginationNav/PaginationNav';
 import UserTable from './UserTable';
@@ -72,6 +73,12 @@ function UsersTab({ pageNumber, pageSize }) {
             .then((response) => {
                 if (response.ok) {
                     setForceUpdate(!forceUpdate);
+                } else {
+                    response.json().then((result) => {
+                        if (result.status === STATUS.FAILURE) {
+                            fireGlobalErrors(result.errorData);
+                        }
+                    });    
                 }
             });
     }, [forceUpdate, locale.full]);

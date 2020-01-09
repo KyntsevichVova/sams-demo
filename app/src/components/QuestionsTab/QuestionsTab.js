@@ -6,7 +6,8 @@ import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { useFilterCallback, usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
 import { API } from '../../lib/API';
-import { FILTERS, PAGE_SIZES } from '../../lib/Constraints';
+import { FILTERS, PAGE_SIZES, STATUS } from '../../lib/Constraints';
+import { fireGlobalErrors } from '../../lib/Errors';
 import Dropdown from '../Dropdown/Dropdown';
 import FilterAside from '../FilterAside/FilterAside';
 import PaginationNav from '../PaginationNav/PaginationNav';
@@ -88,6 +89,12 @@ function QuestionsTab({ pageNumber, pageSize, filter }) {
             .then((response) => {
                 if (response.ok) {
                     setForceUpdate(!forceUpdate);
+                } else {
+                    response.json().then((result) => {
+                        if (result.status === STATUS.FAILURE) {
+                            fireGlobalErrors(result.errorData);
+                        }
+                    });
                 }
             });
     }, [forceUpdate, locale.full]);

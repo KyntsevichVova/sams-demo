@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import { API } from '../../lib/API';
 import { STATUS } from '../../lib/Constraints';
-import { errorFor } from '../../lib/Errors';
+import { errorFor, fireGlobalErrors } from '../../lib/Errors';
 import QuestionForm from './QuestionForm';
 
 const initialErrors = {...errorFor('link'), ...errorFor('title')};
@@ -48,6 +48,8 @@ function QuestionAdd() {
                         }
 
                         setErrors(newErrors);
+
+                        fireGlobalErrors(result.errorData);
                     }
                 });
             }
