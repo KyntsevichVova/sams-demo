@@ -2,8 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import UserContext from '../../contexts/UserContext';
 import { LEVELS, ROLE } from '../../lib/Constraints';
+import ErrorInput from '../ErrorInput/ErrorInput';
 
-function QuestionForm({ initState, okCallback, cancelCallback }) {
+function QuestionForm({ initState, okCallback, cancelCallback, errors }) {
     const [question, setQuestion] = React.useState(initState || {titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter, isOwner: false});
     const { t } = useTranslation('forms');
     const { userState } = React.useContext(UserContext);
@@ -56,7 +57,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     { t('label.question.answerLink') }
                 </label>
 
-                <input 
+                <ErrorInput 
                     type="text" 
                     className="form-control" 
                     id="question-link" 
@@ -65,6 +66,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     name="link"
                     onChange={changeHandler}
                     disabled={isDisabled}
+                    errors={errors.link}
                 />
             </div>
 
@@ -73,7 +75,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     { t('label.question.title.en') }
                 </label>
 
-                <input 
+                <ErrorInput 
                     type="text" 
                     className="form-control" 
                     id="question-titleEn" 
@@ -82,6 +84,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     name="titleEn"
                     onChange={changeHandler}
                     disabled={isDisabled}
+                    errors={errors.titleEn}
                 />
             </div>
 
@@ -90,7 +93,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     { t('label.question.title.ru') }
                 </label>
 
-                <input 
+                <ErrorInput 
                     type="text" 
                     className="form-control" 
                     id="question-titleRu" 
@@ -99,6 +102,7 @@ function QuestionForm({ initState, okCallback, cancelCallback }) {
                     name="titleRu"
                     onChange={changeHandler}
                     disabled={isDisabled}
+                    errors={errors.titleRu}
                 />
             </div>
             

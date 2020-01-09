@@ -2,12 +2,21 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import { API } from '../../lib/API';
-import { LEVELS } from '../../lib/Constraints';
+import { LEVELS, STATUS } from '../../lib/Constraints';
+import { errorFor } from '../../lib/Errors';
 import QuestionForm from './QuestionForm';
+
+const initialErrors = {
+    ...errorFor('link'), 
+    ...errorFor('titleRu'), 
+    ...errorFor('titleEn')
+};
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const [question, setQuestion] = React.useState(undefined);
+    const [errors, setErrors] = React.useState(initialErrors);
+
     const questionId = match.params.questionId || 0;
     const locale = React.useContext(LocaleContext);
 
@@ -38,6 +47,33 @@ function QuestionEdit({ match }) {
         }).then((response) => {
             if (response.ok) {
                 setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        let newErrors = {
+                            ...errorFor(
+                                'link',
+                                result.errorData
+                                    .filter((value) => value.field === 'link')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'titleRu',
+                                result.errorData
+                                    .filter((value) => value.field === 'titles[0].title')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'titleEn',
+                                result.errorData
+                                    .filter((value) => value.field === 'titles[1].title')
+                                    .map((value) => value.message)
+                            )
+                        }
+
+                        setErrors(newErrors);
+                    }
+                });
             }
         });
 
@@ -88,6 +124,7 @@ function QuestionEdit({ match }) {
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                     initState={question}
+                    errors={errors}
                 />
             </div>
             
