@@ -45,5 +45,7 @@ export const STATUS = {
 };
 
 export const TABS = {
-    ADMIN: ['admin.questions', 'admin.users']
+    USER: 'tab.questions',
+    TRANSLATOR: 'tab.translate',
+    ADMIN: 'tab.users'
 };

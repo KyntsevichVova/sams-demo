@@ -1,6 +1,7 @@
 {
-    "admin": {
+    "tab": {
         "questions": "Questions",
+        "translate": "Translate",
         "users": "Users"
     }
 }

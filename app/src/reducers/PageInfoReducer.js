@@ -5,7 +5,6 @@ const pageInfoInitialState = {
     pageNumber: 0, 
     pageSize: PAGE_SIZES[0],
     filter: FILTERS[0].filter,
-    useTabs: false,
     tabIndex: 0
 };
 
@@ -17,8 +16,6 @@ function pageInfoReducer(state, action) {
             return { ...state, pageSize: action.pageSize };
         case 'filter':
             return { ...state, filter: action.filter };
-        case 'useTabs':
-            return { ...state, useTabs: action.useTabs };
         case 'tabIndex':
             return { ...state, tabIndex: action.tabIndex };
         default:

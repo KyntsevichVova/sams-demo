@@ -15,6 +15,7 @@ import QuestionsTab from '../QuestionsTab/QuestionsTab';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
 import TabPanel from '../TabPanel/TabPanel';
+import TranslateTab from '../TranslateTab/TranslateTab';
 import UsersTab from '../UsersTab/UsersTab';
 import './App.css';
 import AppNavbar from './AppNavbar';
@@ -53,17 +54,52 @@ function App() {
         }
     }, [userDispatch]);
 
-    React.useEffect(() => {
-        if (userState.roles.includes(ROLE.ADMIN)) {
-            pageInfoDispatch({ type: 'useTabs', useTabs: true });
-        } else {
-            pageInfoDispatch({ type: 'useTabs', useTabs: false });
-        }
-    }, [pageInfoDispatch, userState]);
-
     const clickTabCallback = React.useCallback((index) => {
         pageInfoDispatch({ type: 'tabIndex', tabIndex: index });
     }, [pageInfoDispatch]);
+
+    let tabs = [];
+
+    tabs.push({
+        title: TABS.USER,
+        component: (
+            <QuestionsTab 
+                pageNumber={pageInfoState.pageNumber}
+                pageSize={pageInfoState.pageSize}
+                filter={pageInfoState.filter}
+            />
+        )
+    });
+
+    if (userState.roles.includes(ROLE.ADMIN)) {
+        tabs.push({
+            title: TABS.ADMIN,
+            component: (
+                <UsersTab
+                    pageNumber={pageInfoState.pageNumber}
+                    pageSize={pageInfoState.pageSize}
+                />
+            )
+        });
+    }
+
+    if (userState.roles.includes(ROLE.TRANSLATOR)) {
+        tabs.push({
+            title: TABS.TRANSLATOR,
+            component: (
+                <TranslateTab
+                    pageNumber={pageInfoState.pageNumber}
+                    pageSize={pageInfoState.pageSize}
+                />
+            )
+        })
+    }
+
+    const isTabbed = tabs.length > 0;
+
+    React.useEffect(() => {
+        pageInfoDispatch({ type: 'tabIndex', tabIndex: 0 });
+    }, [isTabbed]);
 
     return (
         <HashRouter>
@@ -105,43 +141,16 @@ function App() {
 
                                     <Route exact path="/">
 
-                                        {pageInfoState.useTabs
-                                            ? (
-                                                <>
-                                                    <TabPanel
-                                                        tabIndex={pageInfoState.tabIndex}
-                                                        tabTitles={TABS.ADMIN}
-                                                        clickTabCallback={clickTabCallback}
-                                                    />
-                                                    {
-                                                        (pageInfoState.tabIndex === 0)
-                                                        && (
-                                                            <QuestionsTab 
-                                                                pageNumber={pageInfoState.pageNumber}
-                                                                pageSize={pageInfoState.pageSize}
-                                                                filter={pageInfoState.filter}
-                                                            />
-                                                        )
-                                                    }
-                                                    {
-                                                        (pageInfoState.tabIndex === 1)
-                                                        && (
-                                                            <UsersTab
-                                                                pageNumber={pageInfoState.pageNumber}
-                                                                pageSize={pageInfoState.pageSize}
-                                                            />
-                                                        )
-                                                    }
-                                                </>
-                                            )
-                                            : (
-                                                <QuestionsTab 
-                                                    pageNumber={pageInfoState.pageNumber}
-                                                    pageSize={pageInfoState.pageSize}
-                                                    filter={pageInfoState.filter}
+                                        {isTabbed
+                                            && (
+                                                <TabPanel
+                                                    tabIndex={Math.min(pageInfoState.tabIndex, tabs.length)}
+                                                    tabTitles={tabs.map((value) => value.title)}
+                                                    clickTabCallback={clickTabCallback}
                                                 />
                                             )
                                         }
+                                        {tabs.filter((value, index) => index === Math.min(pageInfoState.tabIndex, tabs.length))[0].component}
                                         
                                     </Route>
                                 </Switch>
