@@ -6,7 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity(name = "TITLE")
+@Entity
 @Table(name = "TITLE")
 @Data
 @EqualsAndHashCode(of = {"title"}, callSuper = false)

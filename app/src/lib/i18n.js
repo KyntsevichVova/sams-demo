@@ -1,6 +1,6 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
 import XHR from 'i18next-xhr-backend';
+import { initReactI18next } from 'react-i18next';
 import { BASE_URL } from './Constraints';
 
 i18n
@@ -8,8 +8,8 @@ i18n
     .use(initReactI18next)
     .init({
         debug: true,
-        lng: 'en-US',
-        fallbackLng: 'en-US',
+        lng: 'en',
+        fallbackLng: 'en',
         load: 'languageOnly',
 
         backend: {

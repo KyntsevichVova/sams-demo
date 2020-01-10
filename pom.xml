@@ -20,12 +20,16 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<lombok.version>1.18.10</lombok.version>
-		<commons.version>3.9</commons.version>
+		<commons.lang3.version>3.9</commons.lang3.version>
+		<commons.collections4.version>4.4</commons.collections4.version>
+		<jjwt.version>0.9.1</jjwt.version>
+		<javax.json.version>1.1.4</javax.json.version>
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.frontend.version>1.8.0</maven.frontend.version>
 		<node.version>v10.16.3</node.version>
 		<maven.war.version>3.2.3</maven.war.version>
 		<maven.tomcat7.version>2.2</maven.tomcat7.version>
+		<h2.version>1.4.200</h2.version>
 	</properties>
 
 	<dependencies>
@@ -33,6 +37,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
         <dependency>
@@ -67,7 +76,37 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${commons.version}</version>
+			<version>${commons.lang3.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>${commons.collections4.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>${javax.json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>${javax.json.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

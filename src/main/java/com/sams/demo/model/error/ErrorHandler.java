@@ -2,10 +2,13 @@ package com.sams.demo.model.error;
 
 import com.sams.demo.model.error.exception.SamsDemoException;
 import com.sams.demo.model.response.ResponseBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,17 +18,28 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.Locale;
 
-import static com.sams.demo.model.error.ErrorCode.UNEXPECTED_ERROR;
+import static com.sams.demo.model.error.ErrorCode.*;
+import static com.sams.demo.model.error.exception.SamsDemoException.accessDeniedException;
+import static com.sams.demo.model.error.exception.SamsDemoException.badRequestException;
+import static java.lang.String.format;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
+    public static final String EXCEPTION_DETAILS_PATTERN = "Handled exception details: %s";
+
+    private final MessageSource messageSource;
+
     @Autowired
-    private MessageSource messageSource;
+    public ErrorHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity handle(HttpMessageNotReadableException ex, Locale locale) {
@@ -40,6 +54,8 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handle(MethodArgumentNotValidException ex, Locale locale) {
 
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
         List<ErrorMessage> errors = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -53,8 +69,26 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity handle(BadCredentialsException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
+        return handle(badRequestException(BAD_CREDENTIALS_ERROR), locale);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity handle(AccessDeniedException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
+
+        return handle(accessDeniedException(), locale);
+    }
+
     @ExceptionHandler(SamsDemoException.class)
     public ResponseEntity handle(SamsDemoException ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(messageSource.getMessage(
@@ -70,6 +104,8 @@ public class ErrorHandler {
     }
 
     private ResponseEntity handleUnknownReasonException(Exception ex, Locale locale) {
+
+        log.error(format(EXCEPTION_DETAILS_PATTERN, ex));
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setMessage(messageSource.getMessage(
@@ -94,7 +130,11 @@ public class ErrorHandler {
 
             String message = messageSource.getMessage(
                     fe.getDefaultMessage(),
-                    new String [] {fe.getField()},
+                    FIELD_INVALID_LENGTH.equalsIgnoreCase(fe.getDefaultMessage())
+                    ? new String [] {
+                            requireNonNull(fe.getArguments())[2].toString(),
+                            requireNonNull(fe.getArguments())[1].toString()}
+                    : new String [] {fe.getField()},
                     locale);
 
             errorMessage.setField(fe.getField());

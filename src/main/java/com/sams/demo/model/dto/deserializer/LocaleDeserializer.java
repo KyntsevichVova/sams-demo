@@ -21,10 +21,10 @@ public class LocaleDeserializer extends JsonDeserializer<LocaleEnum> {
             DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
 
         LocaleEnum localeEnum;
-
         try {
             localeEnum = LocaleEnum.valueOf(jsonParser.getText().toUpperCase());
         } catch (Exception ex) {
+
             log.error("Bad request exception: locale is invalid, locale = {}", jsonParser.getText());
             throw badRequestException(LOCALE_INVALID, jsonParser.getText());
         }

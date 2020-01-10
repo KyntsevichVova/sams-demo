@@ -1,5 +1,7 @@
 package com.sams.demo.model.response;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sams.demo.model.dto.BaseDTO;
 import com.sams.demo.model.entity.BaseEntity;
 import com.sams.demo.model.error.ErrorMessage;
@@ -29,6 +31,7 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
     }
 
     private ResponseBuilder(SamsDemoResponse<DTO> response) {
+
         this();
         this.response = response;
     }
@@ -47,7 +50,6 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
     }
 
     public static ResponseBuilder empty() {
-
         return new ResponseBuilder();
     }
 
@@ -96,6 +98,13 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
         return this;
     }
 
+    public ResponseBuilder withAuthorization(String token) {
+
+        this.headers.setBearerAuth(token);
+
+        return this;
+    }
+
     public ResponseBuilder<DTO, ENTITY> withHttpStatus(HttpStatus httpStatus) {
 
         this.httpStatus = httpStatus;
@@ -104,7 +113,12 @@ public class ResponseBuilder<DTO extends BaseDTO, ENTITY extends BaseEntity> {
     }
 
     public ResponseEntity<SamsDemoResponse<DTO>> build() {
-
         return new ResponseEntity<>(this.response, this.headers, this.httpStatus);
+    }
+
+    public String toJson() throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this.build().getBody());
     }
 }

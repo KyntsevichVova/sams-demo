@@ -1,4 +1,5 @@
 import { QUESTIONS_ENDPOINT } from './Constraints';
+import JWT from './JWT';
 
 function buildParams(params) {
     let paramsArray = [];
@@ -14,7 +15,7 @@ function buildParams(params) {
     return paramsArray ? `?${paramsArray.join('&')}` : '';
 }
 
-export const METHOD = {
+const METHOD = {
     GET: 'GET',
     POST: 'POST',
     PUT: 'PUT',
@@ -24,23 +25,23 @@ export const METHOD = {
 function doRequest(
     method, 
     { 
+        endpoint = QUESTIONS_ENDPOINT,
         url = "", 
         params = {}, 
-        headers = null, 
+        headers = new Headers(), 
         body = null 
     }
 ) {
+    headers.set('Authorization', JWT.getStorage());
     const init = {
-        method: method
+        method: method,
+        headers: headers
     };
-    if (headers) {
-        init.headers = headers;
-    }
     if (body) {
         init.body = body;
     }
     return fetch(
-        `${QUESTIONS_ENDPOINT}${url ? `/${url}` : ""}${buildParams(params)}`,
+        `${endpoint}${url ? `/${url}` : ""}${buildParams(params)}`,
         init
     );
 

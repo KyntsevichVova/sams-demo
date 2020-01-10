@@ -11,7 +11,7 @@ import java.util.List;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "LEVEL")
+@Entity
 @Table(name = "LEVEL")
 @Data
 @EqualsAndHashCode(of = {"id", "type"}, callSuper = false)

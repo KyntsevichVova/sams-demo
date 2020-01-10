@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "LOCALE")
+@Entity
 @Table(name = "LOCALE")
 @Data
 @EqualsAndHashCode(of = {"id", "code"}, callSuper = false)

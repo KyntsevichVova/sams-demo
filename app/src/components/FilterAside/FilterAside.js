@@ -1,6 +1,6 @@
 import React from 'react';
-import FilterButton from '../FilterButton/FilterButton';
 import { useTranslation } from 'react-i18next';
+import FilterButton from '../FilterButton/FilterButton';
 
 function FilterAside({ filters, currentFilter, setFilterCallback }) {
     const { t } = useTranslation('table');

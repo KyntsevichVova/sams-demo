@@ -1,21 +1,29 @@
 import React from 'react';
-import QuestionForm from './QuestionForm';
 import { Redirect } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { API } from '../../lib/API';
 import LocaleContext from '../../contexts/LocaleContext';
+import { API } from '../../lib/API';
+import { LEVELS, STATUS } from '../../lib/Constraints';
+import { errorFor, fireGlobalErrors } from '../../lib/Errors';
+import QuestionForm from './QuestionForm';
+
+const initialErrors = {
+    ...errorFor('link'), 
+    ...errorFor('titleRu'), 
+    ...errorFor('titleEn')
+};
 
 function QuestionEdit({ match }) {
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
     const [question, setQuestion] = React.useState(undefined);
+    const [errors, setErrors] = React.useState(initialErrors);
+
     const questionId = match.params.questionId || 0;
-    const { t } = useTranslation('forms');
     const locale = React.useContext(LocaleContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept-Language', locale.full);
+        headers.set('Content-Type', 'application/json');
+        headers.set('Accept-Language', locale.full);
 
         let body = {
             link: question.link,
@@ -39,6 +47,35 @@ function QuestionEdit({ match }) {
         }).then((response) => {
             if (response.ok) {
                 setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        let newErrors = {
+                            ...errorFor(
+                                'link',
+                                result.errorData
+                                    .filter((value) => value.field === 'link')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'titleRu',
+                                result.errorData
+                                    .filter((value) => value.field === 'titles[0].title')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'titleEn',
+                                result.errorData
+                                    .filter((value) => value.field === 'titles[1].title')
+                                    .map((value) => value.message)
+                            )
+                        }
+
+                        setErrors(newErrors);
+
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
             }
         });
 
@@ -51,7 +88,7 @@ function QuestionEdit({ match }) {
     React.useEffect(() => {
 
         let headers = new Headers();
-        headers.append('Accept-Language', locale.full);
+        headers.set('Accept-Language', locale.full);
         
         API.get({
             url: `${questionId}`,
@@ -69,11 +106,20 @@ function QuestionEdit({ match }) {
                         link: data.link,
                         level: data.level,
                         titleRu: titleRu,
-                        titleEn: titleEn
+                        titleEn: titleEn,
+                        isOwner: data.isOwner
                     };
                     
                     setQuestion(question);
                 });
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
+
+                setQuestion({titleRu: "", titleEn: "", link: "", level: LEVELS[0].filter, isOwner: false});
             }
         });
 
@@ -83,11 +129,10 @@ function QuestionEdit({ match }) {
         <>
             <div className="container">
                 <QuestionForm
-                    okTitle={ t('edit.ok') }
-                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
                     initState={question}
+                    errors={errors}
                 />
             </div>
             

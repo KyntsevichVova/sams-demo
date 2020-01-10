@@ -29,17 +29,13 @@ import static org.springframework.http.HttpStatus.*;
 public class QuestionController {
 
     private IQuestionService questionService;
-
-    private IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper;
     private IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper;
 
     @Autowired
     public QuestionController(IQuestionService questionService,
-                              IDTOMapper<CreateQuestionDTO, Question> questionDTOMapper,
                               IDTOMapper<ReadQuestionDTO, Question> readQuestionDTOMapper) {
 
         this.questionService = questionService;
-        this.questionDTOMapper = questionDTOMapper;
         this.readQuestionDTOMapper = readQuestionDTOMapper;
     }
 
@@ -47,9 +43,39 @@ public class QuestionController {
     public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findAllQuestions(
             @Level String level,
             Locale locale,
-            Pageable pageable) {
+            Pageable pageable) throws SamsDemoException {
 
         Page<ReadAllQuestionDTO> page = questionService.findAll(level, locale.toLanguageTag(), pageable);
+
+        return ResponseBuilder
+                .<ReadAllQuestionDTO, Question>success()
+                .withPageData(page)
+                .withHttpStatus(OK)
+                .build();
+    }
+
+    @GetMapping("/translate")
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findQuestionsForTranslation(
+            Locale locale,
+            Pageable pageable) throws SamsDemoException {
+
+        Page<ReadAllQuestionDTO> page = questionService
+                .findAllForTranslation(locale.toLanguageTag(), pageable);
+
+        return ResponseBuilder
+                .<ReadAllQuestionDTO, Question>success()
+                .withPageData(page)
+                .withHttpStatus(OK)
+                .build();
+    }
+    @GetMapping("/query")
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findQuestionsByQuery(
+            @RequestParam(name = "query") String query,
+            Locale locale,
+            Pageable pageable) throws SamsDemoException {
+
+        Page<ReadAllQuestionDTO> page = questionService
+                .findByQuery(query, locale.toLanguageTag(), pageable);
 
         return ResponseBuilder
                 .<ReadAllQuestionDTO, Question>success()
@@ -99,7 +125,8 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{questionId}")
-    public ResponseEntity deleteQuestion(@PathVariable(name = "questionId") Long questionId) {
+    public ResponseEntity deleteQuestion(
+            @PathVariable(name = "questionId") Long questionId) throws SamsDemoException{
 
         questionService.delete(questionId);
 

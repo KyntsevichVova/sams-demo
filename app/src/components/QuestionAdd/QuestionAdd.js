@@ -1,19 +1,22 @@
 import React from 'react';
-import QuestionForm from './QuestionForm';
 import { Redirect } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { API } from '../../lib/API';
 import LocaleContext from '../../contexts/LocaleContext';
+import { API } from '../../lib/API';
+import { STATUS } from '../../lib/Constraints';
+import { errorFor, fireGlobalErrors } from '../../lib/Errors';
+import QuestionForm from './QuestionForm';
+
+const initialErrors = {...errorFor('link'), ...errorFor('title')};
 
 function QuestionAdd() {
+    const [errors, setErrors] = React.useState(initialErrors);
     const [shouldRedirect, setShouldRedirect] = React.useState(false);
-    const { t } = useTranslation('forms');
     const locale = React.useContext(LocaleContext);
 
     const okCallback = React.useCallback((question) => {
         let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept-Language', locale.full);
+        headers.set('Content-Type', 'application/json');
+        headers.set('Accept-Language', locale.full);
 
         let body = {
             ...question,
@@ -24,8 +27,31 @@ function QuestionAdd() {
             headers: headers,
             body: JSON.stringify(body)
         }).then((response) => {
-            if (response.ok) {
+            if (response.status === 201) {
                 setShouldRedirect(true);
+            } else {
+                response.json().then((result) => {
+                    if (result.status === STATUS.FAILURE) {
+                        let newErrors = {
+                            ...errorFor(
+                                'link',
+                                result.errorData
+                                    .filter((value) => value.field === 'link')
+                                    .map((value) => value.message)
+                            ),
+                            ...errorFor(
+                                'title',
+                                result.errorData
+                                    .filter((value) => value.field === 'title')
+                                    .map((value) => value.message)
+                            )
+                        }
+
+                        setErrors(newErrors);
+
+                        fireGlobalErrors(result.errorData);
+                    }
+                });
             }
         });
 
@@ -39,10 +65,9 @@ function QuestionAdd() {
         <>
             <div className="container">
                 <QuestionForm
-                    okTitle={ t('add.ok') }
-                    cancelTitle={ t('common.cancel') }
                     okCallback={okCallback}
                     cancelCallback={cancelCallback}
+                    errors={errors}
                 />
             </div>
             

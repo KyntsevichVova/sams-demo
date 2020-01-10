@@ -10,7 +10,7 @@ import java.util.List;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "QUESTION")
+@Entity
 @Table(name = "QUESTION")
 @Data
 @EqualsAndHashCode(of = {"id", "link", "level"}, callSuper = false)
@@ -21,6 +21,10 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "QUESTION_ID", nullable = false)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     @Column(name = "LINK", nullable = false)
     private String link;
@@ -34,5 +38,4 @@ public class Question extends BaseEntity {
 
     @Column(name = "IS_FULLY_LOCALIZED", nullable = false)
     private Boolean isFullyLocalized;
-
 }

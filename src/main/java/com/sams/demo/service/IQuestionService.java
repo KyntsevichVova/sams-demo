@@ -10,13 +10,19 @@ import org.springframework.data.domain.Pageable;
 
 public interface IQuestionService {
 
-    Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable);
+    Page<ReadAllQuestionDTO> findAll(String level, String locale, Pageable pageable) throws SamsDemoException;
+
+    Page<ReadAllQuestionDTO> findAllForTranslation(String locale, Pageable pageable) throws SamsDemoException;
+
+    Page<ReadAllQuestionDTO> findByQuery(String query, String locale, Pageable pageable) throws SamsDemoException;
 
     Question findById(Long questionId) throws SamsDemoException;
+
+    Question findByIdAndByPassProxy(Long questionId) throws SamsDemoException;
 
     Question save(CreateQuestionDTO questionDTO) throws SamsDemoException;
 
     Question update(Long questionId, UpdateQuestionDTO questionDTO) throws SamsDemoException;
 
-    void delete(Long questionId);
+    void delete(Long questionId) throws SamsDemoException;
 }
