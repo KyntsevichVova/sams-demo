@@ -96,7 +96,7 @@ function App() {
         })
     }
 
-    const isTabbed = tabs.length > 0;
+    const isTabbed = tabs.length > 1;
 
     React.useEffect(() => {
         pageInfoDispatch({ type: 'tabIndex', tabIndex: 0 });
