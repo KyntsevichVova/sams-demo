@@ -1,33 +1,40 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import { Trans } from 'react-i18next';
+import { Link, Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
+import UserContext from '../../contexts/UserContext';
 import { usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
 import { API } from '../../lib/API';
-import { PAGE_SIZES, STATUS, USERS_ENDPOINT } from '../../lib/Constraints';
+import { PAGE_SIZES, STATUS } from '../../lib/Constraints';
 import { fireGlobalErrors } from '../../lib/Errors';
 import Dropdown from '../Dropdown/Dropdown';
 import PaginationNav from '../PaginationNav/PaginationNav';
-import UserTable from './UserTable';
+import QuestionTable from './QuestionTable';
 
-function UsersTab({ pageNumber, pageSize }) {
+function Search({ pageNumber, pageSize, match }) {
     const [pageData, setPageData] = React.useState({});
     const [forceUpdate, setForceUpdate] = React.useState(false);
     const locale = React.useContext(LocaleContext);
+    const { userState } = React.useContext(UserContext);
+    const [redirect, setRedirect] = React.useState({should: false, to: "/"});
 
     const setPageNumberCallback = usePageNumberCallback();
     const setPageSizeCallback = usePageSizeCallback();
+
+    const [query, setQuery] = React.useState(match.params.query || "");
     
     React.useEffect(() => {
         let params = {
             pageSize: pageSize,
-            pageNum: pageNumber
+            pageNum: pageNumber,
+            query: query
         };
 
         let headers = new Headers();
         headers.set('Accept-Language', locale.full);
 
-        API.get({ endpoint: USERS_ENDPOINT, params: params, headers: headers })
+        API.get({ url: "query", params: params, headers: headers })
             .then((data) => {
                 data.json().then((pageData) => {
                     if (pageNumber * pageSize > pageData.total) {
@@ -36,7 +43,7 @@ function UsersTab({ pageNumber, pageSize }) {
                     setPageData(pageData);
                 });
             });
-    }, [pageNumber, pageSize, setPageNumberCallback, forceUpdate, locale.full]);
+    }, [pageNumber, pageSize, setPageNumberCallback, forceUpdate, locale.full, query]);
 
     const totalElements = pageData.total || 0;
     const totalPages = Math.floor((totalElements + pageSize - 1) / pageSize);
@@ -65,11 +72,11 @@ function UsersTab({ pageNumber, pageSize }) {
         </nav>
     );
 
-    const deleteCallback = React.useCallback((userId) => {
+    const deleteCallback = React.useCallback((questionId) => {
         let headers = new Headers();
         headers.set('Accept-Language', locale.full);
 
-        API.delete({ endpoint: USERS_ENDPOINT, url: `${userId}`, headers: headers })
+        API.delete({ url: `${questionId}`, headers: headers })
             .then((response) => {
                 if (response.ok) {
                     setForceUpdate(!forceUpdate);
@@ -78,13 +85,24 @@ function UsersTab({ pageNumber, pageSize }) {
                         if (result.status === STATUS.FAILURE) {
                             fireGlobalErrors(result.errorData);
                         }
-                    });    
+                    });
                 }
             });
     }, [forceUpdate, locale.full]);
 
+    const searchChange = (event) => {
+        if (event.key === "Enter") {
+            setRedirect({should: true, to: `/search/${event.target.value}`});
+        }
+    }
+
+    const change = (event) => {
+        setQuery(event.target.value);
+    }
+
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
+            {redirect.should && <Redirect to={redirect.to}/>}
             <div className="container-fluid mx-5">
 
                 <div className="row mb-3">
@@ -113,7 +131,31 @@ function UsersTab({ pageNumber, pageSize }) {
                                     
                                     entries
                                 </Trans>
-                            </span>                            
+                            </span>
+                            
+                            {
+                                userState.loggedIn
+                                && (
+                                    <Link to="/add">
+                                        <div className="btn btn-primary mx-5">
+                                            <FontAwesomeIcon icon={["fas", "plus"]} />
+                                        </div>
+                                    </Link>
+                                )
+                            }
+                            
+                        </div>
+
+                        <div className="d-flex flex-row justify-content-end w-50">
+                            <div className="input-group mb-0">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                        <FontAwesomeIcon icon={["fas", "search"]} />
+                                    </span>
+                                </div>
+                                
+                                <input type="text" className="form-control h-100" onKeyDown={searchChange} value={query} onChange={change}/>
+                            </div>
                         </div>
 
                     </div>  
@@ -126,8 +168,8 @@ function UsersTab({ pageNumber, pageSize }) {
                     </div>
 
                     <div className="col-10 d-flex flex-column">
-                        <UserTable 
-                            users={pageData.data || []} 
+                        <QuestionTable 
+                            questions={pageData.data || []} 
                             deleteCallback={deleteCallback}
                         /> 
                         {nav}
@@ -139,4 +181,4 @@ function UsersTab({ pageNumber, pageSize }) {
     );
 }
 
-export default UsersTab;
+export default Search;

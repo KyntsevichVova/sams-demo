@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Trans } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import LocaleContext from '../../contexts/LocaleContext';
 import UserContext from '../../contexts/UserContext';
 import { useFilterCallback, usePageNumberCallback, usePageSizeCallback } from '../../hooks/PageInfoHooks';
@@ -18,6 +18,7 @@ function QuestionsTab({ pageNumber, pageSize, filter }) {
     const [forceUpdate, setForceUpdate] = React.useState(false);
     const locale = React.useContext(LocaleContext);
     const { userState } = React.useContext(UserContext);
+    const [redirect, setRedirect] = React.useState({should: false, to: "/"});
 
     const setPageNumberCallback = usePageNumberCallback();
     const setPageSizeCallback = usePageSizeCallback();
@@ -99,8 +100,16 @@ function QuestionsTab({ pageNumber, pageSize, filter }) {
             });
     }, [forceUpdate, locale.full]);
 
+    const searchChange = (event) => {
+        console.log(event);
+        if (event.key === "Enter") {
+            setRedirect({should: true, to: `/search/${event.target.value}`});
+        }
+    }
+
     return (
         <main className="d-flex flex-row justify-content-start pt-3">
+            {redirect.should && <Redirect to={redirect.to}/>}
             <div className="container-fluid mx-5">
 
                 <div className="row mb-3">
@@ -152,7 +161,7 @@ function QuestionsTab({ pageNumber, pageSize, filter }) {
                                     </span>
                                 </div>
                                 
-                                <input type="text" className="form-control h-100" />
+                                <input type="text" className="form-control h-100" onKeyDown={searchChange} />
                             </div>
                         </div>
 

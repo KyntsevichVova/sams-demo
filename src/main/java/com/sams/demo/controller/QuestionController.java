@@ -68,6 +68,21 @@ public class QuestionController {
                 .withHttpStatus(OK)
                 .build();
     }
+    @GetMapping("/query")
+    public ResponseEntity<SamsDemoResponse<ReadAllQuestionDTO>> findQuestionsByQuery(
+            @RequestParam(name = "query") String query,
+            Locale locale,
+            Pageable pageable) throws SamsDemoException {
+
+        Page<ReadAllQuestionDTO> page = questionService
+                .findByQuery(query, locale.toLanguageTag(), pageable);
+
+        return ResponseBuilder
+                .<ReadAllQuestionDTO, Question>success()
+                .withPageData(page)
+                .withHttpStatus(OK)
+                .build();
+    }
 
     @GetMapping("/{questionId}")
     public ResponseEntity<SamsDemoResponse<ReadQuestionDTO>> findQuestionById(

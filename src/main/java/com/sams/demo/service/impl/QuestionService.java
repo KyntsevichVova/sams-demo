@@ -96,6 +96,32 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ReadAllQuestionDTO> findByQuery(
+            String query, String locale, Pageable pageable) throws SamsDemoException {
+
+        log.debug("Entered [findByQuery] with query = {}, locale = {}, pageable = {}", query, locale, pageable);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Long userId = ANONYMOUS_USER_ID;
+        if (authentication != null &&
+                authentication.getPrincipal() != null &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
+
+            userId = ((SecurityPrincipal)authentication.getPrincipal()).getUserId();
+        }
+
+        try {
+            return questionRepository.findByQuery(query, locale, userId, pageable);
+        } catch (Exception ex) {
+
+            log.error("Internal server exception [findByQuery]: database access error {}", ex.getMessage());
+            throw internalServerException(ACCESS_DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     @PreAuthorize(READ_QUESTION_ACL)
     public Question findById(Long questionId) throws SamsDemoException {
 

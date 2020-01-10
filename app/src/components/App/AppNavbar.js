@@ -13,9 +13,11 @@ function AppNavbar({ currentLang, changeLangCallback }) {
 
     return (
         <nav className="navbar navbar-dark mb-5 shadow-sm bg-primary border-bottom">
-            <span className="navbar-brand" style={{fontSize: '2.5rem'}}>
-                { t('main.title') }
-            </span>
+            <Link to="/">
+                <span className="navbar-brand" style={{fontSize: '2.5rem'}}>
+                    { t('main.title') }
+                </span>
+            </Link>
             <div className="d-flex flex-row justify-content-end">
                 <div className="d-flex flex-column">
                     <div className="d-flex justify-content-end">

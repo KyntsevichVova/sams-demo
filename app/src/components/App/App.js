@@ -12,6 +12,7 @@ import { useUserReducer } from '../../reducers/UserReducer';
 import QuestionAdd from '../QuestionAdd/QuestionAdd';
 import QuestionEdit from '../QuestionEdit/QuestionEdit';
 import QuestionsTab from '../QuestionsTab/QuestionsTab';
+import Search from '../Search/Search';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
 import TabPanel from '../TabPanel/TabPanel';
@@ -127,6 +128,17 @@ function App() {
                                     <Route
                                         path="/edit-user/:userId"
                                         component={UserEdit}
+                                    />
+
+                                    <Route
+                                        path="/search/:query"
+                                        children={({ match }) => (
+                                            <Search
+                                                pageNumber={pageInfoState.pageNumber}
+                                                pageSize={pageInfoState.pageSize}
+                                                match={match}
+                                            />
+                                        )}
                                     />
 
                                     <Route 
