@@ -2,7 +2,10 @@ package com.sams.demo.service.impl;
 
 import com.sams.demo.model.dto.UpdateUserDTO;
 import com.sams.demo.model.entity.User;
+import com.sams.demo.model.entity.UserRole;
+import com.sams.demo.model.entity.UserRoleId;
 import com.sams.demo.model.error.exception.SamsDemoException;
+import com.sams.demo.repository.RoleConRepository;
 import com.sams.demo.repository.UserRepository;
 import com.sams.demo.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.sams.demo.model.error.ErrorCode.*;
 import static com.sams.demo.model.error.exception.SamsDemoException.*;
@@ -25,10 +29,13 @@ import static com.sams.demo.security.SecurityExpression.USER_ACL;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final RoleConRepository roleConRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       RoleConRepository roleConRepository) {
         this.userRepository = userRepository;
+        this.roleConRepository = roleConRepository;
     }
 
     @Override
@@ -119,6 +126,22 @@ public class UserService implements IUserService {
 
         user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
+        user.setRoles(userDTO
+                .getRoles()
+                .stream()
+                .map(roleConRepository::findByRole)
+                .map(roleCon -> {
+                    UserRole userRole = new UserRole();
+                    userRole.setId(new UserRoleId());
+                    userRole.getId().setUserId(userId);
+                    userRole.getId().setRoleId(roleCon.getId());
+                    userRole.setRoleCon(roleCon);
+                    userRole.setUser(user);
+                    return userRole;
+                })
+                .collect(Collectors.toList())
+        );
+        user.setIsDeleted(userDTO.getIsDeleted());
 
         try {
             return userRepository.save(user);

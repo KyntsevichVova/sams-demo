@@ -21,6 +21,8 @@ public interface ErrorCode {
 
     String LEVEL_TYPE_INVALID = "level.invalid";
 
+    String ROLE_INVALID = "role.invalid";
+
     String UNEXPECTED_ERROR = "unexpected.error";
     String UNEXPECTED_AUTHENTICATION_ERROR = "unexpected.authentication.error";
 

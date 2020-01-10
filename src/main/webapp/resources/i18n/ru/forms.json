@@ -24,7 +24,8 @@
 
         "user": {
             "email": "Email",
-            "username": "Имя пользователя"
+            "username": "Имя пользователя",
+            "isDeleted": "Удален"
         }
     },
 

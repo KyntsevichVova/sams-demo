@@ -28,7 +28,7 @@ function UserForm({ initState, okCallback, cancelCallback }) {
         setUser({...user, [event.target.name]: event.target.value});
     };
 
-    const checkHandler = (event) => {
+    const roleCheckHandler = (event) => {
         setUser({
             ...user, 
             roles: {
@@ -40,6 +40,13 @@ function UserForm({ initState, okCallback, cancelCallback }) {
             }
         });
     };
+
+    const checkHandler = (event) => {
+        setUser({
+            ...user,
+            [event.target.name]: !user[event.target.name]
+        });
+    }
 
     React.useEffect(() => {
         if (initState) {
@@ -100,7 +107,7 @@ function UserForm({ initState, okCallback, cancelCallback }) {
                                     checked={checked}
                                     disabled={isDisabled}
                                     id={key}
-                                    onClick={checkHandler}
+                                    onClick={roleCheckHandler}
                                 />
                                 <label htmlFor={key} className="noselect">
                                     { t(`role.${role}`) }
@@ -108,6 +115,20 @@ function UserForm({ initState, okCallback, cancelCallback }) {
                             </div>
                         );
                     })}
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            name="isDeleted"
+                            checked={user.isDeleted}
+                            disabled={isDisabled}
+                            id="isdeleted"
+                            onClick={checkHandler}
+                        />
+                        <label htmlFor="isdeleted" className="noselect">
+                            { t(`label.user.isDeleted`) }
+                        </label>
+                    </div>
                 </div>
             </div>
             

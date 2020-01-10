@@ -99,7 +99,7 @@ function App() {
 
     React.useEffect(() => {
         pageInfoDispatch({ type: 'tabIndex', tabIndex: 0 });
-    }, [isTabbed]);
+    }, [isTabbed, pageInfoDispatch]);
 
     return (
         <HashRouter>

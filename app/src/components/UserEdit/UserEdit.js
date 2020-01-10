@@ -17,11 +17,11 @@ function UserEdit({ match }) {
         headers.set('Content-Type', 'application/json');
         headers.set('Accept-Language', locale.full);
 
-        let roles = {};
+        let roles = [];
 
         for (let [key, {role, checked}] of Object.entries(user.roles)) {
             if (checked) {
-                roles[role] = role; 
+                roles.push(role); 
             }
         }
 

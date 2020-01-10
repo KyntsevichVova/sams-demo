@@ -24,7 +24,8 @@
 
         "user": {
             "email": "Email",
-            "username": "Username"
+            "username": "Username",
+            "isDeleted": "Is deleted"
         }
     },
 
